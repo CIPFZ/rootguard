@@ -9,10 +9,14 @@
 
 #![forbid(unsafe_code)]
 
+pub mod flow;
 pub mod hud;
+pub mod i18n;
 pub mod render;
+pub mod save;
 pub mod scenes;
 pub mod script;
+pub mod sfx;
 
 pub use scenes::{BattleScene, TitleScene};
 
@@ -25,8 +29,13 @@ pub const LOGICAL_SIZE: Vec2 = Vec2::new(1280.0, 720.0);
 pub const TITLE: &str = "Rootguard";
 
 /// 游戏内容插件（SPEC.md 3.2 / 3.3）：用 `AssetServer` 加载并校验 `assets/data/`，成功后添加
-/// `ContentPlugin` / `BattlePlugin` / `EconomyPlugin` / `WavePlugin`；失败记为启动错误（SPEC.md 4）。
-pub struct GamePlugin;
+/// `ContentPlugin` / `BattlePlugin` / `EconomyPlugin` / `WavePlugin`，再加载文本表并添加
+/// `SavePlugin` / `SfxPlugin` / `UiPlugin`；任一失败记为启动错误（SPEC.md 4）。
+#[derive(Default)]
+pub struct GamePlugin {
+    /// 存档位置。
+    pub save: save::SaveLocation,
+}
 
 impl Plugin for GamePlugin {
     fn name(&self) -> &'static str {
@@ -42,6 +51,15 @@ impl Plugin for GamePlugin {
             Ok(content) => rootguard_core::add_core_plugins(app, content),
             Err(e) => app.record_startup_error(e),
         }
+        match i18n::I18n::load(&server) {
+            Ok(table) => {
+                app.insert_resource(table);
+            }
+            Err(e) => app.record_startup_error(e),
+        }
+        app.add_plugin(save::SavePlugin(self.save.clone()))
+            .add_plugin(sfx::SfxPlugin)
+            .add_plugin(flow::UiPlugin);
     }
 }
 
@@ -73,11 +91,17 @@ pub fn build_app() -> App {
 /// → 游戏内容插件 → `ScenePlugin` → `DevtoolsPlugin`（feature `devtools`）。
 #[must_use]
 pub fn build_app_with(initial: impl Scene) -> App {
+    build_app_full(initial, save::SaveLocation::Default)
+}
+
+/// 以指定初始场景与存档位置组装 App（测试用独立存档目录）。
+#[must_use]
+pub fn build_app_full(initial: impl Scene, save: save::SaveLocation) -> App {
     let mut app = App::new();
     app.add_plugin(AssetsPlugin { root: asset_root() })
         .add_plugin(GfxPlugin::new(LOGICAL_SIZE))
         .add_plugin(AudioPlugin)
-        .add_plugin(GamePlugin)
+        .add_plugin(GamePlugin { save })
         .add_plugin(ScenePlugin::new(initial));
     #[cfg(feature = "devtools")]
     app.add_plugin(DevtoolsPlugin::default());

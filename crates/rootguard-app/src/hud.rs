@@ -8,6 +8,7 @@ use rootguard_core::resources::{BattleState, CardTray, Phase, WaveState};
 use trellia::prelude::*;
 
 use crate::LOGICAL_SIZE;
+use crate::i18n::{t, tf};
 
 /// Dew 计数框。
 pub const DEW_BOX: Rect = Rect {
@@ -52,22 +53,23 @@ pub fn card_at(world: &World, pos: Vec2) -> Option<usize> {
     (0..n).find(|&i| card_rect(i).contains(pos))
 }
 
-/// 横幅文字（SPEC 11.2："准备"、"大波来袭"、"最后一波"）。E-1 / i18n 落地前为英文（SPEC 11.6）。
+/// 横幅文字（SPEC 11.2："准备"、"大波来袭"、"最后一波"）。
 #[must_use]
-pub fn banner(world: &World) -> Option<&'static str> {
+pub fn banner(world: &World) -> Option<String> {
     let state = world.resources.get::<BattleState>()?;
     let waves = world.resources.get::<WaveState>()?;
     if state.phase == Phase::Intro {
-        return Some("Get ready...");
+        return Some(t(world, "banner.ready"));
     }
     if state.phase != Phase::Playing || waves.banner.is_none() {
         return None;
     }
-    if waves.next_wave + 1 == waves.total_waves {
-        Some("Final wave!")
+    let key = if waves.next_wave + 1 == waves.total_waves {
+        "banner.final_wave"
     } else {
-        Some("A big wave is coming!")
-    }
+        "banner.big_wave"
+    };
+    Some(t(world, key))
 }
 
 /// 绘制 HUD。
@@ -191,7 +193,12 @@ pub fn draw(world: &World, list: &mut DrawList) {
         list.text(
             hud,
             WAVE_BAR.min - Vec2::new(0.0, 22.0),
-            format!("{} {}/{}", state.level, waves.next_wave, waves.total_waves),
+            format!(
+                "{} {}/{}",
+                tf(world, "battle.level", &[("id", state.level.as_str())]),
+                waves.next_wave,
+                waves.total_waves
+            ),
             16.0,
             Color::WHITE,
         );

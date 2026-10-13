@@ -10,7 +10,7 @@ mod common;
 use std::path::{Path, PathBuf};
 
 use common::bot::{Bot, BotConfig};
-use common::{did, lid, send, state};
+use common::{did, lid, next_id, runner_with, send, state};
 use rootguard_app::script::{Replay, Script, ScriptAction, Step};
 use rootguard_app::{BattleScene, build_app_with};
 use rootguard_core::registry::LevelRegistry;
@@ -23,7 +23,8 @@ fn scripts_dir() -> PathBuf {
 
 fn runner_for(script: &Script) -> HeadlessRunner {
     let scene = BattleScene::new(script.level, script.cards.clone(), None);
-    let mut runner = HeadlessRunner::new(build_app_with(scene));
+    let tag = format!("script-{}-{}", script.level, next_id());
+    let mut runner = runner_with(scene, &tag);
     runner.frame();
     runner
 }

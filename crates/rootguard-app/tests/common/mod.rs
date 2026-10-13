@@ -2,7 +2,8 @@
 
 #![allow(dead_code)]
 
-use rootguard_app::{BattleScene, build_app_with};
+use rootguard_app::save::SaveLocation;
+use rootguard_app::{BattleScene, build_app_full};
 use rootguard_core::components::{Cell, DefenderRef, DewPickup, Health, OverlayOf};
 use rootguard_core::events::UiAction;
 use rootguard_core::resources::{BattleState, CardTray, Phase};
@@ -17,12 +18,45 @@ pub fn did(s: &str) -> DefenderId {
     DefenderId::new(s).expect("防御者 id")
 }
 
+/// 测试专用的空存档目录（进程号 + 标签，避免并行测试互相影响，且不触碰用户目录）。
+pub fn temp_save(tag: &str) -> std::path::PathBuf {
+    let dir = std::env::temp_dir().join(format!("rootguard-test-{tag}-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    dir
+}
+
+/// 以指定初始场景与独立存档目录创建 headless 运行器。
+pub fn runner_with(scene: impl Scene, save_tag: &str) -> HeadlessRunner {
+    HeadlessRunner::new(build_app_full(
+        scene,
+        SaveLocation::Dir(temp_save(save_tag)),
+    ))
+}
+
 /// 直接进入对局的 headless 运行器（每帧恰好 1 tick）。
 pub fn battle_runner(level: &str, cards: &[&str]) -> HeadlessRunner {
     let cards = cards.iter().map(|c| did(c)).collect();
-    let mut runner = HeadlessRunner::new(build_app_with(BattleScene::new(lid(level), cards, None)));
+    let tag = format!("battle-{level}-{}", next_id());
+    let mut runner = runner_with(BattleScene::new(lid(level), cards, None), &tag);
     runner.frame();
     runner
+}
+
+/// 每次调用递增的计数（同一进程内区分临时目录）。
+pub fn next_id() -> usize {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    static NEXT: AtomicUsize = AtomicUsize::new(0);
+    NEXT.fetch_add(1, Ordering::Relaxed)
+}
+
+/// 顶层场景名。
+pub fn top(runner: &HeadlessRunner) -> Option<&'static str> {
+    runner
+        .app()
+        .world()
+        .resources
+        .get::<SceneStack>()
+        .and_then(SceneStack::top_name)
 }
 
 pub fn state(runner: &HeadlessRunner) -> Option<BattleState> {

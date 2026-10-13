@@ -2,10 +2,10 @@
 
 mod common;
 
-use common::{battle_runner, card_ready, dew_positions, occupied, phase, send, state};
+use common::{battle_runner, card_ready, dew_positions, occupied, send, state, top};
 use rootguard_core::components::BattleTag;
-use rootguard_core::events::{BattleEnded, HoseTriggered, Outcome, UiAction};
-use rootguard_core::resources::Phase;
+use rootguard_core::events::UiAction;
+use rootguard_core::resources::{LaneState, Phase};
 use trellia::prelude::*;
 
 #[test]
@@ -45,21 +45,29 @@ fn level_1_1_scripted_win() {
 
 #[test]
 fn level_1_1_idle_lose() {
+    // 事件由 SfxPlugin 在当帧消费，这里通过状态断言：先用掉 Hose，再越线失败
     let mut runner = battle_runner("1-1", &[]);
-    let mut hose = 0;
-    let mut ended = None;
+    let mut hose_used_at = None;
     for _ in 0..40_000 {
         runner.frame();
         let world = runner.app().world();
-        hose += world.events.get::<HoseTriggered>().iter().count();
-        if let Some(e) = world.events.get::<BattleEnded>().iter().next() {
-            ended = Some(e.outcome);
-            break;
+        let hose_left = world
+            .resources
+            .get::<LaneState>()
+            .is_some_and(|l| l.hose_available[2]);
+        let s = state(&runner).expect("对局");
+        if !hose_left && hose_used_at.is_none() {
+            hose_used_at = Some(s.level_tick);
         }
+        if s.phase == Phase::Lost {
+            let used = hose_used_at.expect("失败前先触发 Hose");
+            assert!(used < s.level_tick, "Hose 先于失败");
+            assert_eq!(top(&runner), Some("Defeat"));
+            return;
+        }
+        assert_ne!(s.phase, Phase::Won);
     }
-    assert!(hose >= 1, "先触发 Hose");
-    assert_eq!(ended, Some(Outcome::Lost), "再次越线 → Lost");
-    assert_eq!(phase(&runner), Some(Phase::Lost));
+    panic!("40000 帧内未失败");
 }
 
 #[test]

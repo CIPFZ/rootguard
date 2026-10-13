@@ -2,15 +2,17 @@
 
 use rootguard_core::components::DewPickup;
 use rootguard_core::events::UiAction;
-use rootguard_core::registry::DefenderRegistry;
+use rootguard_core::registry::{DefenderRegistry, LevelRegistry};
 use rootguard_core::resources::{BattleState, Phase, UiInbox};
 use rootguard_core::{DefenderId, Grid, LevelId, battle_tick, end_battle, start_battle};
 use trellia::egui;
 use trellia::prelude::*;
 
-use crate::scenes::{TitleScene, button_at, take_scene_actions};
+use crate::i18n::t;
+use crate::scenes::{OutcomeScene, TitleScene, button_at, send};
 use crate::script::{Replay, Script};
-use crate::{hud, render};
+use crate::sfx::{self, Track};
+use crate::{hud, render, save};
 
 /// 卡槽快捷键（SPEC 11.4：数字 1 ～ 8）。
 const CARD_KEYS: [Key; 8] = [
@@ -29,7 +31,9 @@ pub struct BattleScene {
     level: LevelId,
     cards: Vec<DefenderId>,
     seed: Option<u64>,
-    outcome: Option<Phase>,
+    ended: bool,
+    /// 上方有覆盖层（暂停 / 设置）时为 true：HUD 按钮与鼠标翻译停用。
+    covered: bool,
     autoplay: Option<Replay>,
 }
 
@@ -41,7 +45,8 @@ impl BattleScene {
             level,
             cards,
             seed,
-            outcome: None,
+            ended: false,
+            covered: false,
             autoplay: None,
         }
     }
@@ -55,22 +60,13 @@ impl BattleScene {
         scene
     }
 
-    fn restart(&self, world: &mut World) {
-        world
-            .resources
-            .expect_mut::<SceneCommands>()
-            .replace(BattleScene::new(self.level, self.cards.clone(), self.seed));
-        // 重开后不再自动回放
-    }
-
     /// 鼠标与快捷键 → `UiAction`（SPEC 11.1 / 11.4）。只读模拟状态。
-    fn translate_input(world: &mut World) -> Vec<UiAction> {
-        let input = world.resources.expect::<Input>().clone();
+    fn translate_input(world: &World) -> Vec<UiAction> {
+        let input = world.resources.expect::<Input>();
         let Some(state) = world.resources.get::<BattleState>() else {
             return Vec::new();
         };
         let selected = state.selected_card.is_some() || state.shovel_mode;
-        let shovel = state.shovel_mode;
         let mut out = Vec::new();
         for (i, key) in CARD_KEYS.iter().enumerate() {
             if input.key_just_pressed(*key) {
@@ -100,7 +96,7 @@ impl BattleScene {
             } else if dew_hit {
                 out.push(UiAction::CollectDewAt(pos));
             } else if let Some((row, col)) = Grid::cell_at(pos) {
-                if shovel {
+                if state.shovel_mode {
                     out.push(UiAction::ShovelAt { row, col });
                 } else if state.selected_card.is_some() {
                     out.push(UiAction::PlaceAt { row, col });
@@ -108,6 +104,31 @@ impl BattleScene {
             }
         }
         out
+    }
+
+    /// 对局结束：胜利时记录进度并保存（SPEC 14），推入结算场景。
+    fn finish(&mut self, world: &mut World, won: bool) {
+        self.ended = true;
+        let unlocks = if won {
+            let list = world
+                .resources
+                .get::<LevelRegistry>()
+                .and_then(|l| l.get(self.level))
+                .map(|l| l.unlock_on_win.clone())
+                .unwrap_or_default();
+            save::record_win(world, self.level, &list)
+        } else {
+            Vec::new()
+        };
+        let has_next = world
+            .resources
+            .get::<LevelRegistry>()
+            .and_then(|l| l.next(self.level))
+            .is_some();
+        world
+            .resources
+            .expect_mut::<SceneCommands>()
+            .push(OutcomeScene::new(won, unlocks, has_next));
     }
 }
 
@@ -136,7 +157,22 @@ impl Scene for BattleScene {
         if let Some(seed) = self.seed {
             world.resources.insert(GameRng::from_seed(seed));
         }
+        // 命令行直达时会话为空：补上，使“重试 / 下一关”可用
+        if let Some(session) = world.resources.get_mut::<crate::flow::Session>()
+            && session.level.is_none()
+        {
+            session.level = Some(self.level);
+        }
         world.resources.insert(render::RenderState::default());
+        sfx::play_music(world, Track::Battle);
+    }
+
+    fn on_pause(&mut self, _world: &mut World) {
+        self.covered = true;
+    }
+
+    fn on_resume(&mut self, _world: &mut World) {
+        self.covered = false;
     }
 
     fn on_exit(&mut self, world: &mut World) {
@@ -145,7 +181,7 @@ impl Scene for BattleScene {
     }
 
     fn fixed_update(&mut self, world: &mut World) {
-        if self.outcome.is_some() {
+        if self.ended {
             return;
         }
         if let Some(replay) = self.autoplay.as_mut()
@@ -156,68 +192,51 @@ impl Scene for BattleScene {
             world.resources.expect_mut::<UiInbox>().0.extend(due);
         }
         battle_tick(world);
-        let phase = world.resources.get::<BattleState>().map(|s| s.phase);
-        if matches!(phase, Some(Phase::Won | Phase::Lost)) {
-            self.outcome = phase;
+        match world.resources.get::<BattleState>().map(|s| s.phase) {
+            Some(Phase::Won) => self.finish(world, true),
+            Some(Phase::Lost) => self.finish(world, false),
+            _ => {}
         }
     }
 
     fn update(&mut self, world: &mut World) {
         render::track_hurt(world);
-        for action in take_scene_actions(world) {
-            match action {
-                UiAction::Restart => self.restart(world),
-                UiAction::BackToTitle => world
-                    .resources
-                    .expect_mut::<SceneCommands>()
-                    .replace(TitleScene),
-                _ => {}
-            }
-        }
-        if self.outcome.is_some() {
-            let input = world.resources.expect::<Input>();
-            if input.key_just_pressed(Key::Enter) {
-                world.events.send(UiAction::Restart);
-            } else if input.key_just_pressed(Key::Escape) {
-                world.events.send(UiAction::BackToTitle);
-            }
+        if self.ended {
             return;
         }
         for action in Self::translate_input(world) {
-            world.events.send(action);
+            send(world, action);
         }
     }
 
     fn draw(&mut self, world: &mut World) {
         render::draw_battle(world);
-        let text = match self.outcome {
-            Some(Phase::Won) => Some("VICTORY"),
-            Some(Phase::Lost) => Some("DEFEAT"),
-            _ => None,
-        };
-        if let Some(title) = text {
-            render::overlay(
-                world.resources.expect_mut::<DrawList>(),
-                title,
-                "Enter: play again    Esc: title",
-            );
-        }
     }
 
     fn ui(&mut self, world: &mut World, ctx: &egui::Context) {
-        if self.outcome.is_some() {
+        if self.ended || self.covered {
             return;
         }
         let shovel_on = world
             .resources
             .get::<BattleState>()
             .is_some_and(|s| s.shovel_mode);
-        let label = if shovel_on { "Shovel*" } else { "Shovel" };
-        if button_at(world, ctx, "hud_shovel", hud::SHOVEL_BUTTON, label) {
-            world.events.send(UiAction::ToggleShovel);
+        let mut label = t(world, "battle.shovel");
+        if shovel_on {
+            label.push_str(" *");
         }
-        if button_at(world, ctx, "hud_pause", hud::PAUSE_BUTTON, "Pause") {
-            world.events.send(UiAction::PauseToggle);
+        if button_at(world, ctx, "hud_shovel", hud::SHOVEL_BUTTON, &label, true) {
+            send(world, UiAction::ToggleShovel);
+        }
+        if button_at(
+            world,
+            ctx,
+            "hud_pause",
+            hud::PAUSE_BUTTON,
+            &t(world, "battle.pause"),
+            true,
+        ) {
+            send(world, UiAction::PauseToggle);
         }
     }
 }

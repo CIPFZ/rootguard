@@ -8,10 +8,11 @@
 ## 给项目负责人的待办
 
 - [ ] 填写 `scripts/ip_denylist.txt`（AGENT.md 第 6 章；实现者不得自行添加第三方作品名）。
-- [ ] **E-2 / E-3 引擎补充需推送**：实现已在引擎本地分支 `feat/e2-world-asset-helpers`（56082a4）与
-  其上的 `feat/e3-sorted-shapes`（8484ce3）（补丁副本 `tmp/engine-patches/`，未入库）完成并通过引擎全部检查；本环境无引擎仓库推送权限与 `gh`，
+- [ ] **E-1 / E-2 / E-3 引擎补充需推送**：实现已在引擎本地分支链 `feat/e2-world-asset-helpers`（56082a4）→
+  `feat/e3-sorted-shapes`（8484ce3）→ `feat/e1-cjk-font`（76be022）（补丁副本 `tmp/engine-patches/0001～0003`，未入库）完成并通过引擎全部检查；本环境无引擎仓库推送权限与 `gh`，
   需负责人推送 / 合并后，游戏仓库再 `chore(deps): bump trellia to <sha> (E-2)` / `(E-3)`。
-  在此之前游戏按 SPEC 12.2 的回退方案按行分层，不依赖 E-3。
+  在此之前游戏按 SPEC 12.2 的回退方案按行分层（不依赖 E-3），界面按 SPEC 11.6 以英文显示（不依赖 E-1）。
+  bump 后：`i18n::CJK_FONT_AVAILABLE = true`，`main.rs` 设置 `font_path: Some("assets/fonts/RootguardCJK-Regular.otf")`。
 - [ ] **手动试玩 1-1 ～ 1-3**（G2 验收“手动完整玩通 1-3”）：实现者只能在 Xvfb 中用 xdotool 点击验证鼠标通路、
   用 `--autoplay` 在窗口中回放脚本解（1-3 胜利，截图证据），无法代替真人试玩与主观难度记录。
 - [ ] **确认 Sprint 阈值**：SPEC 8.1“hp < 50%”与 16.1“hp ≤ 5 后速度 0.675”在 hp = 5 时矛盾，
@@ -25,7 +26,7 @@
 | G0 骨架 | ✅ 2026-10-13 |
 | G1 核心规则 | ✅ 2026-10-13（E-2 待推送，见下） |
 | G2 可玩对局 | ✅ 2026-10-13（手动试玩待负责人，E-3 待推送） |
-| G3 完整流程 | 未开始 |
+| G3 完整流程 | ✅ 2026-10-13（中文显示待 E-1 合入并 bump rev） |
 | G4 全部关卡 | 未开始 |
 | G5 皮肤与打磨 | 未开始 |
 
@@ -82,3 +83,21 @@
 
 测试：core 23、content 6、app 7（battle_flow 3、scripted_levels 1 + 1 录制工具、smoke 1、cli 1）。
 决策：ADR-003。
+
+## G3 完整流程（2026-10-13 完成，中文显示待 E-1 合入）
+
+验收（SPEC.md 17）：
+
+- [x] Title / LevelSelect / SeedSelect / Pause / Outcome / Settings 六个场景，导航全部经 `UiAction`（ADR-004）。
+- [x] 存档：`progress.ron` 原子写、损坏与版本不符走 `.bak` 备份、`ROOTGUARD_SAVE_DIR` 覆盖。
+- [x] i18n：`zh.ron` / `en.ron` 各 83 条、key 完全一致，全部防御者 / 敌人名称与描述齐备（`i18n_tables_complete`）。
+- [x] 音效与 BGM：11 个音效 + 3 首循环 BGM，`scripts/gen_audio.py` 程序化合成，已登记 `assets/SOURCES.md`。
+- [x] `ui_flow_title_to_battle`、`save_roundtrip`、`audio_events_mapped` 通过。
+- [~] E-1 与中文 HUD：引擎实现完成（ADR-010，1 个测试）；字体子集（Noto Sans CJK SC，OFL，166 KB）已提交。
+  证据：在 `/tmp` 的仓库副本中以 `cargo build --config 'patch...path=/tmp/trellia/...'` 链接本地引擎分支、
+  打开 `font_path` 与 `CJK_FONT_AVAILABLE` 后，Xvfb 截图中标题、按钮、HUD（关卡 / 铲子 / 暂停）、暂停菜单
+  中文显示正确（仓库文件未改动）。正式启用需推送引擎分支并 bump rev。
+- 窗口实点验证：标题 → 选关 → 1-1 → 暂停按钮 → 暂停菜单 → 设置均正常（Xvfb + xdotool 截图）。
+  Xvfb 下无窗口管理器，键盘焦点不可用，Esc 等快捷键只经 headless 测试覆盖。
+
+测试：core 23、content 6、app 13。决策：ADR-004。
