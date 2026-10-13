@@ -1,0 +1,9 @@
+// SPEC 4.2 / 8.2 霜籽：命中 Chill 600 tick
+Projectile(
+    id: "frost_pebble",
+    speed: 5.0,
+    damage: 1,
+    pierce: false,
+    on_hit: [Chill(ticks: 600)],
+    placeholder: (color: 0x90CAF9, radius: 7.0),
+)

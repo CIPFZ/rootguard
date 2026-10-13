@@ -1,0 +1,32 @@
+// 全局规则数值（SPEC 6 / 8.2 / 9 / 10.1）。见 ADR-002：代码中不出现这些数字。
+Rules(
+    // SPEC 6 intro_system："准备"横幅倒计时
+    intro_ticks: 180,
+    economy: (
+        // SPEC 9 Dew 上限
+        dew_cap: 9990,
+        // SPEC 9 天空 Dew：首次 420 tick，之后每 570 + gen_range(0..180) tick
+        sky_first_ticks: 420,
+        sky_interval_ticks: 570,
+        sky_interval_jitter_ticks: 180,
+        sky_amount: 25,
+        // 逻辑像素 / tick
+        sky_fall_speed: 1.0,
+        // SPEC 9 / 7.2 落地后过期
+        dew_expire_ticks: 900,
+    ),
+    waves: (
+        // SPEC 10.1 剩余 hp ≤ 40% 提前开始下一波，最低间隔 300 tick
+        early_start_percent: 40,
+        min_gap_ticks: 300,
+        // SPEC 10.1 flag 波生成前横幅时长
+        flag_banner_ticks: 300,
+    ),
+    status: (
+        // SPEC 8.2 Chill：速度 ×0.5，啃食间隔 ×2
+        chill_speed_factor: 0.5,
+        chill_bite_interval_factor: 2,
+    ),
+    // SPEC 7.1 / 8.1 Gust 对 Heavy 推距减半
+    heavy_push_factor: 0.5,
+)

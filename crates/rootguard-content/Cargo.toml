@@ -8,6 +8,8 @@ publish.workspace = true
 [dependencies]
 log.workspace = true
 rootguard-core.workspace = true
+serde.workspace = true
+thiserror.workspace = true
 trellia-assets.workspace = true
 
 [lints]

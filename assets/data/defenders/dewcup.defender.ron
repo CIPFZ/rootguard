@@ -1,0 +1,13 @@
+// SPEC 7.1 露杯 / Dewcup
+Defender(
+    id: "dewcup",
+    cost: 50,
+    cooldown_ticks: 450,
+    hp: 6,
+    placement: Ground,
+    behaviors: [
+        Producer(interval_ticks: 1440, amount: 25),
+    ],
+    tags: [],
+    placeholder: (color: 0xF2B632, label: "D"),
+)

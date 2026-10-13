@@ -1,0 +1,12 @@
+// SPEC 8.1 枝冠枯壳 / Twig Husk
+Enemy(
+    id: "twig_husk",
+    hp: 10,
+    speed: 0.30,
+    bite_damage: 1,
+    bite_interval_ticks: 60,
+    armor: Some(Helm(hp: 10)),
+    traits: [],
+    threat: 2,
+    placeholder: (color: 0xA1887F, label: "TH"),
+)

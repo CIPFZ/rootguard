@@ -21,6 +21,27 @@ pub const LOGICAL_SIZE: Vec2 = Vec2::new(1280.0, 720.0);
 /// 窗口标题。
 pub const TITLE: &str = "Rootguard";
 
+/// 游戏内容插件（SPEC.md 3.2 / 3.3）：用 `AssetServer` 加载并校验 `assets/data/`，成功后添加
+/// `ContentPlugin` / `BattlePlugin` / `EconomyPlugin` / `WavePlugin`；失败记为启动错误（SPEC.md 4）。
+pub struct GamePlugin;
+
+impl Plugin for GamePlugin {
+    fn name(&self) -> &'static str {
+        "GamePlugin"
+    }
+
+    fn build(&self, app: &mut App) {
+        let Some(server) = app.world().resources.get::<AssetServer>().cloned() else {
+            // AssetsPlugin 已记录根目录错误
+            return;
+        };
+        match rootguard_content::load(&server) {
+            Ok(content) => rootguard_core::add_core_plugins(app, content),
+            Err(e) => app.record_startup_error(e),
+        }
+    }
+}
+
 /// 组装 App。插件顺序（SPEC.md 3.2）：`AssetsPlugin` → `GfxPlugin` → `AudioPlugin`
 /// → 游戏内容插件 → `ScenePlugin` → `DevtoolsPlugin`（feature `devtools`）。
 #[must_use]
@@ -29,6 +50,7 @@ pub fn build_app() -> App {
     app.add_plugin(AssetsPlugin::default())
         .add_plugin(GfxPlugin::new(LOGICAL_SIZE))
         .add_plugin(AudioPlugin)
+        .add_plugin(GamePlugin)
         .add_plugin(ScenePlugin::new(TitleScene));
     #[cfg(feature = "devtools")]
     app.add_plugin(DevtoolsPlugin::default());

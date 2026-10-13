@@ -1,0 +1,12 @@
+// SPEC 8.1 跳栏枯壳 / Vault Husk：首次遇到防御者时跨越到其左侧格（跨越耗时见 ADR-002）
+Enemy(
+    id: "vault_husk",
+    hp: 17,
+    speed: 0.50,
+    bite_damage: 1,
+    bite_interval_ticks: 60,
+    armor: None,
+    traits: [Vault(ticks: 40)],
+    threat: 3,
+    placeholder: (color: 0x7986CB, label: "V"),
+)

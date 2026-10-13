@@ -1,0 +1,13 @@
+// SPEC 7.1 霜籽荚 / Frostpod
+Defender(
+    id: "frostpod",
+    cost: 175,
+    cooldown_ticks: 450,
+    hp: 6,
+    placement: Ground,
+    behaviors: [
+        Shooter(interval_ticks: 85, volley: 1, volley_gap_ticks: 0, projectile: "frost_pebble"),
+    ],
+    tags: [],
+    placeholder: (color: 0x4FA3D1, label: "F"),
+)

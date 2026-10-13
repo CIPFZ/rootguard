@@ -1,0 +1,12 @@
+// SPEC 8.1 背篓枯壳 / Carrier Husk：死亡时原地生成 sproutling
+Enemy(
+    id: "carrier_husk",
+    hp: 20,
+    speed: 0.25,
+    bite_damage: 1,
+    bite_interval_ticks: 60,
+    armor: None,
+    traits: [Carrier(child: "sproutling")],
+    threat: 3,
+    placeholder: (color: 0x6D8B74, label: "CA"),
+)

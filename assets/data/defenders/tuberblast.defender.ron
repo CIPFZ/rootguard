@@ -1,0 +1,13 @@
+// SPEC 7.1 块茎雷 / Tuberblast
+Defender(
+    id: "tuberblast",
+    cost: 25,
+    cooldown_ticks: 1800,
+    hp: 6,
+    placement: Ground,
+    behaviors: [
+        Mine(arm_ticks: 900, damage: 90),
+    ],
+    tags: [],
+    placeholder: (color: 0xA0522D, label: "TB"),
+)

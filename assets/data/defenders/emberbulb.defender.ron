@@ -1,0 +1,13 @@
+// SPEC 7.1 炽球 / Emberbulb：以其格为中心 3 × 3（radius_cells = 1）
+Defender(
+    id: "emberbulb",
+    cost: 150,
+    cooldown_ticks: 3000,
+    hp: 6,
+    placement: Ground,
+    behaviors: [
+        Blast(fuse_ticks: 60, damage: 90, radius_cells: 1),
+    ],
+    tags: [],
+    placeholder: (color: 0xE4572E, label: "E"),
+)

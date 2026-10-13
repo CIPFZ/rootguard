@@ -1,0 +1,9 @@
+// SPEC 4.2 / 7.1 石籽
+Projectile(
+    id: "pebble",
+    speed: 5.0,
+    damage: 1,
+    pierce: false,
+    on_hit: [],
+    placeholder: (color: 0x9CCC65, radius: 7.0),
+)

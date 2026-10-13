@@ -1,0 +1,12 @@
+// SPEC 8.1 小芽怪 / Sproutling（衍生）
+Enemy(
+    id: "sproutling",
+    hp: 5,
+    speed: 0.60,
+    bite_damage: 1,
+    bite_interval_ticks: 60,
+    armor: None,
+    traits: [],
+    threat: 1,
+    placeholder: (color: 0xAED581, label: "s"),
+)

@@ -1,0 +1,12 @@
+// SPEC 8.1 门板枯壳 / Shield Husk：Shield 只挡弹丸
+Enemy(
+    id: "shield_husk",
+    hp: 10,
+    speed: 0.30,
+    bite_damage: 1,
+    bite_interval_ticks: 60,
+    armor: Some(Shield(hp: 55)),
+    traits: [],
+    threat: 4,
+    placeholder: (color: 0x78909C, label: "SH"),
+)

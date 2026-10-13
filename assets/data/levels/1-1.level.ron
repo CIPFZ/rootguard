@@ -1,0 +1,17 @@
+// SPEC 10.2 关卡 1-1：学会放置与收集。威胁预算见 docs/levels.md。
+Level(
+    id: "1-1",
+    seed: 101,
+    lanes: [2],
+    start_dew: 150,
+    sky_dew: true,
+    card_slots: 6,
+    cards: Forced(["pebble_pod"]),
+    unlock_on_win: ["dewcup"],
+    waves: [
+        Wave(delay_ticks: 1500, flag: false, spawns: [(enemy: "husk", count: 1, lane: Random)]),
+        Wave(delay_ticks: 1500, flag: false, spawns: [(enemy: "husk", count: 3, lane: Random)]),
+        Wave(delay_ticks: 1500, flag: false, spawns: [(enemy: "husk", count: 4, lane: Random)]),
+        Wave(delay_ticks: 1500, flag: true,  spawns: [(enemy: "husk", count: 10, lane: Random)]),
+    ],
+)

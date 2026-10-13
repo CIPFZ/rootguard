@@ -1,0 +1,13 @@
+// SPEC 7.1 咬夹草 / Snapmaw：其格或右侧相邻格（reach_cells = 1）
+Defender(
+    id: "snapmaw",
+    cost: 150,
+    cooldown_ticks: 450,
+    hp: 6,
+    placement: Ground,
+    behaviors: [
+        Chomper(chew_ticks: 2520, reach_cells: 1),
+    ],
+    tags: [],
+    placeholder: (color: 0x7B3F99, label: "S"),
+)

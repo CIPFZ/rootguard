@@ -8,6 +8,11 @@
 ## 给项目负责人的待办
 
 - [ ] 填写 `scripts/ip_denylist.txt`（AGENT.md 第 6 章；实现者不得自行添加第三方作品名）。
+- [ ] **E-2 引擎补充需推送**：实现已在引擎本地分支 `feat/e2-world-asset-helpers`（提交 56082a4，
+  补丁副本 `tmp/engine-patches/`，未入库）完成并通过引擎全部检查；本环境无引擎仓库推送权限与 `gh`，
+  需负责人推送 / 合并后，游戏仓库再 `chore(deps): bump trellia to <sha> (E-2)`。游戏在 G3 加载音频前不依赖它。
+- [ ] **确认 Sprint 阈值**：SPEC 8.1“hp < 50%”与 16.1“hp ≤ 5 后速度 0.675”在 hp = 5 时矛盾，
+  暂按验收测试取“≤ 50%”（ADR-002 第 14 条）。
 - [ ] 仓库原有目录 `assests/icon/` 疑为笔误，已移动为 SPEC / AGENT / README 所述的 `assets/icon/`（文件未改动）。
 
 ## 里程碑
@@ -15,7 +20,7 @@
 | 里程碑 | 状态 |
 |---|---|
 | G0 骨架 | ✅ 2026-10-13 |
-| G1 核心规则 | 未开始 |
+| G1 核心规则 | ✅ 2026-10-13（E-2 待推送，见下） |
 | G2 可玩对局 | 未开始 |
 | G3 完整流程 | 未开始 |
 | G4 全部关卡 | 未开始 |
@@ -43,3 +48,19 @@
 规模：rootguard-core 11 行、rootguard-content 9 行、rootguard-app 约 100 行；测试 1（headless 冒烟）。
 
 遗留：`ip_denylist.txt` 待负责人填写。
+
+## G1 核心规则（2026-10-13 完成）
+
+验收（SPEC.md 17）：
+
+- [x] `rootguard-core` 全部组件 / 资源 / 事件 / 系统（SPEC 5 / 6），14 步 FixedUpdate 顺序由 `battle_tick` 固定。
+- [x] `rootguard-content` 加载与 SPEC 4.5 校验（错误含文件路径与字段名，一次报告全部错误）。
+- [x] 12 防御者 + 2 弹丸 + 9 敌人 RON、全局规则 `rules.ron`（ADR-002 A3）、临时关卡 1-1。
+- [x] SPEC 16.1 全部 19 个测试通过（`cargo test -p rootguard-core --test rules`），测试名与 SPEC 表格一致。
+- [x] `every_level_loads_and_validates` 通过（`rootguard-content/tests/load.rs`，另有 4 个校验失败用例）。
+- [~] E-2：引擎实现完成（ADR-008、3 个测试、`lane_demo` 改用后 golden 不变），等待推送后 bump rev。
+
+规模：rootguard-core 4597 行、rootguard-content 561 行、rootguard-app 134 行（含测试与文档注释）；
+测试 31（core 19 + 4 单元，content 5 + 1 单元，app 1 冒烟 + 1）。
+
+决策：ADR-002（24 条规则细节）。

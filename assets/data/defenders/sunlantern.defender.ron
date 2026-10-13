@@ -1,0 +1,13 @@
+// SPEC 7.1 日灯笼 / Sunlantern：每 1440 tick 产 25，每产 4 次额外 +25
+Defender(
+    id: "sunlantern",
+    cost: 125,
+    cooldown_ticks: 450,
+    hp: 6,
+    placement: Ground,
+    behaviors: [
+        Producer(interval_ticks: 1440, amount: 25, bonus_every: 4, bonus_amount: 25),
+    ],
+    tags: [],
+    placeholder: (color: 0xFF9F1C, label: "SL"),
+)

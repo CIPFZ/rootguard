@@ -1,0 +1,13 @@
+// SPEC 7.1 荆棘垫 / Thornmat：不可被啃（tag "spiky"），敌人直接走过
+Defender(
+    id: "thornmat",
+    cost: 100,
+    cooldown_ticks: 450,
+    hp: 6,
+    placement: Ground,
+    behaviors: [
+        Spikes(interval_ticks: 60, damage: 1),
+    ],
+    tags: ["spiky"],
+    placeholder: (color: 0x6B5B3E, label: "TM"),
+)

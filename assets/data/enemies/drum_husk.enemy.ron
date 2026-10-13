@@ -1,0 +1,12 @@
+// SPEC 8.1 鼓腹枯壳 / Drum Husk：Heavy（免疫吞食，Gust 推距减半）
+Enemy(
+    id: "drum_husk",
+    hp: 30,
+    speed: 0.22,
+    bite_damage: 2,
+    bite_interval_ticks: 60,
+    armor: Some(Drum(hp: 60)),
+    traits: [Heavy],
+    threat: 6,
+    placeholder: (color: 0x5D4037, label: "DR"),
+)

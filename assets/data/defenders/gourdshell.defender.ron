@@ -1,0 +1,13 @@
+// SPEC 7.1 葫芦壳 / Gourdshell：仅当现有覆盖层 hp < 2/3 max 时可重复放置以修复
+Defender(
+    id: "gourdshell",
+    cost: 125,
+    cooldown_ticks: 1800,
+    hp: 80,
+    placement: Overlay,
+    behaviors: [
+        Overlay(repair_below_num: 2, repair_below_den: 3),
+    ],
+    tags: [],
+    placeholder: (color: 0xD9A441, label: "G"),
+)
