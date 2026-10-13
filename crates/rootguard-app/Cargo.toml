@@ -16,6 +16,8 @@ env_logger.workspace = true
 log.workspace = true
 rootguard-content.workspace = true
 rootguard-core.workspace = true
+ron.workspace = true
+serde.workspace = true
 trellia = { workspace = true, features = ["egui"] }
 
 [features]

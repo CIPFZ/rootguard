@@ -1,7 +1,7 @@
 //! # rootguard-app
 //!
-//! 职责：组装 Trellia App（插件顺序见 SPEC.md 3.2）、场景（SPEC.md 3.4）、egui UI、
-//! 占位 / 皮肤渲染、音效触发、存档与设置。入口为 `src/main.rs`。
+//! 职责：组装 Trellia App（插件顺序见 SPEC.md 3.2）、场景（SPEC.md 3.4）、HUD 与 egui 按钮、
+//! 占位渲染（SPEC.md 12.2）、音效触发、存档与设置。入口为 `src/main.rs`。
 //!
 //! Feature：`devtools`（默认开启）——引擎调试面板与 Rootguard 调试窗口（SPEC.md 11.5）。
 //!
@@ -9,9 +9,12 @@
 
 #![forbid(unsafe_code)]
 
-mod scenes;
+pub mod hud;
+pub mod render;
+pub mod scenes;
+pub mod script;
 
-pub use scenes::TitleScene;
+pub use scenes::{BattleScene, TitleScene};
 
 use trellia::prelude::*;
 
@@ -42,17 +45,106 @@ impl Plugin for GamePlugin {
     }
 }
 
-/// 组装 App。插件顺序（SPEC.md 3.2）：`AssetsPlugin` → `GfxPlugin` → `AudioPlugin`
-/// → 游戏内容插件 → `ScenePlugin` → `DevtoolsPlugin`（feature `devtools`）。
+/// 资产根目录：`TRELLIA_ASSETS` 已设置时交给引擎解析（返回 `None`）；否则依次尝试
+/// 可执行文件同级 `assets/`、当前目录 `assets/`、编译期工作区 `assets/`（直接运行 `target/` 下的二进制时）。
+#[must_use]
+pub fn asset_root() -> Option<std::path::PathBuf> {
+    if std::env::var_os("TRELLIA_ASSETS").is_some() {
+        return None;
+    }
+    let exe_dir = std::env::current_exe()
+        .ok()
+        .and_then(|e| e.parent().map(|p| p.join("assets")));
+    let cwd = std::env::current_dir().ok().map(|d| d.join("assets"));
+    let workspace = Some(std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../assets"));
+    [exe_dir, cwd, workspace]
+        .into_iter()
+        .flatten()
+        .find(|p| p.join("data").is_dir())
+}
+
+/// 以标题场景组装 App。
 #[must_use]
 pub fn build_app() -> App {
+    build_app_with(TitleScene)
+}
+
+/// 以指定初始场景组装 App。插件顺序（SPEC.md 3.2）：`AssetsPlugin` → `GfxPlugin` → `AudioPlugin`
+/// → 游戏内容插件 → `ScenePlugin` → `DevtoolsPlugin`（feature `devtools`）。
+#[must_use]
+pub fn build_app_with(initial: impl Scene) -> App {
     let mut app = App::new();
-    app.add_plugin(AssetsPlugin::default())
+    app.add_plugin(AssetsPlugin { root: asset_root() })
         .add_plugin(GfxPlugin::new(LOGICAL_SIZE))
         .add_plugin(AudioPlugin)
         .add_plugin(GamePlugin)
-        .add_plugin(ScenePlugin::new(TitleScene));
+        .add_plugin(ScenePlugin::new(initial));
     #[cfg(feature = "devtools")]
     app.add_plugin(DevtoolsPlugin::default());
     app
+}
+
+/// 命令行参数（AGENT.md 7）：`--level <id>` 直接进入关卡，`--seed <n>` 覆盖关卡种子，
+/// `--autoplay <script.ron>` 以脚本解自动对局（调试 / 演示）。
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct CliArgs {
+    /// 直接进入的关卡。
+    pub level: Option<String>,
+    /// 种子覆盖。
+    pub seed: Option<u64>,
+    /// 自动回放的脚本路径。
+    pub autoplay: Option<std::path::PathBuf>,
+}
+
+impl CliArgs {
+    /// 解析参数（不含程序名）；无法识别的参数记 `log::warn!` 后忽略。
+    #[must_use]
+    pub fn parse(args: impl IntoIterator<Item = String>) -> Self {
+        let mut out = Self::default();
+        let mut it = args.into_iter();
+        while let Some(arg) = it.next() {
+            match arg.as_str() {
+                "--level" => out.level = it.next(),
+                "--seed" => out.seed = it.next().and_then(|s| s.parse().ok()),
+                "--autoplay" => out.autoplay = it.next().map(Into::into),
+                other => log::warn!("忽略未知参数 {other}"),
+            }
+        }
+        out
+    }
+
+    /// 按参数组装 App：给出 `--level` 时直接以该关卡的对局场景启动（`Choose` 关使用默认卡组）。
+    #[must_use]
+    pub fn build_app(&self) -> App {
+        if let Some(path) = &self.autoplay {
+            match std::fs::read_to_string(path)
+                .map_err(|e| e.to_string())
+                .and_then(|t| script::Script::parse(&t).map_err(|e| e.to_string()))
+            {
+                Ok(s) => return build_app_with(BattleScene::with_autoplay(s)),
+                Err(e) => log::warn!("无法读取脚本 {}: {e}，按普通方式启动", path.display()),
+            }
+        }
+        match self
+            .level
+            .as_deref()
+            .and_then(|s| rootguard_core::LevelId::new(s).ok())
+        {
+            Some(level) => build_app_with(BattleScene::new(level, Vec::new(), self.seed)),
+            None => build_app(),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn cli_parses_level_and_seed() {
+        let args = CliArgs::parse(["--level", "1-4", "--seed", "104"].map(String::from));
+        assert_eq!(args.level.as_deref(), Some("1-4"));
+        assert_eq!(args.seed, Some(104));
+        assert_eq!(CliArgs::parse(Vec::new()), CliArgs::default());
+    }
 }

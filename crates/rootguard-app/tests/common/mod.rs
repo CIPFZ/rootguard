@@ -1,0 +1,69 @@
+//! 集成测试公共夹具：以 `HeadlessRunner` 驱动完整 App，只通过 `UiAction` 操作（SPEC 11.1 / 16.2）。
+
+#![allow(dead_code)]
+
+use rootguard_app::{BattleScene, build_app_with};
+use rootguard_core::components::{Cell, DefenderRef, DewPickup, Health, OverlayOf};
+use rootguard_core::events::UiAction;
+use rootguard_core::resources::{BattleState, CardTray, Phase};
+use rootguard_core::{DefenderId, LevelId};
+use trellia::prelude::*;
+
+pub fn lid(s: &str) -> LevelId {
+    LevelId::new(s).expect("关卡 id")
+}
+
+pub fn did(s: &str) -> DefenderId {
+    DefenderId::new(s).expect("防御者 id")
+}
+
+/// 直接进入对局的 headless 运行器（每帧恰好 1 tick）。
+pub fn battle_runner(level: &str, cards: &[&str]) -> HeadlessRunner {
+    let cards = cards.iter().map(|c| did(c)).collect();
+    let mut runner = HeadlessRunner::new(build_app_with(BattleScene::new(lid(level), cards, None)));
+    runner.frame();
+    runner
+}
+
+pub fn state(runner: &HeadlessRunner) -> Option<BattleState> {
+    runner.app().world().resources.get::<BattleState>().cloned()
+}
+
+pub fn phase(runner: &HeadlessRunner) -> Option<Phase> {
+    state(runner).map(|s| s.phase)
+}
+
+pub fn send(runner: &mut HeadlessRunner, action: UiAction) {
+    runner.app_mut().world_mut().events.send(action);
+}
+
+/// 当前全部可收集 Dew 的位置。
+pub fn dew_positions(world: &World) -> Vec<Vec2> {
+    let mut v: Vec<(Entity, Vec2)> = world
+        .query::<(Entity, &Transform2D, &DewPickup)>()
+        .iter()
+        .filter(|(_, _, d)| d.amount > 0)
+        .map(|(e, t, _)| (e, t.pos))
+        .collect();
+    v.sort_by_key(|(e, _)| e.to_bits());
+    v.into_iter().map(|(_, p)| p).collect()
+}
+
+/// 格子是否已有存活的地面防御者。
+pub fn occupied(world: &World, row: u8, col: u8) -> bool {
+    world
+        .query::<(&Cell, &Health, &DefenderRef)>()
+        .without::<&OverlayOf>()
+        .iter()
+        .any(|(c, h, _)| c.row == row && c.col == col && h.alive())
+}
+
+/// 第 `slot` 张卡是否就绪。
+pub fn card_ready(world: &World, slot: usize) -> bool {
+    world
+        .resources
+        .get::<CardTray>()
+        .and_then(|t| t.cards.get(slot))
+        .is_some_and(|c| c.ready)
+}
+pub mod bot;

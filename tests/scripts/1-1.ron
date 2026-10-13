@@ -1,0 +1,23 @@
+(
+    level: "1-1",
+    cards: [],
+    max_ticks: 8661,
+    steps: [
+        (tick: 1, actions: [Select(0), Place(2, 0)]),
+        (tick: 420, actions: [Collect(1010.0, -39.0)]),
+        (tick: 1129, actions: [Collect(1110.0, -39.0)]),
+        (tick: 1130, actions: [Select(0), Place(2, 1)]),
+        (tick: 1740, actions: [Collect(910.0, -39.0)]),
+        (tick: 2313, actions: [Collect(810.0, -39.0)]),
+        (tick: 2994, actions: [Collect(1010.0, -39.0)]),
+        (tick: 3600, actions: [Collect(710.0, -39.0)]),
+        (tick: 3601, actions: [Select(0), Place(2, 2)]),
+        (tick: 4304, actions: [Collect(810.0, -39.0)]),
+        (tick: 4892, actions: [Collect(910.0, -39.0)]),
+        (tick: 5524, actions: [Collect(810.0, -39.0)]),
+        (tick: 6260, actions: [Collect(710.0, -39.0)]),
+        (tick: 6261, actions: [Select(0), Place(2, 3)]),
+        (tick: 6917, actions: [Collect(310.0, -39.0)]),
+        (tick: 7565, actions: [Collect(1110.0, -39.0)]),
+    ],
+)
