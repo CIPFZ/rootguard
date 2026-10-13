@@ -9,6 +9,8 @@
 
 #![forbid(unsafe_code)]
 
+#[cfg(feature = "devtools")]
+pub mod devtools;
 pub mod flow;
 pub mod hud;
 pub mod i18n;
@@ -104,7 +106,8 @@ pub fn build_app_full(initial: impl Scene, save: save::SaveLocation) -> App {
         .add_plugin(GamePlugin { save })
         .add_plugin(ScenePlugin::new(initial));
     #[cfg(feature = "devtools")]
-    app.add_plugin(DevtoolsPlugin::default());
+    app.add_plugin(DevtoolsPlugin::default())
+        .add_plugin(devtools::RootguardDevtoolsPlugin);
     app
 }
 
