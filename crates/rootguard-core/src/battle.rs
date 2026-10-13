@@ -75,7 +75,7 @@ pub fn start_battle(
         .get(level_id)
         .ok_or(BattleError::UnknownLevel(level_id))?
         .clone();
-    let rules = *rules;
+    let rules = rules.clone();
     let chosen: Vec<DefenderId> = match &level.cards {
         CardRule::Forced(list) => list.clone(),
         CardRule::Choose => cards

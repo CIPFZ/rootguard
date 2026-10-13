@@ -1,5 +1,7 @@
 // 全局规则数值（SPEC 6 / 8.2 / 9 / 10.1）。见 ADR-002：代码中不出现这些数字。
 Rules(
+    // SPEC 7.1 "解锁：初始"——新存档的已解锁卡牌
+    starting_cards: ["pebble_pod"],
     // SPEC 6 intro_system："准备"横幅倒计时
     intro_ticks: 180,
     economy: (

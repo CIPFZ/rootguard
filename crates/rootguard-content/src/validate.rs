@@ -132,6 +132,22 @@ pub fn validate(raw: &RawContent) -> Vec<ValidationError> {
         }
     }
 
+    let rules = &raw.rules;
+    e.check(
+        !rules.def.starting_cards.is_empty(),
+        &rules.path,
+        "starting_cards",
+        "不能为空",
+    );
+    for (i, &id) in rules.def.starting_cards.iter().enumerate() {
+        e.check(
+            defender(id),
+            &rules.path,
+            format!("starting_cards[{i}]"),
+            "引用的卡牌不存在",
+        );
+    }
+
     for x in &raw.projectiles {
         e.check(x.def.speed > 0.0, &x.path, "speed", "必须 > 0");
         e.check(x.def.damage >= 0, &x.path, "damage", "必须 ≥ 0");

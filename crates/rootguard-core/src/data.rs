@@ -406,9 +406,11 @@ pub struct StatusRules {
 }
 
 /// 全局规则（`assets/data/rules.ron`，ADR-002）。
-#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename = "Rules")]
 pub struct Rules {
+    /// 新存档的已解锁卡牌（SPEC 7.1“初始”）。
+    pub starting_cards: Vec<DefenderId>,
     /// "准备"倒计时（tick，SPEC 6 第 1 步）。
     pub intro_ticks: u32,
     /// 经济。

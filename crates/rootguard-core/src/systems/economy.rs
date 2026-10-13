@@ -12,7 +12,7 @@ use crate::resources::{BattleState, CardTray, LaneState, PendingOps};
 
 /// SPEC 6 第 4 步：天空 Dew、Producer 生产、Dew 下落与过期、点击收集、卡牌冷却推进。
 pub fn economy_system(world: &mut World) {
-    let rules = *world.resources.expect::<Rules>();
+    let rules = world.resources.expect::<Rules>().clone();
     sky_dew(world, &rules);
     produce(world, &rules);
     fall_and_expire(world, &rules);
