@@ -8,9 +8,12 @@
 ## 给项目负责人的待办
 
 - [ ] 填写 `scripts/ip_denylist.txt`（AGENT.md 第 6 章；实现者不得自行添加第三方作品名）。
-- [ ] **E-2 引擎补充需推送**：实现已在引擎本地分支 `feat/e2-world-asset-helpers`（提交 56082a4，
-  补丁副本 `tmp/engine-patches/`，未入库）完成并通过引擎全部检查；本环境无引擎仓库推送权限与 `gh`，
-  需负责人推送 / 合并后，游戏仓库再 `chore(deps): bump trellia to <sha> (E-2)`。游戏在 G3 加载音频前不依赖它。
+- [ ] **E-2 / E-3 引擎补充需推送**：实现已在引擎本地分支 `feat/e2-world-asset-helpers`（56082a4）与
+  其上的 `feat/e3-sorted-shapes`（8484ce3）（补丁副本 `tmp/engine-patches/`，未入库）完成并通过引擎全部检查；本环境无引擎仓库推送权限与 `gh`，
+  需负责人推送 / 合并后，游戏仓库再 `chore(deps): bump trellia to <sha> (E-2)` / `(E-3)`。
+  在此之前游戏按 SPEC 12.2 的回退方案按行分层，不依赖 E-3。
+- [ ] **手动试玩 1-1 ～ 1-3**（G2 验收“手动完整玩通 1-3”）：实现者只能在 Xvfb 中用 xdotool 点击验证鼠标通路、
+  用 `--autoplay` 在窗口中回放脚本解（1-3 胜利，截图证据），无法代替真人试玩与主观难度记录。
 - [ ] **确认 Sprint 阈值**：SPEC 8.1“hp < 50%”与 16.1“hp ≤ 5 后速度 0.675”在 hp = 5 时矛盾，
   暂按验收测试取“≤ 50%”（ADR-002 第 14 条）。
 - [ ] 仓库原有目录 `assests/icon/` 疑为笔误，已移动为 SPEC / AGENT / README 所述的 `assets/icon/`（文件未改动）。
@@ -21,7 +24,7 @@
 |---|---|
 | G0 骨架 | ✅ 2026-10-13 |
 | G1 核心规则 | ✅ 2026-10-13（E-2 待推送，见下） |
-| G2 可玩对局 | 未开始 |
+| G2 可玩对局 | ✅ 2026-10-13（手动试玩待负责人，E-3 待推送） |
 | G3 完整流程 | 未开始 |
 | G4 全部关卡 | 未开始 |
 | G5 皮肤与打磨 | 未开始 |
@@ -64,3 +67,18 @@
 测试 31（core 19 + 4 单元，content 5 + 1 单元，app 1 冒烟 + 1）。
 
 决策：ADR-002（24 条规则细节）。
+
+## G2 可玩对局（2026-10-13 完成，手动试玩待负责人）
+
+验收（SPEC.md 17）：
+
+- [x] `BattleScene` + 占位渲染（SPEC 12.2）+ HUD（SPEC 11.2）+ `UiAction` + 鼠标 / 快捷键翻译（SPEC 11.1 / 11.4）。
+- [x] 关卡 1-1 ～ 1-3（`docs/levels.md`，实际威胁与预算逐波一致），三关脚本解 `tests/scripts/*.ron` 回放必胜。
+- [x] `level_1_1_scripted_win`（胜利于 level_tick 8061）、`level_1_1_idle_lose`、`placeholder_mode_draws_all_entities`。
+- [~] 手动完整玩通 1-3：Xvfb + xdotool 实点验证了“点卡 → 点格放置 → 射击 / 敌人 / Dew 下落”；
+  `cargo run -p rootguard-app -- --autoplay tests/scripts/1-3.ron` 在窗口中回放至 VICTORY（与 headless 同 tick）。
+  真人试玩与主观记录待负责人。
+- [~] E-3：引擎实现完成（ADR-009、1 个测试），等待推送；游戏用按行分层回退（ADR-003 第 4 条）。
+
+测试：core 23、content 6、app 7（battle_flow 3、scripted_levels 1 + 1 录制工具、smoke 1、cli 1）。
+决策：ADR-003。
