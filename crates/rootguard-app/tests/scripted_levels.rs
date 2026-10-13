@@ -59,16 +59,40 @@ fn level_ids() -> Vec<String> {
         .collect()
 }
 
+/// 进入第 `index` 关时已解锁的卡牌：初始卡牌 + 之前各关的 `unlock_on_win`。
+fn unlocked_before(index: usize) -> Vec<String> {
+    let app = build_app_with(rootguard_app::TitleScene);
+    let world = app.world();
+    let mut out: Vec<String> = world
+        .resources
+        .expect::<rootguard_core::data::Rules>()
+        .starting_cards
+        .iter()
+        .map(|d| d.as_str().to_owned())
+        .collect();
+    for level in world.resources.expect::<LevelRegistry>().iter().take(index) {
+        out.extend(level.unlock_on_win.iter().map(|d| d.as_str().to_owned()));
+    }
+    out
+}
+
 #[test]
 fn every_level_has_scripted_solution() {
     let ids = level_ids();
     assert!(!ids.is_empty());
-    for id in ids {
+    for (index, id) in ids.into_iter().enumerate() {
         let path = scripts_dir().join(format!("{id}.ron"));
         let text = std::fs::read_to_string(&path)
             .unwrap_or_else(|e| panic!("关卡 {id} 缺少脚本解 {}: {e}", path.display()));
         let script = Script::parse(&text).unwrap_or_else(|e| panic!("{}: {e}", path.display()));
         assert_eq!(script.level.as_str(), id, "{}", path.display());
+        let unlocked = unlocked_before(index);
+        for card in &script.cards {
+            assert!(
+                unlocked.iter().any(|u| u == card.as_str()),
+                "关卡 {id} 的脚本使用了尚未解锁的卡牌 {card}"
+            );
+        }
         let (phase, tick) = replay(&script);
         assert_eq!(
             phase,
@@ -79,14 +103,81 @@ fn every_level_has_scripted_solution() {
     }
 }
 
-/// 每关的录制参数：选卡与机器人配置。
+/// 每关的录制参数：选卡（须为当时已解锁的卡牌）与机器人配置。参数由离线参数搜索得到。
 fn record_plan(id: &str) -> (Vec<&'static str>, BotConfig) {
-    let cfg = BotConfig::default();
+    let base = BotConfig::default();
+    let tuned = |focus: f32, min_shooters: usize, producers_per_lane: usize| BotConfig {
+        producers_per_lane,
+        econ_until: 14_000,
+        wall_min_power: 1.0,
+        focus,
+        min_shooters,
+        mine_min_hp: 15,
+        ..BotConfig::default()
+    };
     match id {
-        "1-1" | "1-2" | "1-3" => (vec![], cfg),
-        _ => (vec![], cfg),
+        "1-1" | "1-2" | "1-3" => (vec![], base),
+        "1-4" => (
+            vec!["pebble_pod", "dewcup", "barkwall", "frostpod"],
+            PLAN_1_4.cfg(tuned),
+        ),
+        "1-5" => (
+            vec!["pebble_pod", "dewcup", "barkwall", "frostpod", "twinpod"],
+            PLAN_1_5.cfg(tuned),
+        ),
+        "1-6" => (
+            vec![
+                "pebble_pod",
+                "dewcup",
+                "barkwall",
+                "frostpod",
+                "twinpod",
+                "thornmat",
+            ],
+            tuned(25.0, 1, 2),
+        ),
+        "1-7" => (
+            vec![
+                "twinpod",
+                "dewcup",
+                "barkwall",
+                "frostpod",
+                "pebble_pod",
+                "thornmat",
+                "tuberblast",
+            ],
+            BotConfig {
+                mine_min_hp: 30,
+                ..tuned(40.0, 1, 2)
+            },
+        ),
+        "1-8" => (
+            vec![
+                "twinpod",
+                "dewcup",
+                "barkwall",
+                "frostpod",
+                "thornmat",
+                "tuberblast",
+                "emberbulb",
+            ],
+            tuned(40.0, 1, 2),
+        ),
+        _ => (vec![], base),
     }
 }
+
+/// 一组搜索得到的参数：(focus, min_shooters, producers_per_lane)。
+struct Plan(f32, usize, usize);
+
+impl Plan {
+    fn cfg(&self, f: impl Fn(f32, usize, usize) -> BotConfig) -> BotConfig {
+        f(self.0, self.1, self.2)
+    }
+}
+
+const PLAN_1_4: Plan = Plan(25.0, 1, 1);
+const PLAN_1_5: Plan = Plan(40.0, 2, 1);
 
 /// 用机器人录制一关，返回脚本与结果。
 fn record(
