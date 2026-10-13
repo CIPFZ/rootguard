@@ -1,0 +1,23 @@
+// SPEC 10.2 关卡 1-5：速度威胁。base 1.889，预算 [2, 5, 7, 10, 13, 15, 18, 21, 48]（flag 波已 ×2，docs/levels.md）。
+// 由 scripts/gen_levels.py 按预算生成初稿，调整记录见 docs/levels.md。
+Level(
+    id: "1-5",
+    seed: 105,
+    lanes: [0, 1, 2, 3, 4],
+    start_dew: 50,
+    sky_dew: true,
+    card_slots: 6,
+    cards: Choose,
+    unlock_on_win: ["thornmat"],
+    waves: [
+        Wave(delay_ticks: 3600, flag: false, spawns: [(enemy: "husk", count: 2, lane: Fixed(2))]),
+        Wave(delay_ticks: 2700, flag: false, spawns: [(enemy: "husk", count: 3, lane: Fixed(1)), (enemy: "husk", count: 2, lane: Fixed(3))]),
+        Wave(delay_ticks: 2700, flag: false, spawns: [(enemy: "sprinter_husk", count: 1, lane: Random), (enemy: "husk", count: 5, lane: Spread)]),
+        Wave(delay_ticks: 2700, flag: false, spawns: [(enemy: "sprinter_husk", count: 1, lane: Random), (enemy: "husk", count: 8, lane: Spread)]),
+        Wave(delay_ticks: 2700, flag: false, spawns: [(enemy: "sprinter_husk", count: 2, lane: Spread), (enemy: "husk", count: 9, lane: Spread)]),
+        Wave(delay_ticks: 2700, flag: false, spawns: [(enemy: "sprinter_husk", count: 3, lane: Spread), (enemy: "twig_husk", count: 1, lane: Random), (enemy: "husk", count: 7, lane: Spread)]),
+        Wave(delay_ticks: 2700, flag: false, spawns: [(enemy: "sprinter_husk", count: 3, lane: Spread), (enemy: "twig_husk", count: 1, lane: Random), (enemy: "husk", count: 10, lane: Spread)]),
+        Wave(delay_ticks: 2700, flag: false, spawns: [(enemy: "sprinter_husk", count: 4, lane: Spread), (enemy: "twig_husk", count: 1, lane: Random), (enemy: "husk", count: 11, lane: Spread)]),
+        Wave(delay_ticks: 3000, flag: true,  spawns: [(enemy: "sprinter_husk", count: 9, lane: Spread), (enemy: "clay_husk", count: 1, lane: Random), (enemy: "twig_husk", count: 3, lane: Spread), (enemy: "husk", count: 20, lane: Spread)]),
+    ],
+)
