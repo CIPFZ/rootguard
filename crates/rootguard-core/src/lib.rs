@@ -30,14 +30,14 @@ pub use ids::{DefenderId, EnemyId, LevelId, ProjectileId, ShortStr};
 pub use registry::Content;
 pub use systems::battle_tick;
 
-use trellia_core::{App, Plugin};
+use trellia_core::{App, Plugin, Stage};
 
 use events::{
     BattleEnded, DefenderPlaced, DefenderRemoved, DewCollected, DewSpawned, EnemyArmorBroken,
     EnemyDamaged, EnemyDied, EnemySpawned, HoseTriggered, ProjectileFired, ProjectileHit, UiAction,
     WaveStarted,
 };
-use resources::{DamageQueue, DeathLog, PendingOps};
+use resources::{DamageQueue, DeathLog, PendingOps, UiInbox};
 
 /// SPEC 3.3 `ContentPlugin`：插入 `DefenderRegistry` / `ProjectileRegistry` / `EnemyRegistry` /
 /// `LevelRegistry` / `Rules` / `Grid` 资源。内容由 `rootguard-content` 加载并校验。
@@ -71,7 +71,8 @@ impl Plugin for ContentPlugin {
 
 /// SPEC 3.3 `BattlePlugin`：注册对局事件与 `UiAction`，插入内部队列资源。
 ///
-/// FixedUpdate 系统不在此注册，由 `BattleScene::fixed_update` 调用 [`battle_tick`]（ADR-002）。
+/// FixedUpdate 系统不在此注册，由 `BattleScene::fixed_update` 调用 [`battle_tick`]（ADR-002）；
+/// 只在 `PreUpdate` 注册 `buffer_ui_actions`（ADR-003）。
 pub struct BattlePlugin;
 
 impl Plugin for BattlePlugin {
@@ -93,7 +94,9 @@ impl Plugin for BattlePlugin {
         events.register::<BattleEnded>();
         app.insert_resource(DamageQueue::default())
             .insert_resource(PendingOps::default())
-            .insert_resource(DeathLog::default());
+            .insert_resource(DeathLog::default())
+            .insert_resource(UiInbox::default())
+            .add_system(Stage::PreUpdate, systems::buffer_ui_actions);
     }
 }
 

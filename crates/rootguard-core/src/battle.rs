@@ -124,6 +124,7 @@ pub fn start_battle(
     world.resources.insert(DamageQueue::default());
     world.resources.insert(PendingOps::default());
     world.resources.insert(DeathLog::default());
+    world.resources.insert(crate::resources::UiInbox::default());
     crate::systems::refresh_cards(world);
     Ok(())
 }

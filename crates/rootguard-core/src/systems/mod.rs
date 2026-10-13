@@ -14,7 +14,9 @@ pub use combat::{
 };
 pub use damage::{damage_system, death_system, lane_defense_system};
 pub use economy::{economy_system, refresh_cards};
-pub use input::{placement_system, ui_action_system};
+pub use input::{
+    PlaceCheck, buffer_ui_actions, check_placement, placement_system, ui_action_system,
+};
 pub use waves::{outcome_system, wave_system};
 
 use trellia_core::{Entity, World};

@@ -176,6 +176,13 @@ pub struct PendingOps {
     pub collect: Vec<Vec2>,
 }
 
+/// 已到达、尚未被 `ui_action_system` 处理的对局 `UiAction`（ADR-003）。
+///
+/// 引擎事件只存活到下一帧末，而一帧可能执行 0 个 tick；`buffer_ui_actions`（`PreUpdate`）
+/// 每帧把对局动作从事件队列移入此处，保证不会丢失。
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct UiInbox(pub Vec<crate::events::UiAction>);
+
 /// 本 tick 死亡的敌人（`damage_system` 写入，`death_system` 消费）。
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Death {

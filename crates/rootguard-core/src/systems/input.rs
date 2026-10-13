@@ -10,11 +10,32 @@ use crate::data::{Behavior, Placement};
 use crate::events::{DefenderPlaced, DefenderRemoved, RemoveCause, UiAction};
 use crate::grid::Grid;
 use crate::registry::DefenderRegistry;
-use crate::resources::{BattleState, CardTray, LaneState, PendingOps};
+use crate::resources::{BattleState, CardTray, LaneState, PendingOps, UiInbox};
 
-/// SPEC 6 第 2 步：取走全部 `UiAction`，解析对局动作；场景动作原样放回供场景消费（ADR-002）。
-pub fn ui_action_system(world: &mut World) {
+/// 每帧 `PreUpdate`：把事件队列中的对局动作移入 [`UiInbox`]，其余动作放回事件队列供场景消费（ADR-003）。
+pub fn buffer_ui_actions(world: &mut World) {
+    if !world.resources.contains::<UiInbox>() {
+        return;
+    }
     let actions: Vec<UiAction> = world.events.get_mut::<UiAction>().drain().collect();
+    let (battle, rest): (Vec<UiAction>, Vec<UiAction>) =
+        actions.into_iter().partition(UiAction::is_battle_action);
+    world.resources.expect_mut::<UiInbox>().0.extend(battle);
+    let events = world.events.get_mut::<UiAction>();
+    for action in rest {
+        events.send(action);
+    }
+}
+
+/// SPEC 6 第 2 步：处理 [`UiInbox`] 与事件队列中的全部对局动作（选卡、取消、铲子、放置、铲除、收集）；
+/// 场景动作原样放回事件队列（ADR-002 第 9 条）。
+pub fn ui_action_system(world: &mut World) {
+    let mut actions = world
+        .resources
+        .get_mut::<UiInbox>()
+        .map(|inbox| std::mem::take(&mut inbox.0))
+        .unwrap_or_default();
+    actions.extend(world.events.get_mut::<UiAction>().drain());
     let mut passthrough = Vec::new();
     for action in actions {
         if !action.is_battle_action() {
@@ -146,81 +167,100 @@ pub fn placement_system(world: &mut World) {
     }
 }
 
-fn try_place(world: &mut World, slot: usize, cell: Cell, placed: &mut BTreeSet<Cell>) {
+/// 放置检查的结果（SPEC 7.2 Overlay、9）。
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PlaceCheck {
+    /// 新建防御者；`host` 为覆盖层的宿主。
+    New {
+        /// 覆盖层宿主。
+        host: Option<Entity>,
+    },
+    /// 修复已有覆盖层。
+    Repair(Entity),
+}
+
+/// 纯检查：第 `slot` 张卡能否放在 `cell`（激活车道、冷却、Dew、占格与覆盖层规则）。
+/// 不修改 World；`placement_system` 与 app 的悬停预览（SPEC 11.2）共用。
+#[must_use]
+pub fn check_placement(world: &World, slot: usize, cell: Cell) -> Option<PlaceCheck> {
     if cell.row >= Grid::ROWS
         || cell.col >= Grid::COLS
-        || !world.resources.expect::<LaneState>().is_active(cell.row)
+        || !world.resources.get::<LaneState>()?.is_active(cell.row)
     {
-        return;
+        return None;
     }
-    let Some(card) = world
+    let card = world
         .resources
-        .expect::<CardTray>()
+        .get::<CardTray>()?
         .cards
         .get(slot)
-        .copied()
-    else {
+        .copied()?;
+    let def = world
+        .resources
+        .get::<DefenderRegistry>()?
+        .get(card.defender)?;
+    let dew = world.resources.get::<BattleState>()?.dew;
+    if !card.cooldown.finished() || dew < def.cost {
+        return None;
+    }
+    let (ground, overlay) = occupants(world, cell);
+    match def.placement {
+        Placement::Ground | Placement::Any => {
+            ground.is_none().then_some(PlaceCheck::New { host: None })
+        }
+        Placement::Overlay => {
+            let host = ground?;
+            let Some(existing) = overlay else {
+                return Some(PlaceCheck::New { host: Some(host) });
+            };
+            // 修复：仅当现有覆盖层 hp < num/den × max（SPEC 7.1 Gourdshell）
+            let (num, den) = def
+                .behaviors
+                .iter()
+                .find_map(|b| match *b {
+                    Behavior::Overlay {
+                        repair_below_num,
+                        repair_below_den,
+                    } => Some((repair_below_num, repair_below_den)),
+                    _ => None,
+                })
+                .unwrap_or((1, 1));
+            let h = world.get::<Health>(existing)?;
+            (h.hp * den < h.max * num).then_some(PlaceCheck::Repair(existing))
+        }
+    }
+}
+
+fn try_place(world: &mut World, slot: usize, cell: Cell, placed: &mut BTreeSet<Cell>) {
+    let Some(check) = check_placement(world, slot, cell) else {
         return;
     };
     let Some(def) = world
         .resources
-        .expect::<DefenderRegistry>()
-        .get(card.defender)
+        .expect::<CardTray>()
+        .cards
+        .get(slot)
+        .and_then(|c| world.resources.expect::<DefenderRegistry>().get(c.defender))
         .cloned()
     else {
         return;
     };
-    let dew = world.resources.expect::<BattleState>().dew;
-    if !card.cooldown.finished() || dew < def.cost {
-        return;
-    }
-    let (ground, overlay) = occupants(world, cell);
-
-    let host = match def.placement {
-        Placement::Ground | Placement::Any => {
-            if ground.is_some() || placed.contains(&cell) {
-                return;
-            }
-            None
-        }
-        Placement::Overlay => {
-            let Some(host) = ground else {
-                return;
-            };
-            if let Some(existing) = overlay {
-                // 修复：仅当现有覆盖层 hp < num/den × max（SPEC 7.1 Gourdshell）
-                let (num, den) = def
-                    .behaviors
-                    .iter()
-                    .find_map(|b| match *b {
-                        Behavior::Overlay {
-                            repair_below_num,
-                            repair_below_den,
-                        } => Some((repair_below_num, repair_below_den)),
-                        _ => None,
-                    })
-                    .unwrap_or((1, 1));
-                let Some(mut h) = world.get_mut::<Health>(existing) else {
-                    return;
-                };
-                if h.hp * den >= h.max * num {
-                    return;
-                }
+    let host = match check {
+        PlaceCheck::Repair(existing) => {
+            if let Some(mut h) = world.get_mut::<Health>(existing) {
                 h.hp = h.max;
-                drop(h);
-                pay(world, slot, def.cost);
-                world.events.send(DefenderPlaced {
-                    entity: existing,
-                    id: def.id,
-                    cell,
-                });
-                return;
             }
-            if placed.contains(&cell) {
-                return;
-            }
-            Some(host)
+            pay(world, slot, def.cost);
+            world.events.send(DefenderPlaced {
+                entity: existing,
+                id: def.id,
+                cell,
+            });
+            return;
         }
+        // 同一 tick 内同格的第二次新建（第一次尚未生效）
+        PlaceCheck::New { .. } if placed.contains(&cell) => return,
+        PlaceCheck::New { host } => host,
     };
 
     let entity = world.entities.reserve_entity();
