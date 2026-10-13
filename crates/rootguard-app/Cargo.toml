@@ -1,0 +1,27 @@
+[package]
+name = "rootguard-app"
+description = "Rootguard 应用：场景、UI、渲染、音频触发、存档与入口"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "rootguard"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+directories.workspace = true
+env_logger.workspace = true
+log.workspace = true
+rootguard-content.workspace = true
+rootguard-core.workspace = true
+trellia = { workspace = true, features = ["egui"] }
+
+[features]
+default = ["devtools"]
+## 引擎调试面板与 Rootguard 调试窗口（SPEC.md 11.5）
+devtools = ["trellia/devtools"]
+
+[lints]
+workspace = true

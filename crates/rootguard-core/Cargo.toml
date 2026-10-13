@@ -1,0 +1,16 @@
+[package]
+name = "rootguard-core"
+description = "Rootguard 规则与模拟层：组件、资源、事件、系统、数据模型（headless 可测）"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+log.workspace = true
+ron.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+trellia-core.workspace = true
+
+[lints]
+workspace = true

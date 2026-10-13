@@ -1,0 +1,36 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[workspace.dependencies]
+# 内部 crate
+rootguard-core = { path = "crates/rootguard-core" }
+rootguard-content = { path = "crates/rootguard-content" }
+
+# Trellia 引擎：git + rev 锁定（SPEC.md 3.1 R3）。三项指向同一仓库同一 rev，
+# rootguard-core / rootguard-content 直接依赖子 crate 以满足 R1（ADR-001）。
+trellia = { git = "https://github.com/CIPFZ/trellia", rev = "4eb6c29f2b23132ecea106264bde8fd4e151efe8", default-features = false }
+trellia-core = { git = "https://github.com/CIPFZ/trellia", rev = "4eb6c29f2b23132ecea106264bde8fd4e151efe8" }
+trellia-assets = { git = "https://github.com/CIPFZ/trellia", rev = "4eb6c29f2b23132ecea106264bde8fd4e151efe8" }
+
+# 第三方（引擎白名单 + directories，SPEC.md 0.3；版本与引擎一致）
+anyhow = "1.0.104"
+directories = "6.0.0"
+env_logger = "0.11.11"
+log = "0.4.34"
+ron = "0.12.2"
+serde = { version = "1.0.229", features = ["derive"] }
+thiserror = "2.0.21"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+must_use_candidate = "warn"
+missing_errors_doc = "warn"
