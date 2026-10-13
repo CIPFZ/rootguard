@@ -1,0 +1,19 @@
+// SPEC 10.2 关卡 1-2：多车道与经济。base 1.222，预算 [2, 3, 5, 7, 8, 10×2]（docs/levels.md）。
+Level(
+    id: "1-2",
+    seed: 102,
+    lanes: [1, 2, 3],
+    start_dew: 100,
+    sky_dew: true,
+    card_slots: 6,
+    cards: Forced(["pebble_pod", "dewcup"]),
+    unlock_on_win: ["barkwall"],
+    waves: [
+        Wave(delay_ticks: 2400, flag: false, spawns: [(enemy: "husk", count: 2, lane: Spread)]),
+        Wave(delay_ticks: 1800, flag: false, spawns: [(enemy: "husk", count: 3, lane: Spread)]),
+        Wave(delay_ticks: 1800, flag: false, spawns: [(enemy: "husk", count: 3, lane: Spread), (enemy: "twig_husk", count: 1, lane: Random)]),
+        Wave(delay_ticks: 1800, flag: false, spawns: [(enemy: "husk", count: 3, lane: Spread), (enemy: "twig_husk", count: 2, lane: Spread)]),
+        Wave(delay_ticks: 1800, flag: false, spawns: [(enemy: "husk", count: 4, lane: Spread), (enemy: "twig_husk", count: 2, lane: Spread)]),
+        Wave(delay_ticks: 2400, flag: true,  spawns: [(enemy: "husk", count: 8, lane: Spread), (enemy: "twig_husk", count: 6, lane: Spread)]),
+    ],
+)
