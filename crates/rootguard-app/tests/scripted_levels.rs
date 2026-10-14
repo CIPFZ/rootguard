@@ -122,7 +122,15 @@ fn record_plan(id: &str) -> (Vec<&'static str>, BotConfig) {
         ..BotConfig::default()
     };
     match id {
-        "1-1" | "1-2" | "1-3" => (vec![], base),
+        "1-1" | "1-2" => (vec![], base),
+        // SPEC 10.3 重录（ADR-006）：默认参数用掉 2 个 Hose；搜索网格第 2 组即默认参数 + econ_until 8000
+        "1-3" => (
+            vec![],
+            BotConfig {
+                econ_until: 8_000,
+                ..base
+            },
+        ),
         "1-4" => (
             vec!["pebble_pod", "dewcup", "barkwall", "frostpod"],
             PLAN_1_4.cfg(tuned),
