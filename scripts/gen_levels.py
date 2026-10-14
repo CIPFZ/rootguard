@@ -8,6 +8,7 @@
 
     python3 scripts/gen_levels.py            # 写出 assets/data/levels/1-4 ～ 1-10
     python3 scripts/gen_levels.py --dry-run  # 只打印预算表
+    python3 scripts/gen_levels.py 1-9 1-10   # 只重写指定关卡
 """
 
 import math
@@ -54,7 +55,16 @@ def budgets(n, waves):
     return [math.ceil(base(n) * k ** 1.15) * (2 if k - 1 in fl else 1) for k in range(1, waves + 1)]
 
 
-def fill(budget, pool, new, k):
+# 第三次调整（负责人批准，docs/levels.md）：1-9 / 1-10 的余数不再全部用 husk 补齐，
+# 而是优先用“每点威胁生命更低”的敌人（疾行 10/2、跳栏 17/3），husk 只补最后的 1 点
+LOW_HP_FILLER = {9: ["vault_husk", "sprinter_husk"], 10: ["sprinter_husk", "carrier_husk", "vault_husk"]}
+# 低生命填充从第几波开始（1-10 没有“新敌人”，前几波若全是疾行 / 跳栏会过早压垮经济）
+FILLER_FROM = {9: 3, 10: int(__import__("os").environ.get("FILLER_FROM_10", "6"))}
+# 第三次调整：1-9 / 1-10 的波间隔（tick）
+DELAY_OVERRIDE = {9: (3600, 3300, 3300), 10: (3600, 3300, 3300)}
+
+
+def fill(budget, pool, new, k, filler=None, filler_from=3):
     """返回 [(enemy, count)]，威胁总和恰为 budget。"""
     out = {}
     left = budget
@@ -72,6 +82,15 @@ def fill(budget, pool, new, k):
             if c > 0 and c * THREAT[e] <= left:
                 out[e] = out.get(e, 0) + c
                 left -= c * THREAT[e]
+    if filler and k >= filler_from:
+        # 余数在低生命敌人之间轮流分配
+        i = 0
+        while left >= min(THREAT[e] for e in filler):
+            e = filler[i % len(filler)]
+            if THREAT[e] <= left:
+                out[e] = out.get(e, 0) + 1
+                left -= THREAT[e]
+            i += 1
     if left > 0:
         out["husk"] = out.get("husk", 0) + left
     return [(e, c) for e, c in out.items() if c > 0]
@@ -84,14 +103,15 @@ FLAG_DELAY = 3000
 
 def delays(n, waves):
     fl = flags(waves)
+    first, wave, flag = DELAY_OVERRIDE.get(n, (FIRST_DELAY, WAVE_DELAY, FLAG_DELAY))
     out = []
     for i in range(waves):
         if i == 0:
-            out.append(FIRST_DELAY)
+            out.append(first)
         elif i in fl:
-            out.append(FLAG_DELAY)
+            out.append(flag)
         else:
-            out.append(WAVE_DELAY)
+            out.append(wave)
     return out
 
 
@@ -116,7 +136,7 @@ def level_ron(n):
         "    waves: [",
     ]
     for k in range(1, waves + 1):
-        spawns = fill(b[k - 1], full_pool, new, k)
+        spawns = fill(b[k - 1], full_pool, new, k, LOW_HP_FILLER.get(n), FILLER_FROM.get(n, 3))
         parts = []
         for j, (e, c) in enumerate(spawns):
             # 车道逐步打开：第 1 波只走中路，第 2 波走 1、3 路，之后分散到全部车道
@@ -139,7 +159,10 @@ def level_ron(n):
 
 def main():
     dry = "--dry-run" in sys.argv
+    only = {int(a.split("-")[1]) for a in sys.argv[1:] if a.startswith("1-")}
     for n in LEVELS:
+        if only and n not in only:
+            continue
         text, b = level_ron(n)
         print(f"1-{n}: {b}")
         if not dry:

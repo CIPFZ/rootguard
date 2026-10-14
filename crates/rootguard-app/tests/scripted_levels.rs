@@ -163,6 +163,19 @@ fn record_plan(id: &str) -> (Vec<&'static str>, BotConfig) {
             ],
             tuned(40.0, 1, 2),
         ),
+        "1-9" => (
+            vec![
+                "twinpod",
+                "dewcup",
+                "barkwall",
+                "frostpod",
+                "pebble_pod",
+                "thornmat",
+                "tuberblast",
+                "emberbulb",
+            ],
+            tuned(60.0, 2, 1),
+        ),
         _ => (vec![], base),
     }
 }
