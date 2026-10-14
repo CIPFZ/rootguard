@@ -1,6 +1,6 @@
 # Rootguard 游戏规格说明书（v1）
 
-> 状态：v1.1，2026-10-14（修订：10.2 预算上限、10.3 脚本解质量、8.1 Sprint 阈值、7.1 / 10.2 解锁顺序）
+> 状态：v1.2，2026-10-14（v1.1：10.2 预算上限、10.3 脚本解质量、8.1 Sprint 阈值、解锁顺序；v1.2：10.3 适用范围澄清、16.2 `audio_events_mapped` 允许交叉淡化、新增第 20 章 Phase 1 收尾与难度校准）
 > 适用范围：Rootguard Phase 1（白天花园，10 关）
 > 读者：负责从 0 实现游戏的 AI 开发者与项目负责人
 > 前置：Trellia 引擎 v1（https://github.com/CIPFZ/trellia，M5 已验收）
@@ -476,7 +476,7 @@ Chill 下的速度与间隔计算在 `walker_system` / `bite_system` 读取 `Sta
 
 ### 10.3 脚本解的质量要求
 
-`every_level_has_scripted_solution` 除"回放必胜"外还必须满足：脚本解全程触发 Hose Burst **不超过 1 次**。Hose 是给玩家失误用的保险，不是设计预算的一部分；机器人需要多条保险才能通过的关卡，真人必输。现有脚本解中 Hose 使用超过 1 次的关卡（当前为 1-7、1-8、1-9）须按 10.2 的上限阶梯重新生成并重录。测试 `scripted_solution_uses_at_most_one_hose` 对每关断言此条。
+`every_level_has_scripted_solution` 除"回放必胜"外还必须满足：脚本解全程触发 Hose Burst **不超过 1 次**。Hose 是给玩家失误用的保险，不是设计预算的一部分；机器人需要多条保险才能通过的关卡，真人必输。本条对全部 10 关成立；任何关卡的脚本解 Hose 超过 1 次都必须重录，预算本就低于上限的关卡只重录脚本解、不改关卡数据（如 1-3，ADR-006）。测试 `scripted_solution_uses_at_most_one_hose` 对每关断言此条。
 
 ---
 
@@ -638,7 +638,7 @@ Esc 暂停 / 取消选卡；数字 1 ～ 8 选卡；空格 继续；F1 调试面
 | `determinism_golden_1_4` | 1-4 脚本回放 30000 tick，`snapshot()` 与 `tests/golden/level_1_4.snap` 一致 |
 | `save_roundtrip` | 通关后进度写入，重启读取一致；损坏文件走备份路径 |
 | `ui_flow_title_to_battle` | `UiAction` 序列 StartLevel → ConfirmSeeds 后 `SceneStack::top_name() == "Battle"` |
-| `audio_events_mapped` | 一局中 `take_audio_log` 含 `sfx.shoot`、`sfx.dew`、`sfx.plant`、`PlayMusic` |
+| `audio_events_mapped` | 一局中 `take_audio_log` 含 `sfx.shoot`、`sfx.dew`、`sfx.plant`；首次 BGM 为 `PlayMusic`，之后的场景切换为 `CrossfadeMusic`（E-5 落地后，ADR-009） |
 | `placeholder_mode_draws_all_entities` | 对局中 DrawList 的 Rect/Circle 数 ≥ 实体数 |
 
 ### 16.3 性能
@@ -678,3 +678,36 @@ Release 下 1-10 最大波（≈ 40 敌人、45 防御者、100 弹丸）帧耗�
 | 威胁 | 敌人的强度权重，用于波次预算 |
 | 占位渲染 | 几何图形 + 字母标签的渲染模式 |
 | 脚本解 | 一个能必胜该关的 `UiAction` 时间表，用于自动化验证可玩性 |
+
+---
+
+## 20. Phase 1 收尾与难度校准（v1.2 新增）
+
+G5 关闭后、Phase 2 spec 之前，项目处于**收尾期**。本章定义收尾期允许的改动范围与流程。
+
+### 20.1 冻结规则
+
+- 禁止新增防御者、敌人、关卡、场景、行为类型（属于 Phase 2）。
+- 允许：修复缺陷、按 20.2 校准难度、补齐第 20.3 节发布清单、改进文档与工具。
+- 任何 FixedUpdate 逻辑改动仍须保持 `tests/golden/level_1_4.snap` 不变；若必须改变（缺陷修复导致），停下提问。
+
+### 20.2 难度校准流程（基于真人试玩反馈）
+
+负责人在 `docs/levels.md` 填写"手动用时 / 主观难度"后，实现者按以下规则处理，每关一次提交：
+
+| 负责人主观难度 | 处理 |
+|---|---|
+| 过难（多次失败或必须用 Hose） | 该关降一档（10.2 阶梯）重新生成并重录；已是第 3 档则允许把该关 `start_dew` +25 并记录 ADR |
+| 偏难（险胜） | 波间隔 +300 tick，重录；不改预算 |
+| 合适 | 不动 |
+| 偏易 / 过易 | 不动（Phase 1 以"真人可通关"为唯一目标，不追求紧张感） |
+
+校准后更新 `docs/levels.md` 对应行并保留调整历史；1-4 不得改动（golden）。
+
+### 20.3 发布清单（v0.1.0）
+
+- 项目许可证文件 `LICENSE`（由负责人选定，见 `docs/owner-decisions/`），`Cargo.toml` 各 crate 填写 `license` 字段，`package.sh` 把 `LICENSE` 一并打包。
+- `CHANGELOG.md`，首个条目 `0.1.0`。
+- Git tag `v0.1.0`，CI 以 tag 触发时上传三平台安装包为 Release 资产。
+- `README.md` 补充：截图（占位 / 皮肤各一张，由 CI Xvfb 截图或负责人提供）、安装方法、操作说明、许可证说明。
+- 负责人实机验证记录（macOS / Windows 启动、音频听感）写入 `docs/progress.md`；未验证项在 Release 说明中标注。

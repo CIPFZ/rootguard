@@ -2,6 +2,10 @@
 
 ## 会话记录（新记录追加在最上方）
 
+- 2026-10-14 会话 3：接手（收尾期），上下文重建自仓库文件（SPEC v1.2、AGENT v1.2、负责人裁决两份、
+  `docs/game-v1-report.md`、ADR-001 ～ 009）。起点：`cargo build/test --workspace` 绿色，51 个测试。
+  负责人裁决 `2026-10-14-g5-closure.md` 原在仓库根目录（文件名带前导空格）且未入库，移至 `docs/owner-decisions/`
+  并与 SPEC / AGENT v1.2 一并提交。执行 AGENT.md 第 9 章收尾清单，记录见下方“收尾期”章节。
 - 2026-10-14 会话 2（续）：负责人授权实现者直接推送 GitHub。引擎补丁 0001 ～ 0004 应用到 `/data/workspace/trellia`
   main 并推送（4eb6c29 → 24c4d71，引擎 CI 三平台通过）；游戏 bump rev 后依次落地 E-1（中文显示）、E-3（`sort_y`）、
   E-2（加载辅助）、E-5（BGM 交叉淡化）（ADR-009），撰写 `docs/game-v1-report.md`，**G5 关闭**。测试 51 个全绿。
@@ -37,6 +41,10 @@
   用 `--autoplay` 在窗口中回放脚本解（1-3 胜利，截图证据），无法代替真人试玩与主观难度记录。
 - [x] 确认 Sprint 阈值：负责人裁决 2026-10-14 采用“≤ 50%”，ADR-002 第 14 条已标记确认。
 - [ ] 仓库原有目录 `assests/icon/` 疑为笔误，已移动为 SPEC / AGENT / README 所述的 `assets/icon/`（文件未改动）。
+
+## 收尾期（SPEC v1.2 第 20 章，2026-10-14 起）
+
+负责人裁决 `docs/owner-decisions/2026-10-14-g5-closure.md`；任务顺序见 AGENT.md 第 9 章。
 
 ## 里程碑
 
