@@ -2,6 +2,9 @@
 
 ## 会话记录（新记录追加在最上方）
 
+- 2026-10-15 会话 4：执行负责人裁决 `2026-10-15-bite-rhythm.md`（负责人已入库）。eat 片段对齐啃食间隔（ADR-012），
+  `subset_font.py` 注释补充 venv 重建说明；CHANGELOG 日期负责人已在 7f3049a 填写（2026-10-14），未再改动；
+  禁用词表负责人已填（58 词），`check_ip.sh` 零命中。测试 54 个全绿。回到等待试玩反馈。
 - 2026-10-14 会话 3：接手（收尾期），上下文重建自仓库文件（SPEC v1.2、AGENT v1.2、负责人裁决两份、
   `docs/game-v1-report.md`、ADR-001 ～ 009）。起点：`cargo build/test --workspace` 绿色，51 个测试。
   负责人裁决 `2026-10-14-g5-closure.md` 原在仓库根目录（文件名带前导空格）且未入库，移至 `docs/owner-decisions/`
@@ -24,15 +27,17 @@
 
 ## 给项目负责人的待办
 
-- [ ] **打 `v0.1.0` tag 前**：把 `CHANGELOG.md` 中 `## [0.1.0] - Unreleased` 改为实际日期，并按需在“已知限制”中
+- [x] ~~**打 `v0.1.0` tag 前**：把 `CHANGELOG.md` 中 `## [0.1.0] - Unreleased` 改为实际日期~~（负责人 7f3049a 已填 2026-10-14），并按需在“已知限制”中
   更新实机验证结果（Release 说明原样取自该条目，ADR-011）；tag 必须与 `Cargo.toml` 的 `0.1.0` 一致，否则 Release 作业失败。
 - [ ] 实机验证（macOS / Windows 启动、音频与交叉淡化听感、新增啃食音效 `sfx.bite` 的密度）结果写入本文件。
+- [ ] **决定**：Chill 状态下啃食音效是伤害频率的 2 倍（裁决（三）假设的 `Animator` 减速在本游戏不存在，ADR-012）。
+  选项：接受现状 / 让呈现层在 Chill 时按 `chill_bite_interval_factor` 放慢 eat 相位（只改 `render.rs`，模拟不变）。
 - [x] ~~【阻塞 G4】1-10 无法写出脚本解~~：负责人裁决 2026-10-14（SPEC v1.1 预算上限阶梯），已按第 1 档解决。
 - [ ] **手动试玩 10 关**并填 `docs/levels.md` 的“手动用时 / 主观难度”列。建议重点关注 1-9（第 2 档，搜索合格率
   4 / 1536）与 1-10（第 1 档，合格率 16 / 1536）：机器人的合格解很少，真人难度可能偏高。
 - [ ] **知悉**：1-3 不在裁决列出的返工关卡中，但其原脚本解用掉 2 个 Hose，违反 SPEC 10.3；已只重录脚本解、
   关卡数据未改（ADR-006）。如负责人认为 1-3 应完全不动，请告知。
-- [ ] 填写 `scripts/ip_denylist.txt`（AGENT.md 第 6 章；实现者不得自行添加第三方作品名）。
+- [x] ~~填写 `scripts/ip_denylist.txt`~~：负责人 ff2dfa7 已填（58 词），`check_ip.sh` 对 110 个文件零命中。
 - [x] ~~E-1 / E-2 / E-3 / E-5 引擎补充需推送~~：2026-10-14 已由实现者推送至引擎 main 24c4d71 并在游戏中落地（ADR-009）。原记录：实现已在引擎本地分支链 `feat/e2-world-asset-helpers`（56082a4）→
   `feat/e3-sorted-shapes`（8484ce3）→ `feat/e1-cjk-font`（76be022）→ `feat/e5-music-crossfade`（0069b02，2026-10-14 新增，ADR-011）
   （补丁副本 `tmp/engine-patches/0001～0004`，未入库，已验证可按序 `git am` 到引擎 main 4eb6c29）完成并通过引擎全部检查（108 个测试）；
@@ -58,8 +63,8 @@
   `[workspace.package] license = "MIT OR Apache-2.0"`，三个 crate 继承（`cargo metadata` 确认）。提交 6370ed8。
 - [x] `package.sh` 打包两份许可证并纳入布局自检；本机 Linux 包内容确认含 `LICENSE-MIT` / `LICENSE-APACHE`；
   `check_deps.sh` 通过。提交 1b3fb30。
-- [x] `CHANGELOG.md`（Keep a Changelog），`0.1.0` 条目提炼自报告第 4 ～ 6 节，含“已知限制”；日期为 `Unreleased`，
-  **负责人打 tag 前改为实际日期**（发布说明原样取自该条目）。提交 1b94505。
+- [x] `CHANGELOG.md`（Keep a Changelog），`0.1.0` 条目提炼自报告第 4 ～ 6 节，含“已知限制”；日期原为 `Unreleased`，
+  负责人已于 7f3049a 改为 2026-10-14（发布说明原样取自该条目）。提交 1b94505。
 - [x] `README.md`：简介、截图（`docs/screenshots/battle-placeholder.png` / `battle-skinned.png`，1-5 脚本解约 150 s，
   新增 `scripts/screenshot.sh` 在 Xvfb 中生成）、三平台安装、操作说明、许可证说明。提交 784b88d。
 - [x] CI：`v*` tag 触发 `release` 作业（三平台检查与打包通过后，核对 tag 与版本、从 CHANGELOG 提取说明、`gh release`
@@ -77,7 +82,12 @@
   `skin_switching_keeps_golden_1_4` 通过，`tests/golden/level_1_4.snap` 未变。
 - [x] 测试先红后绿：`bite_sfx_on_eat_hit`（红：啃食期间 0 次），另加单元测试 `events_between_reports_entered_event_frames`。
   测试 53 个全绿（core 23、content 6、app 24）。提交 3696f05。
-- 听感待负责人：敌群同时啃食时音效较密（每只啃食中的敌人约每秒 2 次，ADR-010 后果）。
+- ~~听感待负责人：每只啃食中的敌人约每秒 2 次~~ → 2026-10-15 按裁决（三）把 eat 片段改为 `[20, 10, 30]` = 60 tick，
+  与 `bite_interval_ticks` 一致，`eat_hit` 每秒 1 次（ADR-012）。`gen_skins.py` 校验总长，新增测试
+  `eat_clip_matches_bite_interval`（先红：carrier_husk_eat 30 ≠ 60）；只有 13 个 `*_eat.anim.ron` 变化，图集逐字节不变；
+  `bite_sfx_on_eat_hit`、`determinism_golden_1_4`、`skin_switching_keeps_golden_1_4` 通过。测试 54 个全绿。提交 f088b42。
+- **待负责人决定**：Chill 下仍不对齐。游戏不使用引擎 `Animator`（ADR-007），eat 相位不随 Chill 减速，
+  Chill 时音效 60 tick 一次，伤害 120 tick 一次（ADR-012 后果）。未按裁决前提添加代码。
 
 ### 其他
 

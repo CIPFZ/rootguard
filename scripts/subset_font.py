@@ -7,7 +7,7 @@
     assets/fonts/RootguardCJK-Regular.otf
     assets/fonts/LICENSE-OFL.txt   （原字体许可证全文）
 
-需要 fonttools（仅开发期工具，不是游戏依赖）：
+需要 fonttools（仅开发期工具，不是游戏依赖）。`tmp/venv/` 不入库（`.gitignore`），不存在时先重建：
 
     python3 -m venv tmp/venv && tmp/venv/bin/pip install fonttools
     tmp/venv/bin/python scripts/subset_font.py [NotoSansCJK-Regular.ttc] [OFL LICENSE]
