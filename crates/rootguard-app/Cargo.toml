@@ -4,6 +4,7 @@ description = "Rootguard 应用：场景、UI、渲染、音频触发、存档�
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 
 [[bin]]
 name = "rootguard"

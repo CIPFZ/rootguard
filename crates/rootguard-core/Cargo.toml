@@ -4,6 +4,7 @@ description = "Rootguard 规则与模拟层：组件、资源、事件、系统�
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 
 [dependencies]
 log.workspace = true

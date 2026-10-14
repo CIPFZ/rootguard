@@ -4,6 +4,7 @@ description = "Rootguard 内置内容：防御者 / 敌人 / 弹丸 / 关卡 RON
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 
 [dependencies]
 log.workspace = true
