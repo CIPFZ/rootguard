@@ -24,6 +24,9 @@
 
 ## 给项目负责人的待办
 
+- [ ] **打 `v0.1.0` tag 前**：把 `CHANGELOG.md` 中 `## [0.1.0] - Unreleased` 改为实际日期，并按需在“已知限制”中
+  更新实机验证结果（Release 说明原样取自该条目，ADR-011）；tag 必须与 `Cargo.toml` 的 `0.1.0` 一致，否则 Release 作业失败。
+- [ ] 实机验证（macOS / Windows 启动、音频与交叉淡化听感、新增啃食音效 `sfx.bite` 的密度）结果写入本文件。
 - [x] ~~【阻塞 G4】1-10 无法写出脚本解~~：负责人裁决 2026-10-14（SPEC v1.1 预算上限阶梯），已按第 1 档解决。
 - [ ] **手动试玩 10 关**并填 `docs/levels.md` 的“手动用时 / 主观难度”列。建议重点关注 1-9（第 2 档，搜索合格率
   4 / 1536）与 1-10（第 1 档，合格率 16 / 1536）：机器人的合格解很少，真人难度可能偏高。
@@ -45,6 +48,41 @@
 ## 收尾期（SPEC v1.2 第 20 章，2026-10-14 起）
 
 负责人裁决 `docs/owner-decisions/2026-10-14-g5-closure.md`；任务顺序见 AGENT.md 第 9 章。
+
+**当前状态：等待负责人。** 等待：`docs/levels.md` 主观难度列（手动试玩 10 关，重点 1-9 / 1-10）。
+收到后按 SPEC 20.2 与 AGENT 3.4 逐关处理；在此之前不做其他改动（AGENT 3.1）。
+
+### 1. 发布清单 SPEC 20.3（2026-10-14，除打 tag 外完成）
+
+- [x] 许可证：`LICENSE-MIT`（版权行 Rootguard contributors）、`LICENSE-APACHE`（apache.org 原文，sha256 cfc7749b…）；
+  `[workspace.package] license = "MIT OR Apache-2.0"`，三个 crate 继承（`cargo metadata` 确认）。提交 6370ed8。
+- [x] `package.sh` 打包两份许可证并纳入布局自检；本机 Linux 包内容确认含 `LICENSE-MIT` / `LICENSE-APACHE`；
+  `check_deps.sh` 通过。提交 1b3fb30。
+- [x] `CHANGELOG.md`（Keep a Changelog），`0.1.0` 条目提炼自报告第 4 ～ 6 节，含“已知限制”；日期为 `Unreleased`，
+  **负责人打 tag 前改为实际日期**（发布说明原样取自该条目）。提交 1b94505。
+- [x] `README.md`：简介、截图（`docs/screenshots/battle-placeholder.png` / `battle-skinned.png`，1-5 脚本解约 150 s，
+  新增 `scripts/screenshot.sh` 在 Xvfb 中生成）、三平台安装、操作说明、许可证说明。提交 784b88d。
+- [x] CI：`v*` tag 触发 `release` 作业（三平台检查与打包通过后，核对 tag 与版本、从 CHANGELOG 提取说明、`gh release`
+  上传安装包），Linux push 运行另上传 `rootguard-screenshots` 产物（ADR-011）。提交 15b425d、e94923d。**未打 tag。**
+  证据：CI run 38541417044（e94923d）三平台检查、打包与截图全部通过，产物 rootguard-ubuntu-latest 7.69 MB、
+  rootguard-macos-latest 6.24 MB、rootguard-windows-latest 5.89 MB、rootguard-screenshots 103 KB。
+  15b425d / 3696f05 两次运行的 Linux 截图步骤失败（缺 X11 / EGL 运行库），e94923d 补齐后通过。
+  `release` 作业的 tag 前置逻辑（版本核对、CHANGELOG 提取）已在本地用同一脚本验证；完整流程要到负责人打 tag 时才会首次运行。
+- [ ] Git tag `v0.1.0`：负责人在实机验证后打。
+
+### 2. `eat_hit` 事件消费（2026-10-14 完成）
+
+- [x] 呈现层在敌人 eat 片段进入 `eat_hit` 帧时发送引擎 `AnimationEvent`，`SfxPlugin` 播放新音效 `sfx.bite`
+  （`gen_audio.py` 生成，登记 `SOURCES.md`；SPEC 13 补一行；ADR-010）。模拟层未改，`determinism_golden_1_4`、
+  `skin_switching_keeps_golden_1_4` 通过，`tests/golden/level_1_4.snap` 未变。
+- [x] 测试先红后绿：`bite_sfx_on_eat_hit`（红：啃食期间 0 次），另加单元测试 `events_between_reports_entered_event_frames`。
+  测试 53 个全绿（core 23、content 6、app 24）。提交 3696f05。
+- 听感待负责人：敌群同时啃食时音效较密（每只啃食中的敌人约每秒 2 次，ADR-010 后果）。
+
+### 其他
+
+- `tmp/` 残留清理：前任的 G0 ～ G3 截图与 `tmp/shot.sh`（已由 `scripts/screenshot.sh` 取代）已删除；
+  `tmp/venv/` 保留（`scripts/subset_font.py` 文档约定的 fontTools 环境，可重建，从未入库）。
 
 ## 里程碑
 
