@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
 """关卡波次设计辅助（SPEC 10.2，AGENT 3.4）：按威胁预算填写 1-4 ～ 1-10 的 waves 并写出 RON。
 
-预算：第 k 波 ceil(base × k^1.15)，base 从 1-1 的 1 线性增至 1-10 的 3；flag 波 ×2。
+预算：第 k 波 ceil(base × k^1.15)，base 从 1-1 的 1 线性增至 1-10 的 3；flag 波 ×2；
+再按 SPEC 10.2（v1.1）的上限阶梯钳制：非 flag 波 ≤ cap，flag 波 ≤ flag_cap。
 只有最后一波为 flag（中段 flag 在调整中取消，见 docs/levels.md）。新敌人不早于第 3 波。
 车道逐步打开：第 1 波只走中路（Fixed(2)），第 2 波走 1、3 路，之后分散到全部车道。
 本脚本只在设计期运行一次，输出提交为数据；之后的调整直接改 RON 并记录在 docs/levels.md。
 
-    python3 scripts/gen_levels.py            # 写出 assets/data/levels/1-4 ～ 1-10
-    python3 scripts/gen_levels.py --dry-run  # 只打印预算表
-    python3 scripts/gen_levels.py 1-9 1-10   # 只重写指定关卡
+    python3 scripts/gen_levels.py --help
+    python3 scripts/gen_levels.py --dry-run           # 只打印预算表（默认第 1 档 40 / 70）
+    python3 scripts/gen_levels.py 1-9 1-10            # 只重写指定关卡
+    python3 scripts/gen_levels.py --tier 2 1-9        # 按第 2 档（35 / 60）重写 1-9
+    python3 scripts/gen_levels.py --cap 38 --flag-cap 66 1-8
+
+注意：不带关卡参数时重写 1-4 ～ 1-10 全部关卡；1-4 ～ 1-6 的预算低于第 1 档上限，输出与已提交的 RON 一致。
 """
 
+import argparse
 import math
 import os
-import sys
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 
@@ -29,8 +34,8 @@ LEVELS = {
     6: (10, "vault_husk", 50, 6, ["tuberblast"], ["husk", "twig_husk", "clay_husk", "sprinter_husk"]),
     7: (10, "shield_husk", 50, 7, ["emberbulb"], ["husk", "twig_husk", "clay_husk", "sprinter_husk", "vault_husk"]),
     8: (11, "carrier_husk", 50, 7, ["gourdshell"], ["husk", "twig_husk", "clay_husk", "sprinter_husk", "vault_husk", "shield_husk"]),
-    9: (12, "drum_husk", 50, 8, ["snapmaw", "gustbloom"], ["husk", "twig_husk", "clay_husk", "sprinter_husk", "vault_husk", "shield_husk", "carrier_husk"]),
-    10: (14, None, 75, 8, ["sunlantern"], ["husk", "twig_husk", "clay_husk", "sprinter_husk", "vault_husk", "shield_husk", "carrier_husk", "drum_husk"]),
+    9: (12, "drum_husk", 50, 8, ["snapmaw", "sunlantern"], ["husk", "twig_husk", "clay_husk", "sprinter_husk", "vault_husk", "shield_husk", "carrier_husk"]),
+    10: (14, None, 75, 8, ["gustbloom"], ["husk", "twig_husk", "clay_husk", "sprinter_husk", "vault_husk", "shield_husk", "carrier_husk", "drum_husk"]),
 }
 
 INTENT = {
@@ -50,16 +55,27 @@ def flags(waves):
     return {waves - 1} | ({math.ceil(waves / 2) - 1} if waves >= MID_FLAG_MIN_WAVES else set())
 
 
-def budgets(n, waves):
+# SPEC 10.2（v1.1）预算上限阶梯：档 → (cap, flag_cap)
+TIERS = {1: (40, 70), 2: (35, 60), 3: (30, 50)}
+
+
+def raw_budgets(n, waves):
+    """未钳制的预算（flag 波已 ×2）。"""
     fl = flags(waves)
     return [math.ceil(base(n) * k ** 1.15) * (2 if k - 1 in fl else 1) for k in range(1, waves + 1)]
+
+
+def budgets(n, waves, cap, flag_cap):
+    """按上限钳制后的预算。"""
+    fl = flags(waves)
+    return [min(b, flag_cap if k in fl else cap) for k, b in enumerate(raw_budgets(n, waves))]
 
 
 # 第三次调整（负责人批准，docs/levels.md）：1-9 / 1-10 的余数不再全部用 husk 补齐，
 # 而是优先用“每点威胁生命更低”的敌人（疾行 10/2、跳栏 17/3），husk 只补最后的 1 点
 LOW_HP_FILLER = {9: ["vault_husk", "sprinter_husk"], 10: ["sprinter_husk", "carrier_husk", "vault_husk"]}
 # 低生命填充从第几波开始（1-10 没有“新敌人”，前几波若全是疾行 / 跳栏会过早压垮经济）
-FILLER_FROM = {9: 3, 10: int(__import__("os").environ.get("FILLER_FROM_10", "6"))}
+FILLER_FROM = {9: 3, 10: 6}
 # 第三次调整：1-9 / 1-10 的波间隔（tick）
 DELAY_OVERRIDE = {9: (3600, 3300, 3300), 10: (3600, 3300, 3300)}
 
@@ -115,14 +131,22 @@ def delays(n, waves):
     return out
 
 
-def level_ron(n):
+def level_ron(n, cap, flag_cap):
     waves, new, dew, slots, unlock, pool = LEVELS[n]
     full_pool = pool + ([new] if new else [])
-    b = budgets(n, waves)
+    raw = raw_budgets(n, waves)
+    b = budgets(n, waves, cap, flag_cap)
     fl = flags(waves)
     d = delays(n, waves)
+    if b == raw:
+        head = f"// SPEC 10.2 关卡 1-{n}：{INTENT[n]}。base {base(n):.3f}，预算 {b}（flag 波已 ×2，docs/levels.md）。"
+    else:
+        tier = next((t for t, c in TIERS.items() if c == (cap, flag_cap)), None)
+        limit = f"第 {tier} 档上限 {cap} / {flag_cap}" if tier else f"上限 {cap} / {flag_cap}"
+        head = (f"// SPEC 10.2 关卡 1-{n}：{INTENT[n]}。base {base(n):.3f}，{limit}，"
+                f"预算 {b}（flag 波已 ×2，docs/levels.md）。")
     lines = [
-        f"// SPEC 10.2 关卡 1-{n}：{INTENT[n]}。base {base(n):.3f}，预算 {b}（flag 波已 ×2，docs/levels.md）。",
+        head,
         "// 由 scripts/gen_levels.py 按预算生成初稿，调整记录见 docs/levels.md。",
         "Level(",
         f'    id: "1-{n}",',
@@ -158,14 +182,31 @@ def level_ron(n):
 
 
 def main():
-    dry = "--dry-run" in sys.argv
-    only = {int(a.split("-")[1]) for a in sys.argv[1:] if a.startswith("1-")}
+    ap = argparse.ArgumentParser(description="按 SPEC 10.2 威胁预算与上限阶梯生成 1-4 ～ 1-10 的波次初稿。")
+    ap.add_argument("levels", nargs="*", metavar="1-N", help="只重写这些关卡（默认 1-4 ～ 1-10 全部）")
+    ap.add_argument("--tier", type=int, choices=sorted(TIERS), help="按 SPEC 10.2 上限阶梯取 cap / flag_cap")
+    ap.add_argument("--cap", type=int, help="非 flag 波预算上限（默认第 1 档 40）")
+    ap.add_argument("--flag-cap", type=int, help="flag 波预算上限（默认第 1 档 70）")
+    ap.add_argument("--dry-run", action="store_true", help="只打印预算表，不写文件")
+    args = ap.parse_args()
+    tier_cap, tier_flag_cap = TIERS[args.tier or 1]
+    cap = args.cap if args.cap is not None else tier_cap
+    flag_cap = args.flag_cap if args.flag_cap is not None else tier_flag_cap
+    only = set()
+    for a in args.levels:
+        try:
+            only.add(int(a.split("-")[1]))
+        except (IndexError, ValueError):
+            ap.error(f"关卡参数应形如 1-N：{a}")
+    unknown = only - set(LEVELS)
+    if unknown:
+        ap.error(f"本脚本只生成 1-4 ～ 1-10：{sorted(unknown)}")
     for n in LEVELS:
         if only and n not in only:
             continue
-        text, b = level_ron(n)
+        text, b = level_ron(n, cap, flag_cap)
         print(f"1-{n}: {b}")
-        if not dry:
+        if not args.dry_run:
             with open(os.path.join(ROOT, "assets", "data", "levels", f"1-{n}.level.ron"), "w", encoding="utf-8") as f:
                 f.write(text)
 

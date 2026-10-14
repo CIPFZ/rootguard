@@ -6,7 +6,7 @@ use rootguard_app::save::SaveLocation;
 use rootguard_app::{BattleScene, build_app_full};
 use rootguard_core::components::{Cell, DefenderRef, DewPickup, Health, OverlayOf};
 use rootguard_core::events::UiAction;
-use rootguard_core::resources::{BattleState, CardTray, Phase};
+use rootguard_core::resources::{BattleState, CardTray, LaneState, Phase};
 use rootguard_core::{DefenderId, LevelId};
 use trellia::prelude::*;
 
@@ -99,5 +99,24 @@ pub fn card_ready(world: &World, slot: usize) -> bool {
         .get::<CardTray>()
         .and_then(|t| t.cards.get(slot))
         .is_some_and(|c| c.ready)
+}
+
+/// 已触发的 Hose Burst 数（SPEC 10.3）。
+///
+/// `HoseTriggered` 由 `SfxPlugin` 在当帧取走（ADR-004 第 4 条），帧结束后测试读不到事件；
+/// `lane_defense_system` 发出该事件当且仅当把某条激活车道的 `hose_available` 置为 false，
+/// 且每条车道至多一次，因此“激活车道中已用掉的 Hose 数”与事件数一一对应。
+pub fn hoses_used(runner: &HeadlessRunner) -> usize {
+    runner
+        .app()
+        .world()
+        .resources
+        .get::<LaneState>()
+        .map_or(0, |l| {
+            l.active_rows()
+                .into_iter()
+                .filter(|&r| !l.hose_available[usize::from(r)])
+                .count()
+        })
 }
 pub mod bot;
