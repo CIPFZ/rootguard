@@ -1,4 +1,5 @@
-//! SPEC 16.2 `every_level_has_scripted_solution`：每关 `tests/scripts/<id>.ron` 回放必胜。
+//! SPEC 16.2 `every_level_has_scripted_solution`：每关 `tests/scripts/<id>.ron` 回放必胜；
+//! `scripted_solution_uses_at_most_one_hose`：回放全程 Hose ≤ 1（SPEC 10.3）。
 //!
 //! 运行：`cargo test -p rootguard-app --test scripted_levels`
 //!
@@ -107,6 +108,25 @@ fn every_level_has_scripted_solution() {
         );
         println!("{id}: 胜利于 level_tick {tick}，Hose {hoses}");
     }
+}
+
+/// SPEC 10.3 / 16.2：每关脚本解回放全程 `HoseTriggered` ≤ 1 次。
+#[test]
+fn scripted_solution_uses_at_most_one_hose() {
+    let ids = level_ids();
+    assert!(!ids.is_empty());
+    let over: Vec<String> = ids
+        .iter()
+        .filter_map(|id| {
+            let (_, _, hoses) = replay(&load_script(id));
+            (hoses > 1).then(|| format!("{id}: {hoses}"))
+        })
+        .collect();
+    assert!(
+        over.is_empty(),
+        "脚本解用掉的 Hose 超过 1 个（SPEC 10.3）：{}",
+        over.join("，")
+    );
 }
 
 /// 每关的录制参数：选卡（须为当时已解锁的卡牌）与机器人配置。参数由离线参数搜索得到。
