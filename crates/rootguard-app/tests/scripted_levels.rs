@@ -170,6 +170,7 @@ fn record_plan(id: &str) -> (Vec<&'static str>, BotConfig) {
                 ..base
             },
         ),
+        // SPEC v1.1 第 1 档重做：search_plans 卡组 0 × 网格第 163 组
         "1-8" => (
             vec![
                 "twinpod",
@@ -180,7 +181,14 @@ fn record_plan(id: &str) -> (Vec<&'static str>, BotConfig) {
                 "tuberblast",
                 "emberbulb",
             ],
-            tuned(40.0, 1, 2),
+            BotConfig {
+                producers_per_lane: 2,
+                econ_until: 8_000,
+                emergency_x: 760.0,
+                focus: 25.0,
+                mine_min_hp: 15,
+                ..base
+            },
         ),
         "1-9" => (
             vec![
