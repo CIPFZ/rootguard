@@ -3,6 +3,8 @@ name: CI
 on:
   push:
     branches: [main]
+    # v* tag：在检查与打包通过后把三平台安装包上传为 GitHub Release 资产（SPEC 20.3，ADR-011）
+    tags: ["v*"]
   pull_request:
 
 env:
@@ -67,3 +69,67 @@ jobs:
             dist/*.tar.gz
             dist/*.zip
           if-no-files-found: error
+
+      - name: README 截图（Xvfb，占位 / 皮肤）
+        if: github.event_name == 'push' && runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y xvfb imagemagick libgl1-mesa-dri
+          ./scripts/screenshot.sh --out dist/screenshots
+
+      - name: 上传截图
+        if: github.event_name == 'push' && runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rootguard-screenshots
+          path: dist/screenshots/*.png
+          if-no-files-found: error
+
+  release:
+    name: GitHub Release
+    needs: check
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 核对 tag 与 workspace 版本
+        run: |
+          version=$(sed -n '/^\[workspace.package\]/,/^\[/s/^version *= *"\(.*\)"/\1/p' Cargo.toml)
+          if [ "v${version}" != "${GITHUB_REF_NAME}" ]; then
+            echo "tag ${GITHUB_REF_NAME} 与 Cargo.toml 版本 ${version} 不一致" >&2
+            exit 1
+          fi
+
+      - name: 从 CHANGELOG.md 提取发布说明
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '
+            index($0, "## [" v "]") == 1 { on = 1; next }
+            on && /^## \[/ { exit }
+            on && /^\[[^]]+\]: / { exit }
+            on { print }
+          ' CHANGELOG.md > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "CHANGELOG.md 中没有 ${version} 的条目" >&2
+            exit 1
+          fi
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: rootguard-*-latest
+          path: dist
+          merge-multiple: true
+
+      - name: 创建 Release 并上传安装包
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ls -l dist
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/*.tar.gz dist/*.zip --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/*.tar.gz dist/*.zip \
+              --verify-tag --title "Rootguard ${GITHUB_REF_NAME}" --notes-file release-notes.md
+          fi
