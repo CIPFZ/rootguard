@@ -94,7 +94,11 @@ fn load(world: &mut World) -> Result<AudioBank, AssetError> {
     Ok(AudioBank { sfx, music })
 }
 
-/// 切换循环 BGM；与当前曲目相同时不重新开始。
+/// 场景切换时 BGM 交叉淡化的时长（tick，E-5）。
+pub const MUSIC_CROSSFADE_TICKS: u32 = 60;
+
+/// 切换循环 BGM；与当前曲目相同时不重新开始。首次播放直接开始（`PlayMusic`），
+/// 之后的切换在 [`MUSIC_CROSSFADE_TICKS`] 内交叉淡化（`CrossfadeMusic`，SPEC 15 E-5，ADR-009）。
 pub fn play_music(world: &mut World, track: Track) {
     let Some(handle) = world
         .resources
@@ -109,9 +113,13 @@ pub fn play_music(world: &mut World, track: Track) {
     if state.music == Some(track) {
         return;
     }
-    state.music = Some(track);
+    let first = state.music.replace(track).is_none();
     if let Some(queue) = world.resources.get_mut::<AudioQueue>() {
-        queue.play_music(handle, true);
+        if first {
+            queue.play_music(handle, true);
+        } else {
+            queue.crossfade_music(handle, MUSIC_CROSSFADE_TICKS);
+        }
     }
 }
 

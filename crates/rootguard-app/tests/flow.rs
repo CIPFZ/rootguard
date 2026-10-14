@@ -187,10 +187,12 @@ fn audio_events_mapped() {
     let bank = runner.app().world().resources.expect::<AudioBank>();
     let mut keys = Vec::new();
     let mut music = 0;
+    let mut crossfades = Vec::new();
     for req in &log {
         match req {
             AudioRequest::PlaySfx { clip, .. } => keys.extend(bank.key_of(*clip)),
             AudioRequest::PlayMusic { .. } => music += 1,
+            AudioRequest::CrossfadeMusic { ticks, .. } => crossfades.push(*ticks),
             _ => {}
         }
     }
@@ -203,9 +205,14 @@ fn audio_events_mapped() {
     ] {
         assert!(keys.contains(&expected), "缺少 {expected}：{keys:?}");
     }
+    // 首次播放（标题）为 PlayMusic，之后切到对局 / 结算 BGM 为交叉淡化（E-5，ADR-009）
+    assert_eq!(music, 1, "标题 BGM 以 PlayMusic 开始（次数 {music}）");
     assert!(
-        music >= 2,
-        "标题与对局 / 结算各自播放 BGM（PlayMusic 次数 {music}）"
+        crossfades.len() >= 2
+            && crossfades
+                .iter()
+                .all(|&t| t == rootguard_app::sfx::MUSIC_CROSSFADE_TICKS),
+        "对局与结算 BGM 应交叉淡化：{crossfades:?}"
     );
 }
 
