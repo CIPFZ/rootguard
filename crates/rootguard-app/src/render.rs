@@ -3,7 +3,7 @@
 //!
 //! 只读模拟状态，不修改任何模拟组件或资源（AGENT 4.4）。
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
 use rootguard_core::Grid;
 use rootguard_core::components::{
@@ -54,14 +54,104 @@ fn phase(e: Entity, tick: u64) -> u64 {
     tick + u64::from(e.id()) * 7
 }
 
-/// 呈现层状态：受伤闪白时刻（实体 → 最近受伤的 `fixed_tick`）。只做按键查找，不迭代（确定性无关）。
+/// 收集后的 Dew 飞向 HUD 计数的时长（秒，SPEC 9“飘向 HUD 动画”）。
+const DEW_FLY_SECS: f32 = 0.5;
+/// 飞行结束时的缩放。
+const DEW_FLY_END_SCALE: f32 = 0.5;
+/// Dew 消失时过期计时剩余不超过该值视为“过期”而非“被收集”（一帧最多推进 5 tick，引擎 SPEC 4.2）。
+const DEW_EXPIRE_SLACK_TICKS: u32 = 5;
+/// 横幅入场时长（秒）与起始下移量（逻辑像素）。
+const BANNER_IN_SECS: f32 = 0.35;
+const BANNER_RISE_PX: f32 = 24.0;
+
+/// 呈现层状态（纯视觉，AGENT 4.4）：受伤闪白时刻、Dew 收集飞行、横幅入场补间。
+/// 补间按真实帧时间推进（引擎 SPEC 4.7），不参与模拟。
 #[derive(Default)]
 pub struct RenderState {
+    /// 实体 → 最近受伤的 `fixed_tick`（只做按键查找）。
     hurt_at: HashMap<Entity, u64>,
+    /// 上一帧可见的 Dew：实体位 → (位置, 过期计时剩余)。
+    dew_seen: BTreeMap<u64, (Vec2, u32)>,
+    /// 飞向 HUD 的 Dew。
+    flying: Vec<TweenVec2>,
+    /// 当前横幅文字与入场补间（0 → 1）。
+    banner: Option<(String, TweenF32)>,
 }
 
-/// `Update`：记录本帧可见的受伤事件，供闪白使用。
-pub fn track_hurt(world: &mut World) {
+impl RenderState {
+    /// 正在飞向 HUD 的 Dew 数。
+    #[must_use]
+    pub fn flying_dew(&self) -> usize {
+        self.flying.len()
+    }
+
+    /// 横幅入场进度 0..=1（无横幅时为 `None`）。
+    #[must_use]
+    pub fn banner_progress(&self) -> Option<f32> {
+        self.banner.as_ref().map(|(_, t)| t.value())
+    }
+}
+
+/// `Update`（`BattleScene::update`，暂停时不调用）：推进全部呈现层状态。
+pub fn track_visuals(world: &mut World) {
+    track_hurt(world);
+    let dt = world.resources.expect::<Time>().real_dt;
+    let dew: BTreeMap<u64, (Vec2, u32)> = world
+        .query::<(Entity, &Transform2D, &DewPickup)>()
+        .iter()
+        .map(|(e, t, d)| (e.to_bits().get(), (t.pos, d.expire.remaining)))
+        .collect();
+    let banner = hud::banner(world);
+    let Some(state) = world.resources.get_mut::<RenderState>() else {
+        return;
+    };
+    for (key, (pos, expire_left)) in &state.dew_seen {
+        if !dew.contains_key(key) && *expire_left > DEW_EXPIRE_SLACK_TICKS {
+            state.flying.push(TweenVec2::new(
+                *pos,
+                hud::DEW_ICON,
+                DEW_FLY_SECS,
+                Easing::EaseOutQuad,
+            ));
+        }
+    }
+    state.dew_seen = dew;
+    for t in &mut state.flying {
+        t.advance(dt);
+    }
+    state.flying.retain(|t| !t.finished());
+    match (banner, &mut state.banner) {
+        (None, slot) => *slot = None,
+        (Some(text), Some((current, tween))) if *current == text => {
+            tween.advance(dt);
+        }
+        (Some(text), slot) => {
+            *slot = Some((
+                text,
+                TweenF32::new(0.0, 1.0, BANNER_IN_SECS, Easing::EaseOutQuad),
+            ));
+        }
+    }
+}
+
+/// 横幅的绘制参数：(文字, 入场进度 0..=1)。
+#[must_use]
+pub fn banner_anim(world: &World) -> Option<(String, f32)> {
+    let state = world.resources.get::<RenderState>()?;
+    state
+        .banner
+        .as_ref()
+        .map(|(text, t)| (text.clone(), t.value()))
+}
+
+/// 横幅入场时的下移量（逻辑像素）。
+#[must_use]
+pub fn banner_offset(progress: f32) -> f32 {
+    (1.0 - progress) * BANNER_RISE_PX
+}
+
+/// 记录本帧可见的受伤事件，供闪白使用。
+fn track_hurt(world: &mut World) {
     let tick = world.resources.expect::<Time>().fixed_tick;
     let hurt: Vec<Entity> = world
         .events
@@ -144,6 +234,27 @@ pub fn draw_battle(world: &mut World) {
         };
         if !painter.is_some_and(|sk| sk.draw(&mut list, DEW_LAYER, pos, pos.y, pose)) {
             draw_dew_placeholder(&mut list, pos, 1.0);
+        }
+    }
+    // 收集后飞向 HUD 的 Dew（纯视觉，SPEC 9）
+    if let Some(state) = world.resources.get::<RenderState>() {
+        for t in &state.flying {
+            let progress = if t.duration_secs > 0.0 {
+                (t.elapsed_secs / t.duration_secs).clamp(0.0, 1.0)
+            } else {
+                1.0
+            };
+            let pos = t.value();
+            let pose = Pose {
+                clip: DEW_CLIP,
+                elapsed: 0,
+                flash: false,
+                tint: Color::WHITE,
+            };
+            if !painter.is_some_and(|sk| sk.draw(&mut list, DEW_LAYER, pos, pos.y, pose)) {
+                let scale = 1.0 + (DEW_FLY_END_SCALE - 1.0) * progress;
+                draw_dew_placeholder(&mut list, pos, scale);
+            }
         }
     }
     draw_preview(world, &mut list);

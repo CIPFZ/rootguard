@@ -15,6 +15,8 @@ pub const DEW_BOX: Rect = Rect {
     min: Vec2::new(10.0, 8.0),
     max: Vec2::new(120.0, 72.0),
 };
+/// Dew 计数框内的图标中心（收集飞行动画的终点）。
+pub const DEW_ICON: Vec2 = Vec2::new(DEW_BOX.min.x + 26.0, DEW_BOX.min.y + 32.0);
 /// 第一张卡的左上角。
 const CARD_ORIGIN: Vec2 = Vec2::new(132.0, 8.0);
 /// 卡牌尺寸。
@@ -89,12 +91,7 @@ pub fn draw(world: &World, list: &mut DrawList, painter: Option<&crate::skin::Pa
     );
     // Dew 计数
     list.rect(hud, DEW_BOX, Color::from_hex(0x4A_3A28));
-    list.circle(
-        hud,
-        DEW_BOX.min + Vec2::new(26.0, 32.0),
-        16.0,
-        Color::from_hex(0xFF_D84D),
-    );
+    list.circle(hud, DEW_ICON, 16.0, Color::from_hex(0xFF_D84D));
     list.text_aligned(
         hud,
         DEW_BOX.min + Vec2::new(76.0, 18.0),
@@ -206,13 +203,15 @@ pub fn draw(world: &World, list: &mut DrawList, painter: Option<&crate::skin::Pa
             Color::WHITE,
         );
     }
-    if let Some(text) = banner(world) {
+    // 横幅：入场时自下而上滑入并淡入（G5 横幅动画）；呈现层状态缺失时直接显示
+    let anim = crate::render::banner_anim(world).or_else(|| banner(world).map(|t| (t, 1.0)));
+    if let Some((text, progress)) = anim {
         list.text_aligned(
             hud,
-            BANNER_POS,
+            BANNER_POS + Vec2::new(0.0, crate::render::banner_offset(progress)),
             text,
             30.0,
-            Color::from_hex(0xFF_F59D),
+            Color::from_hex(0xFF_F59D).with_alpha(progress),
             TextAlign::Center,
         );
     }

@@ -200,7 +200,7 @@ impl Scene for BattleScene {
     }
 
     fn update(&mut self, world: &mut World) {
-        render::track_hurt(world);
+        render::track_visuals(world);
         if self.ended {
             return;
         }
