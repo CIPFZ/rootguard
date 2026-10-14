@@ -211,6 +211,29 @@ fn record_plan(id: &str) -> (Vec<&'static str>, BotConfig) {
                 ..base
             },
         ),
+        // SPEC v1.1 第 1 档：search_plans 卡组 2 × 网格第 225 组
+        "1-10" => (
+            vec![
+                "twinpod",
+                "sunlantern",
+                "dewcup",
+                "barkwall",
+                "frostpod",
+                "thornmat",
+                "tuberblast",
+                "emberbulb",
+            ],
+            BotConfig {
+                producers_per_lane: 2,
+                econ_until: 8_000,
+                emergency_x: 760.0,
+                wall_min_power: 1.0,
+                focus: 25.0,
+                min_shooters: 2,
+                mine_min_hp: 15,
+                ..base
+            },
+        ),
         _ => (vec![], base),
     }
 }
@@ -532,6 +555,13 @@ fn search_plans() {
         grid.len(),
         results.iter().filter(|r| won(&r.2)).count()
     );
+    for (d, deck) in decks.iter().enumerate() {
+        let n = results
+            .iter()
+            .filter(|r| r.0 == d && won(&r.2) && r.4 <= 1)
+            .count();
+        println!("  卡组 {d} 合格 {n}：{}", deck.join(" / "));
+    }
     for &(d, g, phase, tick, hoses) in results.iter().take(12) {
         let c = &grid[g];
         println!(

@@ -1,0 +1,28 @@
+// SPEC 10.2 关卡 1-10：阶段终局。base 3.000，第 1 档上限 40 / 70，预算 [3, 7, 11, 15, 20, 24, 29, 33, 38, 40, 40, 40, 40, 70]（flag 波已 ×2，docs/levels.md）。
+// 由 scripts/gen_levels.py 按预算生成初稿，调整记录见 docs/levels.md。
+Level(
+    id: "1-10",
+    seed: 110,
+    lanes: [0, 1, 2, 3, 4],
+    start_dew: 75,
+    sky_dew: true,
+    card_slots: 8,
+    cards: Choose,
+    unlock_on_win: ["gustbloom"],
+    waves: [
+        Wave(delay_ticks: 3600, flag: false, spawns: [(enemy: "husk", count: 3, lane: Fixed(2))]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "husk", count: 4, lane: Fixed(1)), (enemy: "husk", count: 3, lane: Fixed(3))]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "husk", count: 11, lane: Spread)]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "husk", count: 15, lane: Spread)]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "twig_husk", count: 1, lane: Random), (enemy: "sprinter_husk", count: 1, lane: Random), (enemy: "husk", count: 16, lane: Spread)]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "twig_husk", count: 1, lane: Random), (enemy: "sprinter_husk", count: 5, lane: Spread), (enemy: "carrier_husk", count: 2, lane: Spread), (enemy: "vault_husk", count: 2, lane: Spread)]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "vault_husk", count: 3, lane: Spread), (enemy: "carrier_husk", count: 3, lane: Spread), (enemy: "twig_husk", count: 1, lane: Random), (enemy: "sprinter_husk", count: 4, lane: Spread), (enemy: "husk", count: 1, lane: Random)]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "vault_husk", count: 3, lane: Spread), (enemy: "carrier_husk", count: 4, lane: Spread), (enemy: "twig_husk", count: 1, lane: Random), (enemy: "sprinter_husk", count: 5, lane: Spread)]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "clay_husk", count: 1, lane: Random), (enemy: "shield_husk", count: 1, lane: Random), (enemy: "vault_husk", count: 3, lane: Spread), (enemy: "carrier_husk", count: 3, lane: Spread), (enemy: "twig_husk", count: 2, lane: Spread), (enemy: "sprinter_husk", count: 4, lane: Spread)]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "clay_husk", count: 1, lane: Random), (enemy: "shield_husk", count: 1, lane: Random), (enemy: "vault_husk", count: 3, lane: Spread), (enemy: "carrier_husk", count: 3, lane: Spread), (enemy: "twig_husk", count: 2, lane: Spread), (enemy: "sprinter_husk", count: 5, lane: Spread)]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "clay_husk", count: 1, lane: Random), (enemy: "shield_husk", count: 1, lane: Random), (enemy: "vault_husk", count: 3, lane: Spread), (enemy: "carrier_husk", count: 3, lane: Spread), (enemy: "twig_husk", count: 2, lane: Spread), (enemy: "sprinter_husk", count: 5, lane: Spread)]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "clay_husk", count: 1, lane: Random), (enemy: "shield_husk", count: 1, lane: Random), (enemy: "vault_husk", count: 3, lane: Spread), (enemy: "carrier_husk", count: 3, lane: Spread), (enemy: "twig_husk", count: 2, lane: Spread), (enemy: "sprinter_husk", count: 5, lane: Spread)]),
+        Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "clay_husk", count: 1, lane: Random), (enemy: "shield_husk", count: 1, lane: Random), (enemy: "vault_husk", count: 3, lane: Spread), (enemy: "carrier_husk", count: 3, lane: Spread), (enemy: "twig_husk", count: 2, lane: Spread), (enemy: "sprinter_husk", count: 5, lane: Spread)]),
+        Wave(delay_ticks: 3300, flag: true,  spawns: [(enemy: "drum_husk", count: 1, lane: Random), (enemy: "clay_husk", count: 1, lane: Random), (enemy: "shield_husk", count: 1, lane: Random), (enemy: "vault_husk", count: 6, lane: Spread), (enemy: "carrier_husk", count: 6, lane: Spread), (enemy: "twig_husk", count: 3, lane: Spread), (enemy: "sprinter_husk", count: 7, lane: Spread)]),
+    ],
+)
