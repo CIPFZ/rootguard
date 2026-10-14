@@ -112,6 +112,18 @@ pub fn clip_ticks(clip: &AnimationClip) -> u64 {
         .sum()
 }
 
+/// 片段从已播放 `from` tick 推进到 `to` tick 的过程中进入的带事件帧（`from` 不含、`to` 含），
+/// 语义同引擎 `AnimationEvent`“进入带事件的帧”（ADR-010）。
+pub fn events_between(clip: &AnimationClip, from: u64, to: u64) -> impl Iterator<Item = &str> {
+    (from.saturating_add(1)..=to).filter_map(move |t| {
+        let i = frame_index_at(clip, t);
+        if i == frame_index_at(clip, t - 1) {
+            return None;
+        }
+        clip.frames.get(i)?.event.as_deref()
+    })
+}
+
 /// 一次精灵绘制的参数。
 #[derive(Clone, Copy, Debug)]
 pub struct Pose<'n> {
@@ -252,5 +264,19 @@ mod tests {
         assert_eq!(frame_index_at(&once, 13), 2);
         assert_eq!(frame_index_at(&once, 1000), 2);
         assert_eq!(clip_ticks(&once), 18);
+    }
+
+    #[test]
+    fn events_between_reports_entered_event_frames() {
+        let mut eat = clip(&[10, 10, 10], true);
+        eat.frames[1].event = Some("eat_hit".into());
+        assert_eq!(events_between(&eat, 5, 9).count(), 0);
+        assert_eq!(events_between(&eat, 9, 10).collect::<Vec<_>>(), ["eat_hit"]);
+        assert_eq!(
+            events_between(&eat, 10, 19).count(),
+            0,
+            "停留在事件帧内不重复"
+        );
+        assert_eq!(events_between(&eat, 0, 70).count(), 3, "每个循环一次");
     }
 }

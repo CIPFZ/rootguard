@@ -5,7 +5,8 @@
 assets/audio/*.ogg。全部波形由本脚本从零合成，旋律由固定种子在五声音阶上随机游走生成，
 不采样、不引用任何外部音频。重新生成：
 
-    python3 scripts/gen_audio.py
+    python3 scripts/gen_audio.py              # 全部
+    python3 scripts/gen_audio.py sfx_bite     # 只生成指定文件（不带扩展名），避免无关文件因编码器差异变动
 
 输出逐字节可能随 oggenc 版本略有差异，但听感一致；生成后在 assets/SOURCES.md 登记。
 """
@@ -107,6 +108,10 @@ def sfx():
         "sfx_hose": [s * math.sin(math.pi * i / int(RATE * 0.6)) for i, s in enumerate(noise(0.6, 0.7, 0.85, seed=5, decay=10.0))],
         "sfx_win": concat(*[tone(f, f, 0.13, "tri", 0.55, decay=0.12) for f in (523, 659, 784, 1046)]),
         "sfx_lose": concat(*[tone(f, f * 0.98, 0.17, "tri", 0.55, decay=0.15) for f in (392, 330, 262, 196)]),
+        # 啃食（皮肤 eat 片段的 eat_hit 帧，ADR-010）：两下短促的低沉碎响，音量偏低，因为会频繁触发
+        "sfx_bite": concat(mix(noise(0.045, 0.32, 0.7, seed=6, decay=0.02), tone(150, 95, 0.045, "sine", 0.3, decay=0.025)),
+                           silence(0.015),
+                           mix(noise(0.035, 0.22, 0.75, seed=7, decay=0.015), tone(130, 90, 0.035, "sine", 0.2, decay=0.02))),
     }
 
 
@@ -170,8 +175,15 @@ def main():
     if not oggenc:
         sys.exit("gen_audio: 需要 oggenc（vorbis-tools）")
     os.makedirs(OUT, exist_ok=True)
+    clips = {**sfx(), **music()}
+    only = sys.argv[1:]
+    unknown = [n for n in only if n not in clips]
+    if unknown:
+        sys.exit(f"gen_audio: 未知名称 {unknown}，可选 {sorted(clips)}")
     with tempfile.TemporaryDirectory() as tmp:
-        for name, samples in {**sfx(), **music()}.items():
+        for name, samples in clips.items():
+            if only and name not in only:
+                continue
             wav = os.path.join(tmp, name + ".wav")
             write_wav(wav, samples)
             ogg = os.path.join(OUT, name + ".ogg")

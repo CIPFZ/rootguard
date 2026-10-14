@@ -4,12 +4,13 @@ mod common;
 
 use std::path::Path;
 
-use common::{lid, next_id, send, state, temp_save, top};
+use common::{battle_runner, lid, next_id, send, state, temp_save, top};
 use rootguard_app::i18n::I18n;
 use rootguard_app::save::{self, BACKUP_NAME, FILE_NAME, SaveLocation, SaveSlot};
 use rootguard_app::script::{Replay, Script};
 use rootguard_app::sfx::AudioBank;
 use rootguard_app::{TitleScene, build_app_full};
+use rootguard_core::components::{WalkState, Walker};
 use rootguard_core::data::CardRule;
 use rootguard_core::events::{Lang, UiAction, VolumeBus};
 use rootguard_core::registry::{DefenderRegistry, EnemyRegistry, LevelRegistry};
@@ -213,6 +214,59 @@ fn audio_events_mapped() {
                 .iter()
                 .all(|&t| t == rootguard_app::sfx::MUSIC_CROSSFADE_TICKS),
         "对局与结算 BGM 应交叉淡化：{crossfades:?}"
+    );
+}
+
+/// 本帧音频日志中 `key` 音效的次数。
+fn sfx_count(runner: &mut HeadlessRunner, key: &str) -> usize {
+    let log = runner.take_audio_log();
+    let bank = runner.app().world().resources.expect::<AudioBank>();
+    log.iter()
+        .filter(|req| {
+            matches!(req, AudioRequest::PlaySfx { clip, .. } if bank.key_of(*clip) == Some(key))
+        })
+        .count()
+}
+
+#[test]
+fn bite_sfx_on_eat_hit() {
+    // 1-1 中路最右格放石籽荚：第一只枯壳怪在被打死前停下啃食，eat 片段每循环进入一次 eat_hit 帧
+    // （ADR-010）。默认占位模式下同样触发：音效不随渲染模式变化。
+    let mut runner = battle_runner("1-1", &[]);
+    let mut first_eat = None;
+    let mut before = 0;
+    let mut during = 0;
+    for _ in 0..6000 {
+        let s = state(&runner).expect("对局");
+        if s.level_tick == 60 {
+            send(&mut runner, UiAction::SelectCard(0));
+            send(&mut runner, UiAction::PlaceAt { row: 2, col: 8 });
+        }
+        runner.frame();
+        let eating = runner
+            .app()
+            .world()
+            .query::<&Walker>()
+            .iter()
+            .any(|w| matches!(w.state, WalkState::Eating(_)));
+        if eating && first_eat.is_none() {
+            first_eat = state(&runner).map(|s| s.level_tick);
+        }
+        let n = sfx_count(&mut runner, "sfx.bite");
+        if first_eat.is_none() {
+            before += n;
+        } else {
+            during += n;
+        }
+        if during >= 3 {
+            break;
+        }
+    }
+    assert!(first_eat.is_some(), "枯壳怪应停下啃食石籽荚");
+    assert_eq!(before, 0, "开始啃食前不应有啃食音效");
+    assert!(
+        during >= 3,
+        "啃食期间应随 eat_hit 帧播放 sfx.bite（{during} 次）"
     );
 }
 

@@ -17,6 +17,7 @@
 | `assets/audio/sfx_hose.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | Hose Burst |
 | `assets/audio/sfx_win.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 胜利 |
 | `assets/audio/sfx_lose.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 失败 |
+| `assets/audio/sfx_bite.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，滤波噪声 + 下滑正弦） | Rootguard 项目 | 项目自有 | 啃食（eat_hit 动画帧，ADR-010） |
 | `assets/audio/bgm_title.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 标题 / 菜单 BGM（循环） |
 | `assets/audio/bgm_battle.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 对局 BGM（循环） |
 | `assets/audio/bgm_outcome.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 结算 BGM（循环） |

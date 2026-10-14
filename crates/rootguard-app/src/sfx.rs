@@ -12,7 +12,7 @@ use rootguard_core::resources::Progress;
 use trellia::prelude::*;
 
 /// 音效 key 与文件（SPEC 13 表）。
-pub const SFX: [(&str, &str); 11] = [
+pub const SFX: [(&str, &str); 12] = [
     ("sfx.shoot", "audio/sfx_shoot.ogg"),
     ("sfx.hit", "audio/sfx_hit.ogg"),
     ("sfx.hit_armor", "audio/sfx_hit_armor.ogg"),
@@ -24,7 +24,11 @@ pub const SFX: [(&str, &str); 11] = [
     ("sfx.hose", "audio/sfx_hose.ogg"),
     ("sfx.win", "audio/sfx_win.ogg"),
     ("sfx.lose", "audio/sfx_lose.ogg"),
+    ("sfx.bite", "audio/sfx_bite.ogg"),
 ];
+
+/// 皮肤 eat 片段的啃食事件帧（SPEC 12.3），由呈现层以引擎 `AnimationEvent` 发出（ADR-010）。
+pub const EAT_HIT_EVENT: &str = "eat_hit";
 
 /// 同一 tick 同一音效最多触发次数（SPEC 13）。
 const MAX_SAME_SFX_PER_TICK: usize = 2;
@@ -183,6 +187,12 @@ fn sfx_system(world: &mut World) {
             .map(|_| "sfx.flag_wave"),
     );
     keys.extend(drain::<HoseTriggered>(world).iter().map(|_| "sfx.hose"));
+    keys.extend(
+        drain::<AnimationEvent>(world)
+            .iter()
+            .filter(|a| a.event == EAT_HIT_EVENT)
+            .map(|_| "sfx.bite"),
+    );
     keys.extend(drain::<BattleEnded>(world).iter().map(|e| match e.outcome {
         Outcome::Won => "sfx.win",
         Outcome::Lost => "sfx.lose",

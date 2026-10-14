@@ -58,13 +58,15 @@ fn phase(e: Entity, tick: u64) -> u64 {
 const DEW_FLY_SECS: f32 = 0.5;
 /// 飞行结束时的缩放。
 const DEW_FLY_END_SCALE: f32 = 0.5;
-/// Dew 消失时过期计时剩余不超过该值视为“过期”而非“被收集”（一帧最多推进 5 tick，引擎 SPEC 4.2）。
-const DEW_EXPIRE_SLACK_TICKS: u32 = 5;
+/// 一帧最多推进的 FixedUpdate tick 数（引擎 SPEC 4.2）。
+const MAX_TICKS_PER_FRAME: u32 = 5;
+/// Dew 消失时过期计时剩余不超过该值视为“过期”而非“被收集”。
+const DEW_EXPIRE_SLACK_TICKS: u32 = MAX_TICKS_PER_FRAME;
 /// 横幅入场时长（秒）与起始下移量（逻辑像素）。
 const BANNER_IN_SECS: f32 = 0.35;
 const BANNER_RISE_PX: f32 = 24.0;
 
-/// 呈现层状态（纯视觉，AGENT 4.4）：受伤闪白时刻、Dew 收集飞行、横幅入场补间。
+/// 呈现层状态（纯视觉，AGENT 4.4）：受伤闪白时刻、Dew 收集飞行、横幅入场补间、动画事件进度。
 /// 补间按真实帧时间推进（引擎 SPEC 4.7），不参与模拟。
 #[derive(Default)]
 pub struct RenderState {
@@ -76,6 +78,8 @@ pub struct RenderState {
     flying: Vec<TweenVec2>,
     /// 当前横幅文字与入场补间（0 → 1）。
     banner: Option<(String, TweenF32)>,
+    /// 已发送动画事件的最后一个 `fixed_tick`（进入对局后的第一帧为 `None`）。
+    anim_tick: Option<u64>,
 }
 
 impl RenderState {
@@ -95,6 +99,7 @@ impl RenderState {
 /// `Update`（`BattleScene::update`，暂停时不调用）：推进全部呈现层状态。
 pub fn track_visuals(world: &mut World) {
     track_hurt(world);
+    emit_anim_events(world);
     let dt = world.resources.expect::<Time>().real_dt;
     let dew: BTreeMap<u64, (Vec2, u32)> = world
         .query::<(Entity, &Transform2D, &DewPickup)>()
@@ -167,6 +172,55 @@ fn track_hurt(world: &mut World) {
         state
             .hurt_at
             .retain(|_, at| tick.saturating_sub(*at) < HURT_FLASH_TICKS);
+    }
+}
+
+/// 敌人 eat 片段进入事件帧（`eat_hit`）时发送引擎 `AnimationEvent`（SPEC 12.3，ADR-010），供音效消费。
+///
+/// 帧与绘制时一样由 `fixed_tick` 推导（[`phase`]，ADR-007），不使用引擎 `Animator`；与渲染模式无关，
+/// 只要皮肤已加载就发送，使两种模式的音效一致。一帧最多补发 [`MAX_TICKS_PER_FRAME`] 个 tick，
+/// 暂停后恢复时不会补发暂停期间的事件。
+fn emit_anim_events(world: &mut World) {
+    let tick = world.resources.expect::<Time>().fixed_tick;
+    let Some(last) = world
+        .resources
+        .get_mut::<RenderState>()
+        .and_then(|s| s.anim_tick.replace(tick))
+    else {
+        return;
+    };
+    let from = last.max(tick.saturating_sub(u64::from(MAX_TICKS_PER_FRAME)));
+    if from >= tick {
+        return;
+    }
+    let (Some(skin), Some(clips)) = (
+        world.resources.get::<skin::SkinAssets>(),
+        world.resources.get::<Assets<AnimationClip>>(),
+    ) else {
+        return;
+    };
+    let mut events = Vec::new();
+    for (e, h, armor, enemy, walker) in world
+        .query::<(Entity, &Health, Option<&Armor>, &EnemyRef, &Walker)>()
+        .iter()
+    {
+        if !h.alive() || !matches!(walker.state, WalkState::Eating(_)) {
+            continue;
+        }
+        let armored = armor.is_some_and(|a| a.hp > 0);
+        let name = enemy_clip(|c| skin.has_clip(c), enemy.id.as_str(), true, armored);
+        let Some(clip) = skin.clip(&name).and_then(|h| clips.get(h)) else {
+            continue;
+        };
+        for event in skin::events_between(clip, phase(e, from), phase(e, tick)) {
+            events.push(AnimationEvent {
+                entity: e,
+                event: event.to_owned(),
+            });
+        }
+    }
+    for event in events {
+        world.events.send(event);
     }
 }
 
@@ -495,11 +549,11 @@ fn draw_defenders(
 }
 
 /// 敌人当前应播放的片段（SPEC 12.3：walk / eat，护甲破损后换 `bare_` 版）。
-fn enemy_clip(sk: &Painter<'_>, id: &str, eating: bool, armored: bool) -> String {
+fn enemy_clip(has: impl Fn(&str) -> bool, id: &str, eating: bool, armored: bool) -> String {
     let act = if eating { "eat" } else { "walk" };
     if !armored {
         let bare = format!("{id}_bare_{act}");
-        if sk.has(&bare) {
+        if has(&bare) {
             return bare;
         }
     }
@@ -539,7 +593,7 @@ fn draw_enemies(
         let armored = armor.is_some_and(|a| a.hp > 0);
         if let Some(sk) = painter {
             let eating = matches!(walker.state, WalkState::Eating(_));
-            let clip = enemy_clip(sk, enemy.id.as_str(), eating, armored);
+            let clip = enemy_clip(|c| sk.has(c), enemy.id.as_str(), eating, armored);
             let tint = if status.chilled() {
                 mix(Color::WHITE, color(palette::CHILL_TINT), CHILL_MIX)
             } else {
