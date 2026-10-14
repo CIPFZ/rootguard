@@ -44,36 +44,13 @@ impl SkinAssets {
     /// 清单、图集、图像或任一片段缺失 / 解析失败 / 校验失败时返回 [`AssetError`]。
     pub fn load(world: &mut World, server: &AssetServer) -> Result<Self, AssetError> {
         let manifest: Manifest = server.load_ron(MANIFEST)?;
-        // 引擎报告 3.8：加载需要同时可变借用多个 Assets<T>（E-2 合入后改用辅助函数）
-        let mut images = world
-            .resources
-            .remove::<Assets<Image>>()
-            .unwrap_or_default();
-        let mut atlases = world
-            .resources
-            .remove::<Assets<Atlas>>()
-            .unwrap_or_default();
-        let mut clips = world
-            .resources
-            .remove::<Assets<AnimationClip>>()
-            .unwrap_or_default();
-        let loaded =
-            load_atlas(server, &mut images, &mut atlases, &manifest.atlas).and_then(|atlas| {
-                let mut by_name = BTreeMap::new();
-                for name in &manifest.clips {
-                    let rel = format!("{ANIM_DIR}/{name}.anim.ron");
-                    let handle = load_clip(server, &atlases, &mut clips, atlas, &rel)?;
-                    by_name.insert(name.clone(), handle);
-                }
-                Ok(Self {
-                    atlas,
-                    clips: by_name,
-                })
-            });
-        world.resources.insert(images);
-        world.resources.insert(atlases);
-        world.resources.insert(clips);
-        loaded
+        let atlas = load_atlas_into(world, &manifest.atlas)?;
+        let mut clips = BTreeMap::new();
+        for name in &manifest.clips {
+            let rel = format!("{ANIM_DIR}/{name}.anim.ron");
+            clips.insert(name.clone(), load_clip_into(world, atlas, &rel)?);
+        }
+        Ok(Self { atlas, clips })
     }
 
     /// 片段名是否存在。

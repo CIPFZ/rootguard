@@ -82,14 +82,7 @@ struct AudioState {
 }
 
 fn load(world: &mut World) -> Result<AudioBank, AssetError> {
-    let Some(server) = world.resources.get::<AssetServer>().cloned() else {
-        return Err(AssetError::RootNotFound("assets".into()));
-    };
-    let mut add = |rel: &'static str| -> Result<Handle<AudioClip>, AssetError> {
-        let bytes = server.load_audio(rel)?;
-        let clips = world.resources.expect_mut::<Assets<AudioClip>>();
-        Ok(clips.add_with_path(rel, bytes))
-    };
+    let mut add = |rel: &'static str| load_audio_into(world, rel);
     let mut sfx = BTreeMap::new();
     for (key, rel) in SFX {
         sfx.insert(key, add(rel)?);
