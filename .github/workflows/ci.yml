@@ -52,3 +52,18 @@ jobs:
       - name: 知识产权禁用词
         if: runner.os != 'Windows'
         run: ./scripts/check_ip.sh
+
+      - name: 打包（发布构建，不带 devtools，SPEC 17 G5）
+        if: github.event_name == 'push'
+        shell: bash
+        run: ./scripts/package.sh
+
+      - name: 上传安装包
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rootguard-${{ matrix.os }}
+          path: |
+            dist/*.tar.gz
+            dist/*.zip
+          if-no-files-found: error
