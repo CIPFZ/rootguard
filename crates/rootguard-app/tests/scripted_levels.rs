@@ -150,19 +150,24 @@ fn record_plan(id: &str) -> (Vec<&'static str>, BotConfig) {
             ],
             tuned(25.0, 1, 2),
         ),
+        // SPEC v1.1 第 1 档重做：search_plans 卡组 1 × 网格第 355 组
         "1-7" => (
             vec![
                 "twinpod",
                 "dewcup",
                 "barkwall",
                 "frostpod",
-                "pebble_pod",
                 "thornmat",
                 "tuberblast",
             ],
             BotConfig {
-                mine_min_hp: 30,
-                ..tuned(40.0, 1, 2)
+                producers_per_lane: 2,
+                econ_until: 8_000,
+                emergency_x: 760.0,
+                focus: 40.0,
+                min_shooters: 2,
+                mine_min_hp: 15,
+                ..base
             },
         ),
         "1-8" => (
