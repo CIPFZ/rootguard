@@ -5,16 +5,20 @@
 - 2026-10-14 会话 2：接手，上下文重建自仓库文件（SPEC v1.1、AGENT v1.1、负责人裁决、ADR-001 ～ 005、
   引擎报告第 3 ～ 4 节）。起点：`cargo build/test --workspace` 绿色，41 个测试。负责人裁决文件原在仓库根目录
   且未入库，按 AGENT.md 移至 `docs/owner-decisions/2026-10-14-g4-levels.md` 并与 SPEC / AGENT v1.1 一并提交。
-  计划：执行 AGENT.md 第 9 章 G4 返工清单。
+  执行 AGENT.md 第 9 章 G4 返工清单并关闭 G4（手动试玩待负责人）：新增 `scripted_solution_uses_at_most_one_hose`，
+  `gen_levels.py --tier/--cap/--flag-cap`，参数搜索工具 `search_plans`；1-7 / 1-8 / 1-10 第 1 档、1-9 第 2 档重做，
+  另发现 1-3 原脚本解 Hose 2 并重录（ADR-006）。测试 42 个全绿，golden 未变。
 - 2026-10-14 会话 1（续）：负责人批准对 1-9 / 1-10 做第三次波次调整；1-9 可解并提交，1-10 仍不可解，再次停下提问。
 - 2026-10-13 会话 1：通读 SPEC.md / AGENT.md、引擎 v1 报告、ADR-001 ～ 007 与 `examples/lane_demo`；
   计划完成 G0 骨架并开始 G1。
 
 ## 给项目负责人的待办
 
-- [ ] **【阻塞 G4】1-10 在第三次调整后仍无法写出脚本解**（AGENT.md 3.5）：详见 `docs/levels.md`“1-4 ～ 1-10 的设计与调整记录”。
-  可选方向：放缓后期预算曲线（偏离 SPEC 10.2 公式）、提高 1-10 起始 Dew（偏离 10.2 关卡表）、或缩减波数。
-
+- [x] ~~【阻塞 G4】1-10 无法写出脚本解~~：负责人裁决 2026-10-14（SPEC v1.1 预算上限阶梯），已按第 1 档解决。
+- [ ] **手动试玩 10 关**并填 `docs/levels.md` 的“手动用时 / 主观难度”列。建议重点关注 1-9（第 2 档，搜索合格率
+  4 / 1536）与 1-10（第 1 档，合格率 16 / 1536）：机器人的合格解很少，真人难度可能偏高。
+- [ ] **知悉**：1-3 不在裁决列出的返工关卡中，但其原脚本解用掉 2 个 Hose，违反 SPEC 10.3；已只重录脚本解、
+  关卡数据未改（ADR-006）。如负责人认为 1-3 应完全不动，请告知。
 - [ ] 填写 `scripts/ip_denylist.txt`（AGENT.md 第 6 章；实现者不得自行添加第三方作品名）。
 - [ ] **E-1 / E-2 / E-3 引擎补充需推送**：实现已在引擎本地分支链 `feat/e2-world-asset-helpers`（56082a4）→
   `feat/e3-sorted-shapes`（8484ce3）→ `feat/e1-cjk-font`（76be022）（补丁副本 `tmp/engine-patches/0001～0003`，未入库）完成并通过引擎全部检查；本环境无引擎仓库推送权限与 `gh`，
@@ -23,8 +27,7 @@
   bump 后：`i18n::CJK_FONT_AVAILABLE = true`，`main.rs` 设置 `font_path: Some("assets/fonts/RootguardCJK-Regular.otf")`。
 - [ ] **手动试玩 1-1 ～ 1-3**（G2 验收“手动完整玩通 1-3”）：实现者只能在 Xvfb 中用 xdotool 点击验证鼠标通路、
   用 `--autoplay` 在窗口中回放脚本解（1-3 胜利，截图证据），无法代替真人试玩与主观难度记录。
-- [ ] **确认 Sprint 阈值**：SPEC 8.1“hp < 50%”与 16.1“hp ≤ 5 后速度 0.675”在 hp = 5 时矛盾，
-  暂按验收测试取“≤ 50%”（ADR-002 第 14 条）。
+- [x] 确认 Sprint 阈值：负责人裁决 2026-10-14 采用“≤ 50%”，ADR-002 第 14 条已标记确认。
 - [ ] 仓库原有目录 `assests/icon/` 疑为笔误，已移动为 SPEC / AGENT / README 所述的 `assets/icon/`（文件未改动）。
 
 ## 里程碑
@@ -35,7 +38,7 @@
 | G1 核心规则 | ✅ 2026-10-13（E-2 待推送，见下） |
 | G2 可玩对局 | ✅ 2026-10-13（手动试玩待负责人，E-3 待推送） |
 | G3 完整流程 | ✅ 2026-10-13（中文显示待 E-1 合入并 bump rev） |
-| G4 全部关卡 | ⏸ 1-1 ～ 1-9 完成；1-10 无脚本解，待负责人裁决 |
+| G4 全部关卡 | ✅ 2026-10-14（按 SPEC v1.1 返工；手动试玩待负责人） |
 | G5 皮肤与打磨 | 未开始 |
 
 ## G0 骨架（2026-10-13 完成）
@@ -110,14 +113,46 @@
 
 测试：core 23、content 6、app 13。决策：ADR-004。
 
-## G4 全部关卡（进行中，2026-10-13）
+## G4 全部关卡（2026-10-14 关闭，手动试玩待负责人）
 
 - [x] 1-4 ～ 1-8 的 RON 与脚本解（`every_level_has_scripted_solution` 8 关回放全部胜利，并检查卡组均已解锁）。
 - [x] `docs/levels.md` 威胁曲线：每波实际威胁与预算逐一相等（脚本核对）。
 - [x] `determinism_golden_1_4`：`tests/golden/level_1_4.snap`（1588 字节，sha256 e3c7a4b1…），debug 与 release 一致。
 - [x] devtools 扩展：`RootguardDebugWindow`（F1），Dew +100、下一波、立即胜负、敌人列表；DebugDraw 格子与碰撞区间。
-- [x] 1-9：第三次调整（负责人批准）后得到脚本解（33097 tick，用掉 5 个 Hose）。
-- [ ] 1-10：第三次调整后仍无脚本解，已再次停下提问（草稿在 `tmp/drafts/`，未入库）。
+- [x] 1-9：~~第三次调整后得到脚本解（33097 tick，用掉 5 个 Hose）~~ → 按 SPEC v1.1 第 2 档重做，见下节。
+- [x] 1-10：~~第三次调整后仍无脚本解~~ → 按 SPEC v1.1 第 1 档重做，见下节。
 - [ ] 手动通关全部关卡并记录用时与感受：需真人。
 
 决策：ADR-005。
+
+### G4 返工（SPEC v1.1，2026-10-14 完成，手动试玩待负责人）
+
+验收（SPEC.md 17 G4 + 10.2 / 10.3，AGENT.md 第 9 章）：
+
+- [x] `scripted_solution_uses_at_most_one_hose`（SPEC 16.2）：先运行为红（1-3: 2，1-7: 2，1-8: 2，1-9: 5）；
+  返工后 10 关全部 ≤ 1。计数方式（车道 `hose_available`）以 `sfx.hose` 音频请求交叉核对一致（ADR-006）。
+- [x] `gen_levels.py` 新增 `--tier / --cap / --flag-cap`（默认第 1 档 40 / 70），超出上限的预算钳到上限；
+  1-4 ～ 1-6 重新生成后与已提交 RON 逐字节一致。
+- [x] 1-7 / 1-8 / 1-9 / 1-10 重做，每关一次提交；`docs/levels.md` 增加“档位”“Hose 用量”两列：
+
+  | 关 | 档位 | 脚本解 tick | Hose | 搜索合格率（3 卡组 × 512 参数） |
+  |---|---|---|---|---|
+  | 1-3（只重录） | — | 14254 | 1 | 124 / 512（Forced 卡组） |
+  | 1-7 | 1（上限未触发） | 21954 | 0 | 114 / 1536 |
+  | 1-8 | 1 | 24137 | 0 | 84 / 1536 |
+  | 1-9 | 2（第 1 档 0 / 1536） | 30565 | 1 | 4 / 1536 |
+  | 1-10 | 1 | 31731 | 1 | 16 / 1536 |
+
+- [x] 解锁调整：1-9 → `snapmaw` + `sunlantern`，1-10 → `gustbloom`；`every_level_has_scripted_solution` 的
+  卡组解锁检查通过（1-10 脚本解使用 `sunlantern`，未使用 `gustbloom`）。
+- [x] `every_level_has_scripted_solution`：10 关回放全部胜利。
+- [x] `determinism_golden_1_4` 通过，`tests/golden/level_1_4.snap` 未变（sha256 e3c7a4b1…）。
+- [x] ADR-002 第 14 条已确认；ADR-005 状态改为已接受并附重做结果；新增 ADR-006。
+- [x] `tmp/`：`tmp/drafts/` 与前任的搜索日志 / 临时脚本已删除；`tmp/engine-patches/` 保留到负责人确认引擎合并；
+  `tmp/g5-wip/gen_skins.py` 进入 G5 时移入 `scripts/`。`tmp/` 在 `.gitignore` 中（`/tmp/`），从未入库。
+- [ ] 手动通关全部 10 关并记录用时与感受：待负责人。
+
+规模：rootguard-core 4652 行、rootguard-content 577 行、rootguard-app 4655 行（含测试与文档注释）；
+测试 42 个（core 23、content 6、app 13），另有 2 个 `#[ignore]` 工具（`record_scripts`、`search_plans`）。
+
+遗留：1-9 / 1-10 的机器人合格解很少，难度需真人评估；机器人带咬夹草的卡组在 1-10 上全部不合格（战术实现较弱）。
