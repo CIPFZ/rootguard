@@ -73,8 +73,12 @@ jobs:
       - name: README 截图（Xvfb，占位 / 皮肤）
         if: github.event_name == 'push' && runner.os == 'Linux'
         run: |
-          sudo apt-get install -y xvfb imagemagick libgl1-mesa-dri
-          ./scripts/screenshot.sh --out dist/screenshots
+          sudo apt-get install -y xvfb imagemagick libgl1-mesa-dri libegl1 libxkbcommon-x11-0 libxcursor1 libxi6 libxrandr2
+          if ! ./scripts/screenshot.sh --out dist/screenshots 2>screenshot.err; then
+            { echo '### 截图失败'; echo '```'; tail -n 60 screenshot.err; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+            cat screenshot.err
+            exit 1
+          fi
 
       - name: 上传截图
         if: github.event_name == 'push' && runner.os == 'Linux'
