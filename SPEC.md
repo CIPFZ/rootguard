@@ -1,6 +1,6 @@
 # Rootguard 游戏规格说明书（v1）
 
-> 状态：草案 v1，2026-10-13
+> 状态：v1.1，2026-10-14（修订：10.2 预算上限、10.3 脚本解质量、8.1 Sprint 阈值、7.1 / 10.2 解锁顺序）
 > 适用范围：Rootguard Phase 1（白天花园，10 关）
 > 读者：负责从 0 实现游戏的 AI 开发者与项目负责人
 > 前置：Trellia 引擎 v1（https://github.com/CIPFZ/trellia，M5 已验收）
@@ -282,7 +282,7 @@ Level(
 | `Chomper` | `state: ChompState, chew: Timer, bite: Timer` | |
 | `Gust` | `fuse: Timer, push_px: f32` | |
 | `Vaulter` | `used: bool` | |
-| `Sprinter` | — | 标记：生命低于 50% 时速度 ×1.5（一次性，由 `Walker.base_speed` 改写） |
+| `Sprinter` | — | 标记：生命 ≤ 50% 时速度 ×1.5（一次性，由 `Walker.base_speed` 改写） |
 | `Carrier` | `child: EnemyId` | |
 | `Heavy` | — | 免疫吞食；Gust 推距减半 |
 | `ProjectileBody` | `damage: i32, speed: f32, pierce: bool, origin_x: f32, hit: SmallVec<Entity>`（无 smallvec 时用 `Vec`） | |
@@ -366,8 +366,8 @@ Level(
 | `emberbulb` | 炽球 / Emberbulb | 150 | 3000 (50s) | 6 | Blast：放置后 60 tick 引爆，以其格为中心 3 × 3 格内敌人受 90 伤害（无视护甲），自身消耗 | 1-7 |
 | `gourdshell` | 葫芦壳 / Gourdshell | 125 | 1800 | 80 | Overlay：放在已有防御者上，优先承伤；可重复放置以修复（仅当 hp < 2/3 max） | 1-8 |
 | `snapmaw` | 咬夹草 / Snapmaw | 150 | 450 | 6 | Chomper：敌人进入其格或右侧相邻格时吞食（Heavy 免疫），咀嚼 2520 tick (42s) 期间不可再吞；吞食对目标即死 | 1-9 |
-| `gustbloom` | 风铃花 / Gustbloom | 100 | 1800 | 6 | Gust：放置后 60 tick 引爆，将其所在车道全部敌人向右推 150 px（Heavy 减半），自身消耗 | 1-10 前置 |
-| `sunlantern` | 日灯笼 / Sunlantern | 125 | 450 | 6 | Producer：每 1440 tick 产 25 Dew，且每产 4 次额外 +25（简化的"成长"） | 1-10 |
+| `gustbloom` | 风铃花 / Gustbloom | 100 | 1800 | 6 | Gust：放置后 60 tick 引爆，将其所在车道全部敌人向右推 150 px（Heavy 减半），自身消耗 | 1-10（Phase 1 收官奖励） |
+| `sunlantern` | 日灯笼 / Sunlantern | 125 | 450 | 6 | Producer：每 1440 tick 产 25 Dew，且每产 4 次额外 +25（简化的"成长"） | 1-9 |
 
 解锁含义：通关该关后进入可选卡池。1-1 ～ 1-3 为 `Forced` 卡组教学关。
 
@@ -394,7 +394,7 @@ Level(
 | `husk` | 枯壳怪 / Husk | 10 | — | 0.30 | 1 / 60 tick | — | 1 | 1-1 |
 | `twig_husk` | 枝冠枯壳 / Twig Husk | 10 | Helm 10 | 0.30 | 1 / 60 | — | 2 | 1-2 |
 | `clay_husk` | 陶盔枯壳 / Clay Husk | 10 | Helm 28 | 0.30 | 1 / 60 | — | 4 | 1-4 |
-| `sprinter_husk` | 疾行枯壳 / Sprinter Husk | 10 | — | 0.45 | 1 / 60 | Sprint（hp < 50% 时速度 ×1.5） | 2 | 1-5 |
+| `sprinter_husk` | 疾行枯壳 / Sprinter Husk | 10 | — | 0.45 | 1 / 60 | Sprint（hp ≤ 50% 时速度 ×1.5，即 hp ≤ 5） | 2 | 1-5 |
 | `vault_husk` | 跳栏枯壳 / Vault Husk | 17 | — | 0.50 | 1 / 60 | Vault（首次遇到防御者时跨越到其左侧格；Snapmaw 吞食优先于跨越） | 3 | 1-6 |
 | `shield_husk` | 门板枯壳 / Shield Husk | 10 | Shield 55（仅正面弹丸；Spikes / Mine / Blast 直接打主生命） | 0.30 | 1 / 60 | — | 4 | 1-7 |
 | `carrier_husk` | 背篓枯壳 / Carrier Husk | 20 | — | 0.25 | 1 / 60 | Carrier：死亡时在原地生成 `sproutling` | 3 | 1-8 |
@@ -459,10 +459,24 @@ Chill 下的速度与间隔计算在 `walker_system` / `bite_system` 读取 `Sta
 | 1-6 | [0..4] | 50 | Choose, 6 | 10 | vault_husk | tuberblast | 跨越对策 |
 | 1-7 | [0..4] | 50 | Choose, 7 | 10 | shield_husk | emberbulb | 高护甲 |
 | 1-8 | [0..4] | 50 | Choose, 7 | 11 | carrier_husk | gourdshell | 衍生 |
-| 1-9 | [0..4] | 50 | Choose, 8 | 12 | drum_husk | snapmaw, gustbloom | 重型 |
-| 1-10 | [0..4] | 75 | Choose, 8 | 14 | 全部混合 | sunlantern | 阶段终局 |
+| 1-9 | [0..4] | 50 | Choose, 8 | 12 | drum_husk | snapmaw, sunlantern | 重型 |
+| 1-10 | [0..4] | 75 | Choose, 8 | 14 | 全部混合 | gustbloom | 阶段终局 |
 
 每关的具体 `waves` 由实现者按以下预算生成并写入 RON（不是运行时生成）：第 k 波（从 1 计）总威胁 ≈ `ceil(base × k^1.15)`，`base` 从 1-1 的 1 递增到 1-10 的 3；`flag` 波威胁 ×2；新敌人首次出现在该关第 3 波或之后；每关 `seed = 100 + 关序号`。实现者在 `docs/levels.md` 中记录每关的威胁曲线表。
+
+**预算上限（v1.1 修订，2026-10-14）**：上式在后期增长过快，因此对每波预算施加上限：非 flag 波 ≤ `cap`，flag 波 ≤ `flag_cap`。上限按以下阶梯取值，从第 1 档开始；某关在当前档位下写不出满足 10.3 的脚本解时，该关（且仅该关）降一档重新生成，无需再向负责人提问；三档用尽仍不可解才停下提问。
+
+| 档 | cap | flag_cap |
+|---|---|---|
+| 1 | 40 | 70 |
+| 2 | 35 | 60 |
+| 3 | 30 | 50 |
+
+已有脚本解且满足 10.3 的关卡不受本修订影响，不必重新生成；1-4 的 golden 快照保持不变。
+
+### 10.3 脚本解的质量要求
+
+`every_level_has_scripted_solution` 除"回放必胜"外还必须满足：脚本解全程触发 Hose Burst **不超过 1 次**。Hose 是给玩家失误用的保险，不是设计预算的一部分；机器人需要多条保险才能通过的关卡，真人必输。现有脚本解中 Hose 使用超过 1 次的关卡（当前为 1-7、1-8、1-9）须按 10.2 的上限阶梯重新生成并重录。测试 `scripted_solution_uses_at_most_one_hose` 对每关断言此条。
 
 ---
 
@@ -620,6 +634,7 @@ Esc 暂停 / 取消选卡；数字 1 ～ 8 选卡；空格 继续；F1 调试面
 | `level_1_1_idle_lose` | 不操作时触发 Hose 后再次越线 → `Lost` |
 | `every_level_loads_and_validates` | 10 关 RON 全部通过校验 |
 | `every_level_has_scripted_solution` | 每关附一个 `tests/scripts/<id>.ron` 操作脚本（tick → UiAction 列表），回放必胜；这是关卡可玩性的最低保证 |
+| `scripted_solution_uses_at_most_one_hose` | 每关脚本解回放中 `HoseTriggered` 事件 ≤ 1 次（10.3） |
 | `determinism_golden_1_4` | 1-4 脚本回放 30000 tick，`snapshot()` 与 `tests/golden/level_1_4.snap` 一致 |
 | `save_roundtrip` | 通关后进度写入，重启读取一致；损坏文件走备份路径 |
 | `ui_flow_title_to_battle` | `UiAction` 序列 StartLevel → ConfirmSeeds 后 `SceneStack::top_name() == "Battle"` |
