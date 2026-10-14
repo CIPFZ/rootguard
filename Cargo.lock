@@ -2856,7 +2856,7 @@ checksum = "db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a"
 [[package]]
 name = "trellia"
 version = "0.1.0"
-source = "git+https://github.com/CIPFZ/trellia?rev=4eb6c29f2b23132ecea106264bde8fd4e151efe8#4eb6c29f2b23132ecea106264bde8fd4e151efe8"
+source = "git+https://github.com/CIPFZ/trellia?rev=24c4d712ff3c157dad12ac7d50836476e699b8fa#24c4d712ff3c157dad12ac7d50836476e699b8fa"
 dependencies = [
  "anyhow",
  "trellia-assets",
@@ -2872,7 +2872,7 @@ dependencies = [
 [[package]]
 name = "trellia-assets"
 version = "0.1.0"
-source = "git+https://github.com/CIPFZ/trellia?rev=4eb6c29f2b23132ecea106264bde8fd4e151efe8#4eb6c29f2b23132ecea106264bde8fd4e151efe8"
+source = "git+https://github.com/CIPFZ/trellia?rev=24c4d712ff3c157dad12ac7d50836476e699b8fa#24c4d712ff3c157dad12ac7d50836476e699b8fa"
 dependencies = [
  "image",
  "log",
@@ -2885,7 +2885,7 @@ dependencies = [
 [[package]]
 name = "trellia-audio"
 version = "0.1.0"
-source = "git+https://github.com/CIPFZ/trellia?rev=4eb6c29f2b23132ecea106264bde8fd4e151efe8#4eb6c29f2b23132ecea106264bde8fd4e151efe8"
+source = "git+https://github.com/CIPFZ/trellia?rev=24c4d712ff3c157dad12ac7d50836476e699b8fa#24c4d712ff3c157dad12ac7d50836476e699b8fa"
 dependencies = [
  "log",
  "trellia-assets",
@@ -2895,7 +2895,7 @@ dependencies = [
 [[package]]
 name = "trellia-core"
 version = "0.1.0"
-source = "git+https://github.com/CIPFZ/trellia?rev=4eb6c29f2b23132ecea106264bde8fd4e151efe8#4eb6c29f2b23132ecea106264bde8fd4e151efe8"
+source = "git+https://github.com/CIPFZ/trellia?rev=24c4d712ff3c157dad12ac7d50836476e699b8fa#24c4d712ff3c157dad12ac7d50836476e699b8fa"
 dependencies = [
  "glam",
  "hecs",
@@ -2907,7 +2907,7 @@ dependencies = [
 [[package]]
 name = "trellia-devtools"
 version = "0.1.0"
-source = "git+https://github.com/CIPFZ/trellia?rev=4eb6c29f2b23132ecea106264bde8fd4e151efe8#4eb6c29f2b23132ecea106264bde8fd4e151efe8"
+source = "git+https://github.com/CIPFZ/trellia?rev=24c4d712ff3c157dad12ac7d50836476e699b8fa#24c4d712ff3c157dad12ac7d50836476e699b8fa"
 dependencies = [
  "egui",
  "trellia-core",
@@ -2918,7 +2918,7 @@ dependencies = [
 [[package]]
 name = "trellia-egui"
 version = "0.1.0"
-source = "git+https://github.com/CIPFZ/trellia?rev=4eb6c29f2b23132ecea106264bde8fd4e151efe8#4eb6c29f2b23132ecea106264bde8fd4e151efe8"
+source = "git+https://github.com/CIPFZ/trellia?rev=24c4d712ff3c157dad12ac7d50836476e699b8fa#24c4d712ff3c157dad12ac7d50836476e699b8fa"
 dependencies = [
  "anyhow",
  "eframe",
@@ -2936,7 +2936,7 @@ dependencies = [
 [[package]]
 name = "trellia-gfx"
 version = "0.1.0"
-source = "git+https://github.com/CIPFZ/trellia?rev=4eb6c29f2b23132ecea106264bde8fd4e151efe8#4eb6c29f2b23132ecea106264bde8fd4e151efe8"
+source = "git+https://github.com/CIPFZ/trellia?rev=24c4d712ff3c157dad12ac7d50836476e699b8fa#24c4d712ff3c157dad12ac7d50836476e699b8fa"
 dependencies = [
  "glam",
  "log",
@@ -2948,7 +2948,7 @@ dependencies = [
 [[package]]
 name = "trellia-headless"
 version = "0.1.0"
-source = "git+https://github.com/CIPFZ/trellia?rev=4eb6c29f2b23132ecea106264bde8fd4e151efe8#4eb6c29f2b23132ecea106264bde8fd4e151efe8"
+source = "git+https://github.com/CIPFZ/trellia?rev=24c4d712ff3c157dad12ac7d50836476e699b8fa#24c4d712ff3c157dad12ac7d50836476e699b8fa"
 dependencies = [
  "egui",
  "log",
@@ -2962,7 +2962,7 @@ dependencies = [
 [[package]]
 name = "trellia-scene"
 version = "0.1.0"
-source = "git+https://github.com/CIPFZ/trellia?rev=4eb6c29f2b23132ecea106264bde8fd4e151efe8#4eb6c29f2b23132ecea106264bde8fd4e151efe8"
+source = "git+https://github.com/CIPFZ/trellia?rev=24c4d712ff3c157dad12ac7d50836476e699b8fa#24c4d712ff3c157dad12ac7d50836476e699b8fa"
 dependencies = [
  "egui",
  "log",
