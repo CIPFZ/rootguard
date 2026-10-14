@@ -8,6 +8,9 @@
   执行 AGENT.md 第 9 章 G4 返工清单并关闭 G4（手动试玩待负责人）：新增 `scripted_solution_uses_at_most_one_hose`，
   `gen_levels.py --tier/--cap/--flag-cap`，参数搜索工具 `search_plans`；1-7 / 1-8 / 1-10 第 1 档、1-9 第 2 档重做，
   另发现 1-3 原脚本解 Hose 2 并重录（ADR-006）。测试 42 个全绿，golden 未变。
+  随后进入 G5：皮肤模式与原创图集（ADR-007）、Dew 飞行 / 横幅动画、打包脚本、性能测量（ADR-008）；
+  E-5 在引擎分支实现完成（补丁 0004），**按 AGENT 3.6 停下，等待负责人推送合并引擎 E-1 ～ E-5 并回传 sha**。
+  测试 49 个全绿。
 - 2026-10-14 会话 1（续）：负责人批准对 1-9 / 1-10 做第三次波次调整；1-9 可解并提交，1-10 仍不可解，再次停下提问。
 - 2026-10-13 会话 1：通读 SPEC.md / AGENT.md、引擎 v1 报告、ADR-001 ～ 007 与 `examples/lane_demo`；
   计划完成 G0 骨架并开始 G1。
@@ -20,9 +23,11 @@
 - [ ] **知悉**：1-3 不在裁决列出的返工关卡中，但其原脚本解用掉 2 个 Hose，违反 SPEC 10.3；已只重录脚本解、
   关卡数据未改（ADR-006）。如负责人认为 1-3 应完全不动，请告知。
 - [ ] 填写 `scripts/ip_denylist.txt`（AGENT.md 第 6 章；实现者不得自行添加第三方作品名）。
-- [ ] **E-1 / E-2 / E-3 引擎补充需推送**：实现已在引擎本地分支链 `feat/e2-world-asset-helpers`（56082a4）→
-  `feat/e3-sorted-shapes`（8484ce3）→ `feat/e1-cjk-font`（76be022）（补丁副本 `tmp/engine-patches/0001～0003`，未入库）完成并通过引擎全部检查；本环境无引擎仓库推送权限与 `gh`，
-  需负责人推送 / 合并后，游戏仓库再 `chore(deps): bump trellia to <sha> (E-2)` / `(E-3)`。
+- [ ] **【阻塞 G5 关闭】E-1 / E-2 / E-3 / E-5 引擎补充需推送**：实现已在引擎本地分支链 `feat/e2-world-asset-helpers`（56082a4）→
+  `feat/e3-sorted-shapes`（8484ce3）→ `feat/e1-cjk-font`（76be022）→ `feat/e5-music-crossfade`（0069b02，2026-10-14 新增，ADR-011）
+  （补丁副本 `tmp/engine-patches/0001～0004`，未入库，已验证可按序 `git am` 到引擎 main 4eb6c29）完成并通过引擎全部检查（108 个测试）；
+  本环境无引擎仓库推送权限与 `gh`，需负责人推送 / 合并后回传 sha，游戏仓库再 `chore(deps): bump trellia to <sha> (E-1 E-2 E-3 E-5)`。
+  已在 `/tmp` 的仓库副本中以 `--config patch` 链接该分支链验证：游戏 49 个测试（含 golden）全部通过。
   在此之前游戏按 SPEC 12.2 的回退方案按行分层（不依赖 E-3），界面按 SPEC 11.6 以英文显示（不依赖 E-1）。
   bump 后：`i18n::CJK_FONT_AVAILABLE = true`，`main.rs` 设置 `font_path: Some("assets/fonts/RootguardCJK-Regular.otf")`。
 - [ ] **手动试玩 1-1 ～ 1-3**（G2 验收“手动完整玩通 1-3”）：实现者只能在 Xvfb 中用 xdotool 点击验证鼠标通路、
@@ -39,7 +44,7 @@
 | G2 可玩对局 | ✅ 2026-10-13（手动试玩待负责人，E-3 待推送） |
 | G3 完整流程 | ✅ 2026-10-13（中文显示待 E-1 合入并 bump rev） |
 | G4 全部关卡 | ✅ 2026-10-14（按 SPEC v1.1 返工；手动试玩待负责人） |
-| G5 皮肤与打磨 | 未开始 |
+| G5 皮肤与打磨 | ⏸ 2026-10-14 除 E-5 接入与报告外完成；等待负责人合并引擎（见待办） |
 
 ## G0 骨架（2026-10-13 完成）
 
@@ -156,3 +161,35 @@
 测试 42 个（core 23、content 6、app 13），另有 2 个 `#[ignore]` 工具（`record_scripts`、`search_plans`）。
 
 遗留：1-9 / 1-10 的机器人合格解很少，难度需真人评估；机器人带咬夹草的卡组在 1-10 上全部不合格（战术实现较弱）。
+
+## G5 皮肤与打磨（进行中，2026-10-14；等待引擎合并）
+
+验收（SPEC.md 17 G5，AGENT.md 第 10 章）：
+
+- [x] `Skinned` 模式美术：`scripts/gen_skins.py`（自 `tmp/g5-wip/` 移入并按 ADR-007 修订造型）生成
+  `assets/skins/default/`（图集 1536 × 1536、247 帧、46 个片段、`skin.ron` 清单），引擎 RON 格式；
+  防御者 idle 4 帧（射手 / 咬夹草 attack 3 帧），敌人 walk 4 帧 + eat 3 帧（`eat_hit` 事件帧）+ 护甲破损版 + 受伤闪白帧；
+  已登记 `assets/SOURCES.md`。证据：`skin_covers_all_content`；Xvfb 窗口截图中 1-10 皮肤模式正常显示。
+- [x] **两种模式切换无差异**：`skin_switching_keeps_golden_1_4`（对局中每 500 帧切换一次模式，30000 帧后快照与
+  golden 逐字节一致）；`skinned_mode_draws_sprites`；占位模式未改动（`placeholder_mode_draws_all_entities` 通过）。
+- [x] Dew 收集飞向 HUD 的 Tween、横幅入场动画、受伤闪白（两种模式）：`tests/visual_fx.rs` 3 个测试（ADR-008）。
+- [~] E-5 音乐交叉淡化：引擎分支 `feat/e5-music-crossfade` 实现完成（ADR-011，补丁 `tmp/engine-patches/0004`），
+  **等待负责人推送合并**；合并后游戏侧把 `sfx::play_music` 的场景切换改为 `crossfade_music`。
+- [x] 三平台打包脚本 `scripts/package.sh`（ADR-008）：本机 Linux 包解压到仓库外可独立运行（Xvfb 截图）；
+  macOS / Windows 由 CI（push 时打包并上传产物）首次运行验证。
+- [x] 性能 SPEC 16.3（`cargo run --release -p rootguard-app --example perf_1_10 [-- --skinned] [--stress]`，
+  AMD EPYC 9K65，headless CPU 帧耗时，测量方法见 ADR-008）：
+
+  | 场景 | 模式 | 峰值（敌人 / 防御者 / 弹丸） | 最大场面 p50 | p99 | 最大 |
+  |---|---|---|---|---|---|
+  | 1-10 脚本解 | Placeholder | 31 / 31 / 10 | 43 µs | 69 µs | 554 µs |
+  | 1-10 脚本解 | Skinned | 31 / 31 / 10 | 45 µs | 69 µs | 180 µs |
+  | 压力场景 | Placeholder | 43 / 45 / 94 | 64 µs | 83 µs | 889 µs |
+  | 压力场景 | Skinned | 43 / 45 / 94 | 67 µs | 100 µs | 1.4 ms |
+
+  均远低于 4 ms。devtools 面板的 “frame ms” 是真实帧间隔（垂直同步下约 16.7 ms），不反映负载；
+  实机 GPU / egui 绘制耗时需负责人在桌面环境补充。
+- [ ] `docs/game-v1-report.md`：G5 关闭（E-5 接入）后撰写。
+
+规模：rootguard-core 4652 行、rootguard-content 577 行、rootguard-app 5661 行（含测试与文档注释）；
+测试 49 个（core 23、content 6、app 20）。决策：ADR-007、ADR-008。
