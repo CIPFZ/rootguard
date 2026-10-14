@@ -4,7 +4,7 @@
 #   ./scripts/package.sh                  # 为本机目标打包
 #   ./scripts/package.sh --target x86_64-pc-windows-msvc
 #
-# 产物：dist/rootguard-<版本>-<目标>/（可执行文件 + assets/ + 说明），以及同名 .tar.gz（Windows 为 .zip）。
+# 产物：dist/rootguard-<版本>-<目标>/（可执行文件 + assets/ + 许可证 + 说明），以及同名 .tar.gz（Windows 为 .zip）。
 # 发布构建不带 devtools（AGENT 4.4：调试窗口在发布构建中不存在）。游戏在可执行文件同级查找 assets/。
 set -euo pipefail
 
@@ -36,18 +36,21 @@ rm -rf "$out"
 mkdir -p "$out"
 cp "target/${target}/release/${exe}" "$out/"
 cp -R assets "$out/assets"
+cp LICENSE-MIT LICENSE-APACHE "$out/"
 cat > "$out/README.txt" <<EOF
 Rootguard ${version} (${target})
 
 运行 / Run: ./${exe}
 assets/ 必须与可执行文件放在同一目录。 / Keep assets/ next to the executable.
 存档目录可用环境变量 ROOTGUARD_SAVE_DIR 覆盖。 / Override the save directory with ROOTGUARD_SAVE_DIR.
+代码与项目自有素材以 MIT OR Apache-2.0 双许可发布（LICENSE-MIT / LICENSE-APACHE）。
 素材来源与许可证见 assets/SOURCES.md；字体许可证见 assets/fonts/LICENSE-OFL.txt。
+Code and project-owned assets: MIT OR Apache-2.0 (LICENSE-MIT / LICENSE-APACHE).
 Asset sources and licenses: assets/SOURCES.md; font license: assets/fonts/LICENSE-OFL.txt.
 EOF
 
-# 布局自检：可执行文件、数据、皮肤清单与字体许可证都在
-for f in "$exe" assets/data/rules.ron assets/skins/default/skin.ron assets/fonts/LICENSE-OFL.txt assets/SOURCES.md; do
+# 布局自检：可执行文件、数据、皮肤清单与各许可证都在
+for f in "$exe" LICENSE-MIT LICENSE-APACHE assets/data/rules.ron assets/skins/default/skin.ron assets/fonts/LICENSE-OFL.txt assets/SOURCES.md; do
     [ -e "$out/$f" ] || { echo "打包缺少 $f" >&2; exit 1; }
 done
 
