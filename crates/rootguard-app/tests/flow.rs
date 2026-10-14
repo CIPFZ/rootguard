@@ -237,3 +237,29 @@ fn i18n_tables_complete() {
         }
     }
 }
+
+/// SPEC 11.6 / E-1：默认中文时对局 HUD 直接显示中文（不再回退英文），且 CJK 字体可解析。
+#[test]
+fn chinese_hud_when_lang_zh() {
+    let dir = temp_save(&format!("zh-{}", next_id()));
+    let mut runner = title_runner(&dir);
+    act(&mut runner, UiAction::SetLanguage(Lang::Zh));
+    act(&mut runner, UiAction::StartLevel(lid("1-1")));
+    assert_eq!(top(&runner), Some("Battle"));
+    runner.frame();
+    let texts: Vec<String> = runner
+        .last_draw_list()
+        .iter()
+        .filter_map(|c| match &c.kind {
+            DrawKind::Text { text, .. } => Some(text.clone()),
+            _ => None,
+        })
+        .collect();
+    assert!(
+        texts.iter().any(|t| t.starts_with("关卡 1-1")),
+        "HUD 应显示中文关卡名：{texts:?}"
+    );
+    assert!(texts.iter().any(|t| t == "准备……"), "Intro 横幅应为中文");
+    let font = rootguard_app::cjk_font_path().expect("CJK 字体应随资产提供");
+    assert!(font.is_file());
+}

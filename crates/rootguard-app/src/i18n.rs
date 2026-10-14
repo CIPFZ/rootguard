@@ -1,7 +1,7 @@
 //! 文本表（SPEC 11.6）：`assets/data/i18n/{zh,en}.ron`，代码通过 [`t`] 取用。
 //!
-//! 缺失 key 显示 key 本身并 `log::warn!` 一次。中文显示依赖引擎补充 E-1（CJK 字体）；
-//! 在游戏所用的引擎 rev 支持之前，界面以英文显示，中文表仍保持齐备（SPEC 11.6，ADR-004）。
+//! 缺失 key 显示 key 本身并 `log::warn!` 一次。中文字形由引擎 E-1 的 `RunConfig.font_path`
+//! 加载 [`CJK_FONT`] 提供（SPEC 11.6，ADR-004 第 8 条、ADR-009）。
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Mutex;
@@ -10,8 +10,8 @@ use rootguard_core::events::Lang;
 use rootguard_core::resources::Progress;
 use trellia::prelude::*;
 
-/// 当前引擎 rev 是否能显示 CJK 字形（E-1 合入并 bump rev 后改为 true，ADR-004）。
-pub const CJK_FONT_AVAILABLE: bool = false;
+/// CJK 字体子集（相对资产根目录，`scripts/subset_font.py` 生成，SPEC 11.6 / E-1）。
+pub const CJK_FONT: &str = "fonts/RootguardCJK-Regular.otf";
 
 /// 文本表资源。
 pub struct I18n {
@@ -41,16 +41,6 @@ impl I18n {
             server.load_ron("data/i18n/zh.ron")?,
             server.load_ron("data/i18n/en.ron")?,
         ))
-    }
-
-    /// 实际显示语言：设置为中文但字体不可用时回退英文。
-    #[must_use]
-    pub fn display_lang(lang: Lang) -> Lang {
-        if lang == Lang::Zh && !CJK_FONT_AVAILABLE {
-            Lang::En
-        } else {
-            lang
-        }
     }
 
     /// 取文本；缺失时返回 key 本身并警告一次。
@@ -104,7 +94,7 @@ pub fn t(world: &World, key: &str) -> String {
         .get::<Progress>()
         .map_or(Lang::default(), |p| p.settings.lang);
     match world.resources.get::<I18n>() {
-        Some(i18n) => i18n.get(I18n::display_lang(lang), key).to_owned(),
+        Some(i18n) => i18n.get(lang, key).to_owned(),
         None => key.to_owned(),
     }
 }

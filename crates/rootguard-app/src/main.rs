@@ -7,6 +7,7 @@ fn main() {
     let cfg = trellia::RunConfig {
         title: rootguard_app::TITLE.into(),
         logical_size: rootguard_app::LOGICAL_SIZE,
+        font_path: rootguard_app::cjk_font_path(),
         ..trellia::RunConfig::default()
     };
     if let Err(e) = trellia::run_egui(args.build_app(), cfg) {

@@ -91,6 +91,22 @@ pub fn asset_root() -> Option<std::path::PathBuf> {
         .find(|p| p.join("data").is_dir())
 }
 
+/// CJK 字体文件的绝对路径（传给 `RunConfig.font_path`，SPEC 11.6 / E-1）：资产根目录取
+/// `TRELLIA_ASSETS` 或 [`asset_root`]。文件不存在时警告并返回 `None`（中文字形缺失，其余照常）。
+#[must_use]
+pub fn cjk_font_path() -> Option<std::path::PathBuf> {
+    let root = std::env::var_os("TRELLIA_ASSETS")
+        .map(std::path::PathBuf::from)
+        .or_else(asset_root)?;
+    let path = root.join(i18n::CJK_FONT);
+    if path.is_file() {
+        Some(path)
+    } else {
+        log::warn!("找不到 CJK 字体 {}，中文将无法显示", path.display());
+        None
+    }
+}
+
 /// 以标题场景组装 App。
 #[must_use]
 pub fn build_app() -> App {
