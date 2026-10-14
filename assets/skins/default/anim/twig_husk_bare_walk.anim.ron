@@ -1,0 +1,11 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "twig_husk_bare_walk",
+    looping: true,
+    frames: [
+        (frame: "twig_husk_bare_walk_0", ticks: 12),
+        (frame: "twig_husk_bare_walk_1", ticks: 12),
+        (frame: "twig_husk_bare_walk_2", ticks: 12),
+        (frame: "twig_husk_bare_walk_3", ticks: 12),
+    ],
+)

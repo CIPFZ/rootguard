@@ -1,0 +1,10 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "twinpod_attack",
+    looping: false,
+    frames: [
+        (frame: "twinpod_attack_0", ticks: 6),
+        (frame: "twinpod_attack_1", ticks: 6),
+        (frame: "twinpod_attack_2", ticks: 6),
+    ],
+)

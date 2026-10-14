@@ -72,8 +72,8 @@ pub fn banner(world: &World) -> Option<String> {
     Some(t(world, key))
 }
 
-/// 绘制 HUD。
-pub fn draw(world: &World, list: &mut DrawList) {
+/// 绘制 HUD；皮肤模式下卡槽显示皮肤图标（SPEC 11.2“占位色块 / 皮肤图”）。
+pub fn draw(world: &World, list: &mut DrawList, painter: Option<&crate::skin::Painter<'_>>) {
     let (Some(state), Some(tray), Some(defs)) = (
         world.resources.get::<BattleState>(),
         world.resources.get::<CardTray>(),
@@ -111,15 +111,18 @@ pub fn draw(world: &World, list: &mut DrawList) {
             continue;
         };
         let swatch = Rect::from_min_size(rect.min + Vec2::new(8.0, 6.0), Vec2::new(60.0, 34.0));
-        list.rect(hud, swatch, Color::from_hex(def.placeholder.color));
-        list.text_aligned(
-            hud,
-            swatch.center() - Vec2::new(0.0, 11.0),
-            def.placeholder.label.as_str(),
-            20.0,
-            Color::WHITE,
-            TextAlign::Center,
-        );
+        let icon = format!("{}_idle", card.defender.as_str());
+        if !painter.is_some_and(|sk| sk.icon(list, hud, swatch, &icon)) {
+            list.rect(hud, swatch, Color::from_hex(def.placeholder.color));
+            list.text_aligned(
+                hud,
+                swatch.center() - Vec2::new(0.0, 11.0),
+                def.placeholder.label.as_str(),
+                20.0,
+                Color::WHITE,
+                TextAlign::Center,
+            );
+        }
         list.text_aligned(
             hud,
             Vec2::new(rect.center().x, rect.max.y - 22.0),

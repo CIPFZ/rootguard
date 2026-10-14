@@ -1,0 +1,10 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "frostpod_attack",
+    looping: false,
+    frames: [
+        (frame: "frostpod_attack_0", ticks: 6),
+        (frame: "frostpod_attack_1", ticks: 6),
+        (frame: "frostpod_attack_2", ticks: 6),
+    ],
+)

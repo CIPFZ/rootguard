@@ -1,0 +1,11 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "gustbloom_idle",
+    looping: true,
+    frames: [
+        (frame: "gustbloom_idle_0", ticks: 15),
+        (frame: "gustbloom_idle_1", ticks: 15),
+        (frame: "gustbloom_idle_2", ticks: 15),
+        (frame: "gustbloom_idle_3", ticks: 15),
+    ],
+)

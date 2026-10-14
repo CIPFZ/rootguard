@@ -1,0 +1,11 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "sproutling_walk",
+    looping: true,
+    frames: [
+        (frame: "sproutling_walk_0", ticks: 12),
+        (frame: "sproutling_walk_1", ticks: 12),
+        (frame: "sproutling_walk_2", ticks: 12),
+        (frame: "sproutling_walk_3", ticks: 12),
+    ],
+)

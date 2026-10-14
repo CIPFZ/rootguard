@@ -1,0 +1,8 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "pebble",
+    looping: true,
+    frames: [
+        (frame: "pebble_0", ticks: 60),
+    ],
+)

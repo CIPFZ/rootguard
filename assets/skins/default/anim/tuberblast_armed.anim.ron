@@ -1,0 +1,9 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "tuberblast_armed",
+    looping: true,
+    frames: [
+        (frame: "tuberblast_armed_0", ticks: 20),
+        (frame: "tuberblast_armed_1", ticks: 20),
+    ],
+)

@@ -1,0 +1,10 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "pebble_pod_attack",
+    looping: false,
+    frames: [
+        (frame: "pebble_pod_attack_0", ticks: 6),
+        (frame: "pebble_pod_attack_1", ticks: 6),
+        (frame: "pebble_pod_attack_2", ticks: 6),
+    ],
+)

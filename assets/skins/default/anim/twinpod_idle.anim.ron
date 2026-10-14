@@ -1,0 +1,11 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "twinpod_idle",
+    looping: true,
+    frames: [
+        (frame: "twinpod_idle_0", ticks: 15),
+        (frame: "twinpod_idle_1", ticks: 15),
+        (frame: "twinpod_idle_2", ticks: 15),
+        (frame: "twinpod_idle_3", ticks: 15),
+    ],
+)

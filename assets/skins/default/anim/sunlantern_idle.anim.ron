@@ -1,0 +1,11 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "sunlantern_idle",
+    looping: true,
+    frames: [
+        (frame: "sunlantern_idle_0", ticks: 15),
+        (frame: "sunlantern_idle_1", ticks: 15),
+        (frame: "sunlantern_idle_2", ticks: 15),
+        (frame: "sunlantern_idle_3", ticks: 15),
+    ],
+)

@@ -1,0 +1,10 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "husk_eat",
+    looping: true,
+    frames: [
+        (frame: "husk_eat_0", ticks: 10),
+        (frame: "husk_eat_1", ticks: 10, event: "eat_hit"),
+        (frame: "husk_eat_2", ticks: 10),
+    ],
+)

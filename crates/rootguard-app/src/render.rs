@@ -1,4 +1,5 @@
-//! 占位渲染（SPEC 12.2）：背景、防御者、敌人、弹丸、Dew、悬停预览与调试形状。
+//! 对局渲染：占位渲染（SPEC 12.2）的背景、防御者、敌人、弹丸、Dew、悬停预览与调试形状；
+//! `SkinMode::Skinned` 时角色改由 [`crate::skin`] 绘制，缺少皮肤的实体仍画占位（SPEC 12.1）。
 //!
 //! 只读模拟状态，不修改任何模拟组件或资源（AGENT 4.4）。
 
@@ -6,8 +7,8 @@ use std::collections::HashMap;
 
 use rootguard_core::Grid;
 use rootguard_core::components::{
-    Armor, Cell, DefenderRef, DewPickup, EnemyRef, Health, OverlayOf, Placeholder, ProjectileBody,
-    StatusEffects, Walker,
+    Armor, Cell, ChompState, Chomper, DefenderRef, DewPickup, EnemyRef, Health, Mine, OverlayOf,
+    Placeholder, ProjectileBody, ProjectileRef, Shooter, StatusEffects, WalkState, Walker,
 };
 use rootguard_core::data::ArmorKind;
 use rootguard_core::events::EnemyDamaged;
@@ -17,6 +18,7 @@ use trellia::prelude::*;
 
 use crate::LOGICAL_SIZE;
 use crate::hud;
+use crate::skin::{self, Painter, Pose};
 
 /// 受伤闪白持续的 tick 数（SPEC 12.2）。
 const HURT_FLASH_TICKS: u64 = 6;
@@ -40,6 +42,16 @@ mod palette {
     pub const DEW_GLOW: u32 = 0xFF_F3B0;
     pub const PREVIEW_OK: u32 = 0x66_FF66;
     pub const PREVIEW_BAD: u32 = 0xFF_5555;
+    /// 皮肤模式：生命 < 50% 的防御者着色（对应占位模式的红色描边）。
+    pub const LOW_HP_TINT: u32 = 0xFF_B0B0;
+}
+
+/// 皮肤模式下 Chill 着色的混合比例（与占位模式一致）。
+const CHILL_MIX: f32 = 0.5;
+
+/// 同类角色的循环动画按实体错开相位，避免整齐划一（纯视觉）。
+fn phase(e: Entity, tick: u64) -> u64 {
+    tick + u64::from(e.id()) * 7
 }
 
 /// 呈现层状态：受伤闪白时刻（实体 → 最近受伤的 `fixed_tick`）。只做按键查找，不迭代（确定性无关）。
@@ -93,43 +105,69 @@ pub fn draw_battle(world: &mut World) {
     };
     let alpha = world.resources.expect::<Time>().alpha;
     let tick = world.resources.expect::<Time>().fixed_tick;
+    let painter = Painter::active(world);
+    let painter = painter.as_ref();
     draw_background(world, &mut list);
-    draw_defenders(world, &mut list, alpha);
-    draw_enemies(world, &mut list, alpha, tick);
-    for (t, body, p, lane) in world
+    draw_defenders(world, &mut list, alpha, tick, painter);
+    draw_enemies(world, &mut list, alpha, tick, painter);
+    for (e, t, _, p, lane, pr) in world
         .query::<(
+            Entity,
             &Transform2D,
             &ProjectileBody,
             &Placeholder,
             &rootguard_core::components::Lane,
+            &ProjectileRef,
         )>()
         .iter()
     {
-        let _ = body;
-        list.circle(
-            row_layer(lane.row),
-            t.lerp(alpha),
-            p.size.x / 2.0,
-            color(p.color),
-        );
+        let layer = row_layer(lane.row);
+        let pos = t.lerp(alpha);
+        let pose = Pose {
+            clip: pr.id.as_str(),
+            elapsed: phase(e, tick),
+            flash: false,
+            tint: Color::WHITE,
+        };
+        if !painter.is_some_and(|sk| sk.draw(&mut list, layer, pos, pos.y, pose)) {
+            list.circle(layer, pos, p.size.x / 2.0, color(p.color));
+        }
     }
     // Dew 画在 HUD 之上：下落时会经过顶部 HUD 区域，仍需可见可点
-    let dew_layer = Layer(Layer::OVERLAY.0 + 1);
-    for (t, _) in world.query::<(&Transform2D, &DewPickup)>().iter() {
+    for (e, t, _) in world.query::<(Entity, &Transform2D, &DewPickup)>().iter() {
         let pos = t.lerp(alpha);
-        list.circle(
-            dew_layer,
-            pos,
-            22.0,
-            color(palette::DEW_GLOW).with_alpha(0.5),
-        );
-        list.circle(dew_layer, pos, 16.0, color(palette::DEW));
+        let pose = Pose {
+            clip: DEW_CLIP,
+            elapsed: phase(e, tick),
+            flash: false,
+            tint: Color::WHITE,
+        };
+        if !painter.is_some_and(|sk| sk.draw(&mut list, DEW_LAYER, pos, pos.y, pose)) {
+            draw_dew_placeholder(&mut list, pos, 1.0);
+        }
     }
     draw_preview(world, &mut list);
-    hud::draw(world, &mut list);
+    hud::draw(world, &mut list, painter);
     world.resources.insert(list);
     #[cfg(feature = "devtools")]
     debug_shapes(world);
+}
+
+/// Dew 所在图层：HUD 之上（ADR-003 第 3 条）。
+pub const DEW_LAYER: Layer = Layer(Layer::OVERLAY.0 + 1);
+
+/// Dew 的皮肤片段名。
+pub const DEW_CLIP: &str = "dew";
+
+/// 占位 Dew：黄色圆 + 微光描边（SPEC 12.2）；`scale` 用于收集飞行动画。
+pub fn draw_dew_placeholder(list: &mut DrawList, pos: Vec2, scale: f32) {
+    list.circle(
+        DEW_LAYER,
+        pos,
+        22.0 * scale,
+        color(palette::DEW_GLOW).with_alpha(0.5),
+    );
+    list.circle(DEW_LAYER, pos, 16.0 * scale, color(palette::DEW));
 }
 
 fn draw_background(world: &World, list: &mut DrawList) {
@@ -208,10 +246,57 @@ fn draw_background(world: &World, list: &mut DrawList) {
     );
 }
 
-fn draw_defenders(world: &World, list: &mut DrawList, alpha: f32) {
+/// 防御者当前应播放的片段与已播放 tick（SPEC 12.3：idle；射手发射后 attack 一次；咬夹草咀嚼时
+/// 循环 attack；块茎雷武装后 armed）。只读模拟组件。
+fn defender_pose(
+    sk: &Painter<'_>,
+    id: &str,
+    e: Entity,
+    tick: u64,
+    shooter: Option<&Shooter>,
+    chomper: Option<&Chomper>,
+    mine: Option<&Mine>,
+) -> (String, u64) {
+    let attack = format!("{id}_attack");
+    if let Some(s) = shooter
+        && !s.timer.finished()
+        && let Some(len) = sk.ticks(&attack)
+    {
+        let since = u64::from(s.timer.duration.saturating_sub(s.timer.remaining));
+        if since < len {
+            return (attack, since);
+        }
+    }
+    if chomper.is_some_and(|c| c.state == ChompState::Chewing) && sk.has(&attack) {
+        return (attack, phase(e, tick));
+    }
+    let armed = format!("{id}_armed");
+    if mine.is_some_and(|m| m.armed) && sk.has(&armed) {
+        return (armed, phase(e, tick));
+    }
+    (format!("{id}_idle"), phase(e, tick))
+}
+
+fn draw_defenders(
+    world: &World,
+    list: &mut DrawList,
+    alpha: f32,
+    tick: u64,
+    painter: Option<&Painter<'_>>,
+) {
     // 地面防御者
-    for (t, p, h, cell, _) in world
-        .query::<(&Transform2D, &Placeholder, &Health, &Cell, &DefenderRef)>()
+    for (e, t, p, h, cell, d, shooter, chomper, mine) in world
+        .query::<(
+            Entity,
+            &Transform2D,
+            &Placeholder,
+            &Health,
+            &Cell,
+            &DefenderRef,
+            Option<&Shooter>,
+            Option<&Chomper>,
+            Option<&Mine>,
+        )>()
         .without::<&OverlayOf>()
         .iter()
     {
@@ -220,6 +305,23 @@ fn draw_defenders(world: &World, list: &mut DrawList, alpha: f32) {
         }
         let layer = row_layer(cell.row);
         let pos = t.lerp(alpha);
+        if let Some(sk) = painter {
+            let (clip, elapsed) = defender_pose(sk, d.id.as_str(), e, tick, shooter, chomper, mine);
+            let tint = if h.hp * 2 < h.max {
+                color(palette::LOW_HP_TINT)
+            } else {
+                Color::WHITE
+            };
+            let pose = Pose {
+                clip: &clip,
+                elapsed,
+                flash: false,
+                tint,
+            };
+            if sk.draw(list, layer, skin::foot(pos), pos.y, pose) {
+                continue;
+            }
+        }
         let body = Rect::from_center_size(pos, p.size);
         list.rect(layer, body, color(p.color));
         if h.hp * 2 < h.max {
@@ -234,15 +336,47 @@ fn draw_defenders(world: &World, list: &mut DrawList, alpha: f32) {
             TextAlign::Center,
         );
     }
-    // 覆盖层：宿主外围描边环
-    for (t, p, h, cell, _) in world
-        .query::<(&Transform2D, &Placeholder, &Health, &Cell, &OverlayOf)>()
+    // 覆盖层：宿主外围描边环（皮肤模式：环形皮肤，排在宿主之后）
+    for (e, t, p, h, cell, d, _) in world
+        .query::<(
+            Entity,
+            &Transform2D,
+            &Placeholder,
+            &Health,
+            &Cell,
+            &DefenderRef,
+            &OverlayOf,
+        )>()
         .iter()
     {
         if !h.alive() {
             continue;
         }
-        let ring = Rect::from_center_size(t.lerp(alpha), p.size + Vec2::splat(12.0));
+        let pos = t.lerp(alpha);
+        if let Some(sk) = painter {
+            let clip = format!("{}_idle", d.id.as_str());
+            let tint = if h.hp * 2 < h.max {
+                color(palette::LOW_HP_TINT)
+            } else {
+                Color::WHITE
+            };
+            let pose = Pose {
+                clip: &clip,
+                elapsed: phase(e, tick),
+                flash: false,
+                tint,
+            };
+            if sk.draw(
+                list,
+                row_layer(cell.row),
+                skin::foot(pos),
+                pos.y + 1.0,
+                pose,
+            ) {
+                continue;
+            }
+        }
+        let ring = Rect::from_center_size(pos, p.size + Vec2::splat(12.0));
         let c = if h.hp * 2 < h.max {
             color(palette::LOW_HP)
         } else {
@@ -252,9 +386,27 @@ fn draw_defenders(world: &World, list: &mut DrawList, alpha: f32) {
     }
 }
 
-fn draw_enemies(world: &World, list: &mut DrawList, alpha: f32, tick: u64) {
+/// 敌人当前应播放的片段（SPEC 12.3：walk / eat，护甲破损后换 `bare_` 版）。
+fn enemy_clip(sk: &Painter<'_>, id: &str, eating: bool, armored: bool) -> String {
+    let act = if eating { "eat" } else { "walk" };
+    if !armored {
+        let bare = format!("{id}_bare_{act}");
+        if sk.has(&bare) {
+            return bare;
+        }
+    }
+    format!("{id}_{act}")
+}
+
+fn draw_enemies(
+    world: &World,
+    list: &mut DrawList,
+    alpha: f32,
+    tick: u64,
+    painter: Option<&Painter<'_>>,
+) {
     let hurt = world.resources.get::<RenderState>();
-    for (e, t, p, h, lane, status, armor, _, _) in world
+    for (e, t, p, h, lane, status, armor, enemy, walker) in world
         .query::<(
             Entity,
             &Transform2D,
@@ -273,13 +425,32 @@ fn draw_enemies(world: &World, list: &mut DrawList, alpha: f32, tick: u64) {
         }
         let layer = row_layer(lane.row);
         let pos = t.lerp(alpha);
-        let mut c = color(p.color);
-        if status.chilled() {
-            c = mix(c, color(palette::CHILL_TINT), 0.5);
-        }
         let flashing = hurt
             .and_then(|s| s.hurt_at.get(&e))
             .is_some_and(|&at| tick.saturating_sub(at) < HURT_FLASH_TICKS);
+        let armored = armor.is_some_and(|a| a.hp > 0);
+        if let Some(sk) = painter {
+            let eating = matches!(walker.state, WalkState::Eating(_));
+            let clip = enemy_clip(sk, enemy.id.as_str(), eating, armored);
+            let tint = if status.chilled() {
+                mix(Color::WHITE, color(palette::CHILL_TINT), CHILL_MIX)
+            } else {
+                Color::WHITE
+            };
+            let pose = Pose {
+                clip: &clip,
+                elapsed: phase(e, tick),
+                flash: flashing,
+                tint,
+            };
+            if sk.draw(list, layer, skin::foot(pos), pos.y, pose) {
+                continue;
+            }
+        }
+        let mut c = color(p.color);
+        if status.chilled() {
+            c = mix(c, color(palette::CHILL_TINT), CHILL_MIX);
+        }
         if flashing {
             c = mix(c, Color::WHITE, 0.7);
         }

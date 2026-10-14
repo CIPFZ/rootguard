@@ -1,7 +1,7 @@
 //! # rootguard-app
 //!
 //! 职责：组装 Trellia App（插件顺序见 SPEC.md 3.2）、场景（SPEC.md 3.4）、HUD 与 egui 按钮、
-//! 占位渲染（SPEC.md 12.2）、音效触发、存档与设置。入口为 `src/main.rs`。
+//! 占位渲染（SPEC.md 12.2）与皮肤渲染（SPEC.md 12.3）、音效触发、存档与设置。入口为 `src/main.rs`。
 //!
 //! Feature：`devtools`（默认开启）——引擎调试面板与 Rootguard 调试窗口（SPEC.md 11.5）。
 //!
@@ -19,6 +19,7 @@ pub mod save;
 pub mod scenes;
 pub mod script;
 pub mod sfx;
+pub mod skin;
 
 pub use scenes::{BattleScene, TitleScene};
 
@@ -58,6 +59,13 @@ impl Plugin for GamePlugin {
                 app.insert_resource(table);
             }
             Err(e) => app.record_startup_error(e),
+        }
+        // 皮肤是可选增强（SPEC 12.1）：加载失败时警告并让 Skinned 模式回退占位渲染
+        match skin::SkinAssets::load(app.world_mut(), &server) {
+            Ok(assets) => {
+                app.insert_resource(assets);
+            }
+            Err(e) => log::warn!("皮肤加载失败，皮肤模式将回退占位渲染：{e}"),
         }
         app.add_plugin(save::SavePlugin(self.save.clone()))
             .add_plugin(sfx::SfxPlugin)

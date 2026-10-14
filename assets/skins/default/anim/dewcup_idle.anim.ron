@@ -1,0 +1,11 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "dewcup_idle",
+    looping: true,
+    frames: [
+        (frame: "dewcup_idle_0", ticks: 15),
+        (frame: "dewcup_idle_1", ticks: 15),
+        (frame: "dewcup_idle_2", ticks: 15),
+        (frame: "dewcup_idle_3", ticks: 15),
+    ],
+)

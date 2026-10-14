@@ -1,0 +1,10 @@
+// 由 scripts/gen_skins.py 生成
+AnimationClip(
+    name: "snapmaw_attack",
+    looping: true,
+    frames: [
+        (frame: "snapmaw_attack_0", ticks: 6),
+        (frame: "snapmaw_attack_1", ticks: 6),
+        (frame: "snapmaw_attack_2", ticks: 6),
+    ],
+)
