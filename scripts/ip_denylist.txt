@@ -1,4 +1,78 @@
 # Rootguard 知识产权禁用词表（scripts/check_ip.sh 使用）
 #
-# 由项目负责人维护：每行一个词或短语，大小写不敏感，`#` 开头为注释。
+# 由项目负责人维护：每行一个词或短语，大小写不敏感、子串匹配，`#` 开头为注释。
 # 实现者（AI 开发者）不得向本表添加任何第三方作品的角色名或作品名（AGENT.md 第 6 章）。
+#
+# 填写原则：
+# - 只放特定作品的专有名称，不放通用词（植物 / 僵尸 / 向日葵 / 阳光 / zombie / sun / pea 等不是任何人的财产，
+#   且短词会误伤：pea 命中 peak，sun 命中 sunlantern）。
+# - 优先多字词或带空格的短语；英文短词一律跳过。
+# - 命中时脚本不回显词本身，只报文件与行号。
+
+# 1. 作品名（中 / 英 / 缩写）
+植物大战僵尸
+Plants vs. Zombies
+Plants vs Zombies
+Plants versus Zombies
+PvZ
+
+# 2. 开发与发行方
+PopCap
+宝开
+Electronic Arts
+美国艺电
+
+# 3. 标志性角色与物品（中文）
+豌豆射手
+双发射手
+寒冰射手
+坚果墙
+高坚果
+樱桃炸弹
+土豆地雷
+食人花
+小喷菇
+火爆辣椒
+火炬树桩
+玉米加农炮
+疯狂戴夫
+路障僵尸
+铁桶僵尸
+读报僵尸
+撑杆僵尸
+橄榄球僵尸
+舞王僵尸
+冰车僵尸
+巨人僵尸
+小鬼僵尸
+僵王博士
+
+# 4. 标志性角色与物品（英文，均为多字或独有拼写）
+Peashooter
+Snow Pea
+Wall-nut
+Wallnut
+Tall-nut
+Cherry Bomb
+Potato Mine
+Puff-shroom
+Torchwood
+Cob Cannon
+Crazy Dave
+Conehead
+Buckethead
+Newspaper Zombie
+Pole Vaulting Zombie
+Football Zombie
+Dancing Zombie
+Zomboni
+Gargantuar
+Zomboss
+
+# 5. 作品特有模式与专有名词
+禅境花园
+智慧树
+Zen Garden
+Tree of Wisdom
+Vasebreaker
+Wall-nut Bowling
