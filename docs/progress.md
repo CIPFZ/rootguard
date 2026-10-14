@@ -66,7 +66,7 @@
   上传安装包），Linux push 运行另上传 `rootguard-screenshots` 产物（ADR-011）。提交 15b425d、e94923d。**未打 tag。**
   证据：CI run 38541417044（e94923d）三平台检查、打包与截图全部通过，产物 rootguard-ubuntu-latest 7.69 MB、
   rootguard-macos-latest 6.24 MB、rootguard-windows-latest 5.89 MB、rootguard-screenshots 103 KB。
-  15b425d / 3696f05 两次运行的 Linux 截图步骤失败（缺 X11 / EGL 运行库），e94923d 补齐后通过。
+  15b425d / 3696f05 两次运行的 Linux 截图步骤失败（日志需登录查看；推测缺 X11 / EGL 运行库），e94923d 补齐运行库后通过。
   `release` 作业的 tag 前置逻辑（版本核对、CHANGELOG 提取）已在本地用同一脚本验证；完整流程要到负责人打 tag 时才会首次运行。
 - [ ] Git tag `v0.1.0`：负责人在实机验证后打。
 
