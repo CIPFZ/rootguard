@@ -14,13 +14,17 @@
 
 动作：防御者 idle 4 帧（射手 / 咬夹草另有 attack 3 帧，块茎雷另有 armed 2 帧）；敌人 walk 4 帧、
 eat 3 帧（第 2 帧带 `eat_hit` 事件），有护甲的敌人另有 bare_walk / bare_eat（护甲破损后）。
+eat 片段总长必须等于该敌人的 `bite_interval_ticks`（读取 assets/data/enemies/*.enemy.ron，不符即报错），
+使每循环一次的 `eat_hit` 啃食音效与模拟中的伤害同频（负责人裁决 2026-10-15，ADR-010）。
 弹丸与 Dew 各 1 帧，锚点在中心；其余锚点在底部中心。
 
 需要 Pillow（开发期工具）：python3 scripts/gen_skins.py
 """
 
+import glob
 import math
 import os
+import re
 
 from PIL import Image, ImageDraw
 
@@ -28,6 +32,9 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 OUT = os.path.join(ROOT, "assets", "skins", "default")
 CELL = 96
 SS = 4  # 超采样
+# eat 帧时长：抬头 → 咬下（eat_hit）→ 停顿；总和须等于 bite_interval_ticks
+EAT_TICKS = (20, 10, 30)
+EAT_HIT_FRAME = 1
 OUTLINE = (52, 40, 32, 255)
 LINE_W = 3
 
@@ -408,6 +415,19 @@ def flash(img):
     return Image.merge("RGBA", (*mix, a))
 
 
+def bite_intervals():
+    """敌人 id → bite_interval_ticks（来自 assets/data/enemies/*.enemy.ron）。"""
+    out = {}
+    for path in glob.glob(os.path.join(ROOT, "assets", "data", "enemies", "*.enemy.ron")):
+        text = open(path, encoding="utf-8").read()
+        eid = re.search(r'\bid:\s*"([a-z0-9_]+)"', text)
+        interval = re.search(r"\bbite_interval_ticks:\s*(\d+)", text)
+        if not (eid and interval):
+            raise SystemExit(f"gen_skins: 无法从 {path} 读取 id / bite_interval_ticks")
+        out[eid.group(1)] = int(interval.group(1))
+    return out
+
+
 def frames():
     """生成全部 (帧名, 图像, 锚点) 与动画片段定义 [(片段名, looping, [(帧名, ticks, 事件)])]。"""
     out = []
@@ -437,7 +457,10 @@ def frames():
                 add(name, tuberblast(f, armed=True))
                 armed.append((name, 20, None))
             clips.append((f"{did}_armed", True, armed))
+    intervals = bite_intervals()
     for eid, (fn, armored) in ENEMIES.items():
+        if sum(EAT_TICKS) != intervals.get(eid):
+            raise SystemExit(f"gen_skins: eat 片段总长 {sum(EAT_TICKS)} ≠ {eid} 的 bite_interval_ticks {intervals.get(eid)}")
         variants = [("", True)] + ([("bare_", False)] if armored else [])
         for prefix, arm in variants:
             walk = []
@@ -454,7 +477,7 @@ def frames():
                 img = fn(0, eat=e, armored=arm)
                 add(name, img)
                 add(f"{name}_flash", flash(img))
-                eat.append((name, 10, "eat_hit" if e == 1 else None))
+                eat.append((name, EAT_TICKS[e], "eat_hit" if e == EAT_HIT_FRAME else None))
             clips.append((f"{eid}_{prefix}eat", True, eat))
     for oid, fn in OTHER.items():
         add(f"{oid}_0", fn(0), anchor=(0.5, 0.5))

@@ -3,8 +3,8 @@ AnimationClip(
     name: "drum_husk_bare_eat",
     looping: true,
     frames: [
-        (frame: "drum_husk_bare_eat_0", ticks: 10),
+        (frame: "drum_husk_bare_eat_0", ticks: 20),
         (frame: "drum_husk_bare_eat_1", ticks: 10, event: "eat_hit"),
-        (frame: "drum_husk_bare_eat_2", ticks: 10),
+        (frame: "drum_husk_bare_eat_2", ticks: 30),
     ],
 )

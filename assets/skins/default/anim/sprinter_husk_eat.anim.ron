@@ -3,8 +3,8 @@ AnimationClip(
     name: "sprinter_husk_eat",
     looping: true,
     frames: [
-        (frame: "sprinter_husk_eat_0", ticks: 10),
+        (frame: "sprinter_husk_eat_0", ticks: 20),
         (frame: "sprinter_husk_eat_1", ticks: 10, event: "eat_hit"),
-        (frame: "sprinter_husk_eat_2", ticks: 10),
+        (frame: "sprinter_husk_eat_2", ticks: 30),
     ],
 )

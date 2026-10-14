@@ -93,6 +93,37 @@ fn skin_covers_all_content() {
     }
 }
 
+#[test]
+fn eat_clip_matches_bite_interval() {
+    // eat 片段每循环进入一次 eat_hit 帧并播放 sfx.bite（ADR-010）：片段总长必须等于模拟中的啃食间隔，
+    // 音效才与伤害同频（负责人裁决 2026-10-15）。护甲破损后的 bare_eat 同样适用。
+    let app = build_app_with(rootguard_app::TitleScene);
+    let world = app.world();
+    let skin = world.resources.expect::<SkinAssets>();
+    let clips = world.resources.expect::<Assets<AnimationClip>>();
+    let mut checked = 0;
+    for (id, def) in world.resources.expect::<EnemyRegistry>().iter() {
+        for name in [format!("{id}_eat"), format!("{id}_bare_eat")] {
+            let Some(clip) = skin.clip(&name).and_then(|h| clips.get(h)) else {
+                continue;
+            };
+            assert_eq!(
+                rootguard_app::skin::clip_ticks(clip),
+                u64::from(def.bite_interval_ticks),
+                "{name} 总长应等于 {id} 的 bite_interval_ticks"
+            );
+            let hits = clip
+                .frames
+                .iter()
+                .filter(|f| f.event.as_deref() == Some(rootguard_app::sfx::EAT_HIT_EVENT))
+                .count();
+            assert_eq!(hits, 1, "{name} 每循环应恰有 1 个 eat_hit 帧");
+            checked += 1;
+        }
+    }
+    assert!(checked >= 9, "应检查全部敌人的 eat 片段（{checked}）");
+}
+
 /// 回放 1-4 脚本 `ticks` 帧；`skin_at(frame)` 给出该帧开始前要切换到的模式（`None` 不切换）。
 fn run_1_4(
     ticks: u32,
