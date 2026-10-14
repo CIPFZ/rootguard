@@ -2,6 +2,9 @@
 
 ## 会话记录（新记录追加在最上方）
 
+- 2026-10-14 会话 2（续）：负责人授权实现者直接推送 GitHub。引擎补丁 0001 ～ 0004 应用到 `/data/workspace/trellia`
+  main 并推送（4eb6c29 → 24c4d71，引擎 CI 三平台通过）；游戏 bump rev 后依次落地 E-1（中文显示）、E-3（`sort_y`）、
+  E-2（加载辅助）、E-5（BGM 交叉淡化）（ADR-009），撰写 `docs/game-v1-report.md`，**G5 关闭**。测试 51 个全绿。
 - 2026-10-14 会话 2：接手，上下文重建自仓库文件（SPEC v1.1、AGENT v1.1、负责人裁决、ADR-001 ～ 005、
   引擎报告第 3 ～ 4 节）。起点：`cargo build/test --workspace` 绿色，41 个测试。负责人裁决文件原在仓库根目录
   且未入库，按 AGENT.md 移至 `docs/owner-decisions/2026-10-14-g4-levels.md` 并与 SPEC / AGENT v1.1 一并提交。
@@ -23,7 +26,7 @@
 - [ ] **知悉**：1-3 不在裁决列出的返工关卡中，但其原脚本解用掉 2 个 Hose，违反 SPEC 10.3；已只重录脚本解、
   关卡数据未改（ADR-006）。如负责人认为 1-3 应完全不动，请告知。
 - [ ] 填写 `scripts/ip_denylist.txt`（AGENT.md 第 6 章；实现者不得自行添加第三方作品名）。
-- [ ] **【阻塞 G5 关闭】E-1 / E-2 / E-3 / E-5 引擎补充需推送**：实现已在引擎本地分支链 `feat/e2-world-asset-helpers`（56082a4）→
+- [x] ~~E-1 / E-2 / E-3 / E-5 引擎补充需推送~~：2026-10-14 已由实现者推送至引擎 main 24c4d71 并在游戏中落地（ADR-009）。原记录：实现已在引擎本地分支链 `feat/e2-world-asset-helpers`（56082a4）→
   `feat/e3-sorted-shapes`（8484ce3）→ `feat/e1-cjk-font`（76be022）→ `feat/e5-music-crossfade`（0069b02，2026-10-14 新增，ADR-011）
   （补丁副本 `tmp/engine-patches/0001～0004`，未入库，已验证可按序 `git am` 到引擎 main 4eb6c29）完成并通过引擎全部检查（108 个测试）；
   本环境无引擎仓库推送权限与 `gh`，需负责人推送 / 合并后回传 sha，游戏仓库再 `chore(deps): bump trellia to <sha> (E-1 E-2 E-3 E-5)`。
@@ -40,11 +43,11 @@
 | 里程碑 | 状态 |
 |---|---|
 | G0 骨架 | ✅ 2026-10-13 |
-| G1 核心规则 | ✅ 2026-10-13（E-2 待推送，见下） |
-| G2 可玩对局 | ✅ 2026-10-13（手动试玩待负责人，E-3 待推送） |
-| G3 完整流程 | ✅ 2026-10-13（中文显示待 E-1 合入并 bump rev） |
+| G1 核心规则 | ✅ 2026-10-13（E-2 已于 2026-10-14 落地） |
+| G2 可玩对局 | ✅ 2026-10-13（手动试玩待负责人；E-3 已于 2026-10-14 落地） |
+| G3 完整流程 | ✅ 2026-10-13（中文显示已于 2026-10-14 随 E-1 落地） |
 | G4 全部关卡 | ✅ 2026-10-14（按 SPEC v1.1 返工；手动试玩待负责人） |
-| G5 皮肤与打磨 | ⏸ 2026-10-14 除 E-5 接入与报告外完成；等待负责人合并引擎（见待办） |
+| G5 皮肤与打磨 | ✅ 2026-10-14（实机音频听感与 GPU 耗时待负责人） |
 
 ## G0 骨架（2026-10-13 完成）
 
@@ -162,7 +165,7 @@
 
 遗留：1-9 / 1-10 的机器人合格解很少，难度需真人评估；机器人带咬夹草的卡组在 1-10 上全部不合格（战术实现较弱）。
 
-## G5 皮肤与打磨（进行中，2026-10-14；等待引擎合并）
+## G5 皮肤与打磨（2026-10-14 完成）
 
 验收（SPEC.md 17 G5，AGENT.md 第 10 章）：
 
@@ -173,10 +176,13 @@
 - [x] **两种模式切换无差异**：`skin_switching_keeps_golden_1_4`（对局中每 500 帧切换一次模式，30000 帧后快照与
   golden 逐字节一致）；`skinned_mode_draws_sprites`；占位模式未改动（`placeholder_mode_draws_all_entities` 通过）。
 - [x] Dew 收集飞向 HUD 的 Tween、横幅入场动画、受伤闪白（两种模式）：`tests/visual_fx.rs` 3 个测试（ADR-008）。
-- [~] E-5 音乐交叉淡化：引擎分支 `feat/e5-music-crossfade` 实现完成（ADR-011，补丁 `tmp/engine-patches/0004`），
-  **等待负责人推送合并**；合并后游戏侧把 `sfx::play_music` 的场景切换改为 `crossfade_music`。
+- [x] E-5 音乐交叉淡化：引擎 24c4d71（引擎 ADR-011）；游戏场景切换 BGM 交叉淡化 60 tick，首次播放仍为
+  `PlayMusic`（`audio_events_mapped` 断言两者，ADR-009）。听感未经人耳确认。
+- [x] 引擎 bump 后续：E-1 中文显示（`chinese_hud_when_lang_zh`，Xvfb 截图确认）、E-3 行遮挡改用 `sort_y`
+  （`rows_occlude_by_sort_y`）、E-2 加载辅助；golden 不变。
 - [x] 三平台打包脚本 `scripts/package.sh`（ADR-008）：本机 Linux 包解压到仓库外可独立运行（Xvfb 截图）；
-  macOS / Windows 由 CI（push 时打包并上传产物）首次运行验证。
+  CI run 38523777097（1c59eed）三平台检查与打包全部通过，产物 rootguard-ubuntu-latest 7.68 MB、
+  rootguard-macos-latest 6.23 MB、rootguard-windows-latest 5.88 MB（macOS / Windows 包未在实机启动）。
 - [x] 性能 SPEC 16.3（`cargo run --release -p rootguard-app --example perf_1_10 [-- --skinned] [--stress]`，
   AMD EPYC 9K65，headless CPU 帧耗时，测量方法见 ADR-008）：
 
@@ -189,7 +195,8 @@
 
   均远低于 4 ms。devtools 面板的 “frame ms” 是真实帧间隔（垂直同步下约 16.7 ms），不反映负载；
   实机 GPU / egui 绘制耗时需负责人在桌面环境补充。
-- [ ] `docs/game-v1-report.md`：G5 关闭（E-5 接入）后撰写。
+- [x] `docs/game-v1-report.md` 已提交。
+- [x] `tmp/engine-patches/` 已删除（补丁均已合入引擎 main）。
 
-规模：rootguard-core 4652 行、rootguard-content 577 行、rootguard-app 5661 行（含测试与文档注释）；
-测试 49 个（core 23、content 6、app 20）。决策：ADR-007、ADR-008。
+规模：rootguard-core 4652 行、rootguard-content 577 行、rootguard-app 5718 行（含测试与文档注释）；
+测试 51 个（core 23、content 6、app 22）。决策：ADR-007、ADR-008、ADR-009。
