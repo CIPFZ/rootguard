@@ -174,9 +174,12 @@ fn color(hex: u32) -> Color {
     Color::from_hex(hex)
 }
 
-/// 行遮挡（SPEC 12.2）：E-3 落地前每行一个图层。
-fn row_layer(row: u8) -> Layer {
-    Layer(Layer::WORLD.0 + i16::from(row))
+/// 对局角色的图层；行遮挡由 `sort_y` 决定（SPEC 12.2，E-3）。
+const WORLD: Layer = Layer::WORLD;
+
+/// 行遮挡（SPEC 2.2 / 12.2）：同一行的全部命令共用行底 y，行内按提交顺序。
+fn row_y(row: u8) -> f32 {
+    Grid::sort_y(row)
 }
 
 fn mix(a: Color, b: Color, t: f32) -> Color {
@@ -211,7 +214,7 @@ pub fn draw_battle(world: &mut World) {
         )>()
         .iter()
     {
-        let layer = row_layer(lane.row);
+        let y = row_y(lane.row);
         let pos = t.lerp(alpha);
         let pose = Pose {
             clip: pr.id.as_str(),
@@ -219,8 +222,8 @@ pub fn draw_battle(world: &mut World) {
             flash: false,
             tint: Color::WHITE,
         };
-        if !painter.is_some_and(|sk| sk.draw(&mut list, layer, pos, pos.y, pose)) {
-            list.circle(layer, pos, p.size.x / 2.0, color(p.color));
+        if !painter.is_some_and(|sk| sk.draw(&mut list, WORLD, pos, y, pose)) {
+            list.circle_sorted(WORLD, y, pos, p.size.x / 2.0, color(p.color));
         }
     }
     // Dew 画在 HUD 之上：下落时会经过顶部 HUD 区域，仍需可见可点
@@ -414,7 +417,7 @@ fn draw_defenders(
         if !h.alive() {
             continue;
         }
-        let layer = row_layer(cell.row);
+        let y = row_y(cell.row);
         let pos = t.lerp(alpha);
         if let Some(sk) = painter {
             let (clip, elapsed) = defender_pose(sk, d.id.as_str(), e, tick, shooter, chomper, mine);
@@ -429,22 +432,22 @@ fn draw_defenders(
                 flash: false,
                 tint,
             };
-            if sk.draw(list, layer, skin::foot(pos), pos.y, pose) {
+            if sk.draw(list, WORLD, skin::foot(pos), y, pose) {
                 continue;
             }
         }
         let body = Rect::from_center_size(pos, p.size);
-        list.rect(layer, body, color(p.color));
+        list.rect_sorted(WORLD, y, body, color(p.color));
         if h.hp * 2 < h.max {
-            list.rect_stroke(layer, body, color(palette::LOW_HP), 3.0);
+            list.rect_stroke_sorted(WORLD, y, body, color(palette::LOW_HP), 3.0);
         }
-        list.text_aligned(
-            layer,
+        list.text_sorted(
+            WORLD,
+            y,
             pos - Vec2::new(0.0, 16.0),
             p.label.as_str(),
             28.0,
             Color::WHITE,
-            TextAlign::Center,
         );
     }
     // 覆盖层：宿主外围描边环（皮肤模式：环形皮肤，排在宿主之后）
@@ -477,13 +480,7 @@ fn draw_defenders(
                 flash: false,
                 tint,
             };
-            if sk.draw(
-                list,
-                row_layer(cell.row),
-                skin::foot(pos),
-                pos.y + 1.0,
-                pose,
-            ) {
+            if sk.draw(list, WORLD, skin::foot(pos), row_y(cell.row), pose) {
                 continue;
             }
         }
@@ -493,7 +490,7 @@ fn draw_defenders(
         } else {
             color(palette::OVERLAY_RING)
         };
-        list.rect_stroke(row_layer(cell.row), ring, c, 6.0);
+        list.rect_stroke_sorted(WORLD, row_y(cell.row), ring, c, 6.0);
     }
 }
 
@@ -534,7 +531,7 @@ fn draw_enemies(
         if !h.alive() {
             continue;
         }
-        let layer = row_layer(lane.row);
+        let y = row_y(lane.row);
         let pos = t.lerp(alpha);
         let flashing = hurt
             .and_then(|s| s.hurt_at.get(&e))
@@ -554,7 +551,7 @@ fn draw_enemies(
                 flash: flashing,
                 tint,
             };
-            if sk.draw(list, layer, skin::foot(pos), pos.y, pose) {
+            if sk.draw(list, WORLD, skin::foot(pos), y, pose) {
                 continue;
             }
         }
@@ -566,40 +563,43 @@ fn draw_enemies(
             c = mix(c, Color::WHITE, 0.7);
         }
         let body = Rect::from_center_size(pos, p.size);
-        list.rect(layer, body, c);
+        list.rect_sorted(WORLD, y, body, c);
         if let Some(a) = armor.filter(|a| a.hp > 0) {
             match a.kind {
-                ArmorKind::Helm => list.rect(
-                    layer,
+                ArmorKind::Helm => list.rect_sorted(
+                    WORLD,
+                    y,
                     Rect::from_center_size(
                         Vec2::new(pos.x, body.min.y - 6.0),
                         Vec2::new(p.size.x + 6.0, 16.0),
                     ),
                     color(palette::HELM),
                 ),
-                ArmorKind::Shield => list.rect(
-                    layer,
+                ArmorKind::Shield => list.rect_sorted(
+                    WORLD,
+                    y,
                     Rect::from_center_size(
                         Vec2::new(body.min.x - 6.0, pos.y),
                         Vec2::new(12.0, p.size.y + 10.0),
                     ),
                     color(palette::SHIELD),
                 ),
-                ArmorKind::Drum => list.circle(
-                    layer,
+                ArmorKind::Drum => list.circle_sorted(
+                    WORLD,
+                    y,
                     pos + Vec2::new(0.0, 18.0),
                     20.0,
                     color(palette::DRUM),
                 ),
             }
         }
-        list.text_aligned(
-            layer,
+        list.text_sorted(
+            WORLD,
+            y,
             pos - Vec2::new(0.0, 16.0),
             p.label.as_str(),
             26.0,
             Color::WHITE,
-            TextAlign::Center,
         );
     }
 }

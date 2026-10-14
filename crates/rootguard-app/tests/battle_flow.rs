@@ -97,3 +97,42 @@ fn placeholder_mode_draws_all_entities() {
     }
     assert!(checked > 100, "应在有多个实体的帧上检查（{checked}）");
 }
+
+/// SPEC 12.2 / E-3：对局角色全部画在 `Layer::WORLD`，行遮挡由 `sort_y = 行底 y` 决定，不再按行分层。
+#[test]
+fn rows_occlude_by_sort_y() {
+    let mut runner = battle_runner("1-1", &[]);
+    let rows: Vec<f32> = (0..rootguard_core::Grid::ROWS)
+        .map(rootguard_core::Grid::sort_y)
+        .collect();
+    let mut world_cmds = 0;
+    for _ in 0..3000 {
+        let s = state(&runner).expect("对局中");
+        if s.level_tick == 30 || s.level_tick.is_multiple_of(700) {
+            send(&mut runner, UiAction::SelectCard(0));
+            if let Some(col) = (0..9).find(|&c| !occupied(runner.app().world(), 2, c)) {
+                send(&mut runner, UiAction::PlaceAt { row: 2, col });
+            }
+        }
+        runner.frame();
+        for c in runner.last_draw_list() {
+            assert!(
+                !(Layer::WORLD.0 + 1..=Layer::WORLD.0 + 4).contains(&c.layer.0),
+                "不应再有按行分层的图层 {:?}",
+                c.layer
+            );
+            if c.layer == Layer::WORLD {
+                assert!(
+                    rows.iter().any(|y| (c.sort_y - y).abs() < 1e-3),
+                    "WORLD 层命令的 sort_y {} 应为某行底 y",
+                    c.sort_y
+                );
+                world_cmds += 1;
+            }
+        }
+    }
+    assert!(
+        world_cmds > 1000,
+        "应检查到足够多的角色命令（{world_cmds}）"
+    );
+}
