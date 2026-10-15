@@ -106,6 +106,27 @@ ART-SPEC 7 全表加 4.1 / 4.4 的口部特效，均为 `art/fx/<id>/` 并由 `f
 3. 测试：`battle_effects_follow_events`（1-10：十类特效与 Chill 霜晶）、`constructed_effects`（石子口部 / 命中、
    风环拉伸、铲除残影、放置缩放——1-10 脚本解没用到双籽荚、风铃花与铲子）。
 
+### 7. 音效（2026-10-16）
+
+1. ART-SPEC 12 的 20 个新音效由 `scripts/gen_audio.py` 合成（只新增文件，已有音频未重新编码），登记 `SOURCES.md`，
+   SPEC 13 表按 ART-SPEC 12“允许的改动清单”补行。触发方式见 SPEC 13 表：模拟事件或片段事件帧。
+2. **片段事件帧 → 音效**（ART-SPEC 3.2）：`gulp`（咬夹草 snap 末帧）、`thud`（鼓腹枯壳 walk 每步）、`prick`（荆棘垫
+   trigger 第 0 帧 = 扎刺伤害的 tick）、`vault`（跳栏开始）与原有 `eat_hit`。呈现层对全部角色计算当前片段与相位，
+   与上一帧比较后发引擎 `AnimationEvent`；新片段的第 0 帧事件只在确实从第 0 帧开始时发（敌人中途走进荆棘垫不算）。
+3. **事件帧固定取 garden 片段**（缺片段回退 default），不论渲染模式与所选皮肤：音效时机属于美术规格的事件帧，
+   不应随设置改变（ADR-010“与渲染模式无关”的推广）。`default` 皮肤的 eat 片段与 garden 同长、`eat_hit` 都在末帧，
+   原有啃食音效不变。
+4. **不能取走的事件**（`EnemyDamaged`、`EnemyArmorBroken`、`DewSpawned`，呈现层也要读）：`sfx_system` 只读并记住
+   上一帧的事件键去重（双缓冲）。生产的额外产量是同一 tick 的第二个 `DewSpawned`，按生产者去重；日灯笼第
+   `bonus_every` 次（`produced % bonus_every == 0`）换 `sfx.lantern`。
+5. 冰石命中 `sfx.hit_frost`：`sfx_system` 在 `ProjectileFired` 时记下弹丸是否冰石，命中时查表（`ProjectileHit` 不带
+   弹丸 id）；门板破碎没有新音效（5.6 只写命中木板用 `sfx.hit_armor`）。
+6. 测试：`art_phase_sfx_mapped`（1-10，16 种新音效；只用冰石时不出现普通发射 / 命中；铃声远少于滴落）、
+   `constructed_sfx_mapped`（咬夹草 snap 与 gulp 一一对应、风铃花 gust、葫芦壳 shell_crack）。波形图
+   `docs/screenshots/a2-sfx.png`（自上而下：drip、wood_crack、shoot_frost、hit_frost、prick、tuber_burst、ember_burst、
+   shell_crack、snap、gulp、gust、lantern、wilt、twig_snap、pot_break、vault、seeds_spill、thud、gourd_break、sprout_down）。
+   听感未经人耳确认（本环境无音频设备）。
+
 ## 后果
 
 - 新片段都由模拟状态唯一决定，暂停、回放、切换渲染模式都不会让动画与模拟错位。

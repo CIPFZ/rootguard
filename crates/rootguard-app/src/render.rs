@@ -103,6 +103,8 @@ pub struct RenderState {
     defender_born: BTreeMap<u64, u64>,
     /// 是否已过进入对局的第一帧。
     anim_started: bool,
+    /// 上一帧各角色的片段与已播放 tick（非 eat 片段的事件帧，ADR-016 第 7 节）。
+    clip_seen: BTreeMap<u64, (String, u64)>,
 }
 
 impl RenderState {
@@ -274,8 +276,12 @@ fn emit_anim_events(world: &mut World) {
     else {
         return;
     };
+    // 与其他片段事件一样固定用 garden 视图（ADR-016 第 7 节）
     let (Some(skin), Some(clips)) = (
-        skin::SkinView::selected(world),
+        world
+            .resources
+            .get::<skin::Skins>()
+            .map(|s| s.view(rootguard_core::events::SkinName::Garden)),
         world.resources.get::<Assets<AnimationClip>>(),
     ) else {
         return;
@@ -343,12 +349,139 @@ fn emit_anim_events(world: &mut World) {
             });
         }
     }
+    let (clip_events, clip_seen) = other_clip_events(world, factor);
+    events.extend(clip_events);
     if let Some(state) = world.resources.get_mut::<RenderState>() {
         state.eat_seen = next;
+        state.clip_seen = clip_seen;
     }
     for event in events {
         world.events.send(event);
     }
+}
+
+/// 片段从 `prev`（上一帧的片段与已播放 tick）推进到 `name` / `now` 时进入的事件帧。片段改变（或第一次看到）
+/// 时从片段开头算（第 0 帧的事件只在仍处于第 0 帧时算）；同片段倒退（循环回绕或被风推回）时补一个周期。
+fn clip_events_since<'c>(
+    clip: &'c AnimationClip,
+    name: &str,
+    prev: Option<&(String, u64)>,
+    now: u64,
+) -> Vec<&'c str> {
+    let len = skin::clip_ticks(clip);
+    match prev {
+        Some((p, from)) if p == name && now >= *from => {
+            skin::events_between(clip, *from, now).collect()
+        }
+        Some((p, from)) if p == name && clip.looping => {
+            skin::events_between(clip, *from, now + len).collect()
+        }
+        // 新片段：只有确实从第 0 帧开始（如跨越刚开始）才算进入第 0 帧；中途切入（敌人走进荆棘垫时扎刺计时器
+        // 已在周期中段）不发第 0 帧的事件
+        _ => clip
+            .frames
+            .first()
+            .filter(|f| now < u64::from(f.duration_ticks))
+            .and_then(|f| f.event.as_deref())
+            .into_iter()
+            .chain(skin::events_between(clip, 0, now))
+            .collect(),
+    }
+}
+
+/// 啃食以外的片段事件帧（ART-SPEC 3.2）：敌人 walk / sprint / vault / spawn（鼓腹枯壳每步 `thud`、跳栏 `vault`）
+/// 与防御者片段（荆棘垫扎刺 `prick`、咬夹草 `gulp`）。相位与绘制同一规则；不论渲染模式。
+fn other_clip_events(
+    world: &World,
+    factor: u32,
+) -> (Vec<AnimationEvent>, BTreeMap<u64, (String, u64)>) {
+    let mut events = Vec::new();
+    let mut seen = BTreeMap::new();
+    let (Some(sk), Some(state)) = (
+        Painter::for_events(world),
+        world.resources.get::<RenderState>(),
+    ) else {
+        return (events, seen);
+    };
+    let tick = world.resources.expect::<Time>().fixed_tick;
+    let mut emit = |e: Entity, name: String, elapsed: u64| {
+        let key = e.to_bits().get();
+        if let Some(clip) = sk.clip_data(&name).filter(|_| !name.ends_with("_eat")) {
+            for ev in clip_events_since(clip, &name, state.clip_seen.get(&key), elapsed) {
+                events.push(AnimationEvent {
+                    entity: e,
+                    event: ev.to_owned(),
+                });
+            }
+        }
+        seen.insert(key, (name, elapsed));
+    };
+    for (e, enemy, t, walker, armor, biter, status, vaulter, h) in world
+        .query::<(
+            Entity,
+            &EnemyRef,
+            &Transform2D,
+            &Walker,
+            Option<&Armor>,
+            Option<&Biter>,
+            &StatusEffects,
+            Option<&Vaulter>,
+            &Health,
+        )>()
+        .iter()
+    {
+        if !h.alive() {
+            continue;
+        }
+        let look = EnemyLook {
+            id: enemy.id.as_str(),
+            x: t.pos.x,
+            walker,
+            biter,
+            status,
+            armor,
+            vaulter,
+            def_speed: enemy_def_speed(world, enemy),
+            age: enemy_age(world, e, tick),
+        };
+        let (name, elapsed) = enemy_pose_with(|c| sk.ticks(c), &look, tick, e, factor);
+        // 啃食事件由 Biter 相位单独判定（上方），这里只记录片段
+        emit(e, name, elapsed);
+    }
+    let enemies = enemy_positions(world);
+    for (e, d, h, cell, shooter, mine, blast, gust, chomper, spikes) in world
+        .query::<(
+            Entity,
+            &DefenderRef,
+            &Health,
+            &Cell,
+            Option<&Shooter>,
+            Option<&Mine>,
+            Option<&Blast>,
+            Option<&Gust>,
+            Option<&Chomper>,
+            Option<&Spikes>,
+        )>()
+        .without::<&OverlayOf>()
+        .iter()
+    {
+        if !h.alive() || (chomper.is_none() && spikes.is_none()) {
+            continue;
+        }
+        let timers = DefenderTimers {
+            shooter,
+            mine,
+            blast,
+            gust,
+            chomper,
+            spikes,
+            occupied: cell_occupied(&enemies, *cell),
+        };
+        let state_name = defender_state(|c| sk.has(c), d.id.as_str(), h);
+        let (name, elapsed) = defender_pose_with(&sk, d.id.as_str(), e, tick, state_name, timers);
+        emit(e, name, elapsed);
+    }
+    (events, seen)
 }
 
 /// Chill 啃食间隔倍率（规则数据，SPEC 8.2）；规则缺失时为 1。

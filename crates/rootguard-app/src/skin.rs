@@ -253,6 +253,29 @@ impl<'w> Painter<'w> {
         })
     }
 
+    /// 动画事件用的片段视图：固定为 garden（缺片段回退 default），不论渲染模式与所选皮肤——音效的时机
+    /// 属于美术规格的事件帧（ART-SPEC 3.2），不应随设置变化（ADR-010 / ADR-016 第 7 节）。
+    #[must_use]
+    pub fn for_events(world: &'w World) -> Option<Self> {
+        let view = world.resources.get::<Skins>()?.view(SkinName::Garden);
+        if view.chain.is_empty() {
+            return None;
+        }
+        let atlases = world.resources.get::<Assets<Atlas>>()?;
+        let clips = world.resources.get::<Assets<AnimationClip>>()?;
+        Some(Self {
+            view,
+            atlases,
+            clips,
+        })
+    }
+
+    /// 片段数据。
+    #[must_use]
+    pub fn clip_data(&self, clip: &str) -> Option<&'w AnimationClip> {
+        self.clips.get(self.view.clip(clip)?)
+    }
+
     /// 片段是否存在。
     #[must_use]
     pub fn has(&self, clip: &str) -> bool {

@@ -119,6 +119,9 @@
   plant_dust / tuber_burst / ember_wave / gust_ring / dew_pop / hose_burst / frost_crown）+ 口部小尘 / 白气，按事件生成；
   Chill 霜晶；放置弹性缩放与铲除残影（4.13）。帧条 `docs/screenshots/a2-fx.png`。测试 `battle_effects_follow_events`、
   `constructed_effects`。未做：咬夹草叶齿残影与咀嚼结束气泡（无对应事件）。
+- [x] 第 7 类 音效（2026-10-16，ADR-016 第 7 节）：ART-SPEC 12 的 20 个新音效（`gen_audio.py`，登记 `SOURCES.md`，SPEC 13
+  补行）；模拟事件 + 片段事件帧（gulp / thud / prick / vault，固定取 garden 片段、不随设置变化）。波形图
+  `docs/screenshots/a2-sfx.png`。测试 `art_phase_sfx_mapped`、`constructed_sfx_mapped`。听感待负责人实机确认。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 

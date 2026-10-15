@@ -23,6 +23,7 @@ Clips([
         looping: false,
         duration: Rule("enemies.vault_husk.vault.ticks"),
         frames: List([6, 6, 8, 8, 6, 6]),
+        events: [(0, "vault")],
         keys: {
             "body": [(t: 0, dy: 4, rot: 4), (t: 6, dy: -8, rot: -12), (t: 12, dy: -22, rot: -20), (t: 20, dy: -26, rot: -8), (t: 28, dy: -12, rot: 4), (t: 34, dy: 3, rot: 6)],
             "leg_front": [(t: 0, dy: 4, rot: 20), (t: 6, dy: -8, rot: 30), (t: 12, dy: -22, rot: 40), (t: 20, dy: -26, rot: 30), (t: 28, dy: -12, rot: 10), (t: 34, dy: 3, rot: 6)],

@@ -568,6 +568,26 @@ Esc 暂停 / 取消选卡；数字 1 ～ 8 选卡；空格 继续；F1 调试面
 | `WaveStarted(flag)` | `sfx.flag_wave` |
 | `HoseTriggered` | `sfx.hose` |
 | `AnimationEvent { event: "eat_hit" }`（敌人 eat 片段的啃食帧，SPEC 12.3） | `sfx.bite`（收尾期补充，ADR-010） |
+| `DewSpawned`（生产者产出；ART-SPEC 4.2 / 4.12） | `sfx.drip`（美术阶段，ART-SPEC 12） |
+| `DefenderRemoved(Killed)` 树皮墙（4.3） | `sfx.wood_crack`（美术阶段，ART-SPEC 12） |
+| `ProjectileFired` 冰石（4.4） | `sfx.shoot_frost`（美术阶段，ART-SPEC 12） |
+| `ProjectileHit` 冰石（6 章） | `sfx.hit_frost`（美术阶段，ART-SPEC 12） |
+| 荆棘垫 `trigger` 片段事件帧 `prick`（4.6） | `sfx.prick`（美术阶段，ART-SPEC 12） |
+| `DefenderRemoved(Consumed)` 块茎雷（4.7） | `sfx.tuber_burst`（美术阶段，ART-SPEC 12） |
+| `DefenderRemoved(Consumed)` 炽球（4.8） | `sfx.ember_burst`（美术阶段，ART-SPEC 12） |
+| `DefenderRemoved(Killed)` 葫芦壳（4.9） | `sfx.shell_crack`（美术阶段，ART-SPEC 12） |
+| `EnemyDamaged(Chomp)`（4.10） | `sfx.snap`（美术阶段，ART-SPEC 12） |
+| 咬夹草 `snap` 片段事件帧 `gulp`（4.10） | `sfx.gulp`（美术阶段，ART-SPEC 12） |
+| `DefenderRemoved(Consumed)` 风铃花（4.11） | `sfx.gust`（美术阶段，ART-SPEC 12） |
+| `DewSpawned` 日灯笼第 `bonus_every` 次（4.12） | `sfx.lantern`（美术阶段，ART-SPEC 12） |
+| `DefenderRemoved(Killed)` 其他守卫（4.13） | `sfx.wilt`（美术阶段，ART-SPEC 12） |
+| `EnemyArmorBroken` 枝冠（5.2） | `sfx.twig_snap`（美术阶段，ART-SPEC 12） |
+| `EnemyArmorBroken` 陶盆（5.3） | `sfx.pot_break`（美术阶段，ART-SPEC 12） |
+| 跳栏 `vault` 片段事件帧（5.5） | `sfx.vault`（美术阶段，ART-SPEC 12） |
+| `EnemyDied` 背篓枯壳（与 `sfx.husk_down` 同时，5.7） | `sfx.seeds_spill`（美术阶段，ART-SPEC 12） |
+| 鼓腹枯壳 `walk` 片段事件帧 `thud`（5.8） | `sfx.thud`（美术阶段，ART-SPEC 12） |
+| `EnemyArmorBroken` 葫芦（5.8） | `sfx.gourd_break`（美术阶段，ART-SPEC 12） |
+| `EnemyDied` 小芽怪（代替 `sfx.husk_down`，5.9） | `sfx.sprout_down`（美术阶段，ART-SPEC 12） |
 | `BattleEnded(Won/Lost)` | `sfx.win` / `sfx.lose` |
 | 场景 | Title / Battle / Outcome 各一首循环 BGM |
 

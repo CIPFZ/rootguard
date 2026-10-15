@@ -18,6 +18,26 @@
 | `assets/audio/sfx_win.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 胜利 |
 | `assets/audio/sfx_lose.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 失败 |
 | `assets/audio/sfx_bite.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，滤波噪声 + 下滑正弦） | Rootguard 项目 | 项目自有 | 啃食（eat_hit 动画帧，ADR-010） |
+| `assets/audio/sfx_drip.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 露水产出（极轻） |
+| `assets/audio/sfx_wood_crack.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 树皮墙倒下 |
+| `assets/audio/sfx_shoot_frost.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 霜籽荚发射 |
+| `assets/audio/sfx_hit_frost.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 冰石命中 |
+| `assets/audio/sfx_prick.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 荆棘垫扎刺 |
+| `assets/audio/sfx_tuber_burst.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 块茎雷爆炸 |
+| `assets/audio/sfx_ember_burst.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 炽球爆炸 |
+| `assets/audio/sfx_shell_crack.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 葫芦壳破碎 |
+| `assets/audio/sfx_snap.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 咬夹草吞食 |
+| `assets/audio/sfx_gulp.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 咬夹草咽下 |
+| `assets/audio/sfx_gust.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 风铃花吹风 |
+| `assets/audio/sfx_lantern.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 日灯笼第 4 次产出 |
+| `assets/audio/sfx_wilt.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 守卫被吃光 |
+| `assets/audio/sfx_twig_snap.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 枝冠折断 |
+| `assets/audio/sfx_pot_break.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 陶盆碎 |
+| `assets/audio/sfx_vault.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 跳栏芦苇弹响 |
+| `assets/audio/sfx_seeds_spill.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 背篓种子撒落 |
+| `assets/audio/sfx_thud.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 鼓腹枯壳脚步 |
+| `assets/audio/sfx_gourd_break.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 葫芦身炸开 |
+| `assets/audio/sfx_sprout_down.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码；美术阶段 A2，ART-SPEC 12） | Rootguard 项目 | 项目自有 | 小芽怪合拢 |
 | `assets/audio/bgm_title.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 标题 / 菜单 BGM（循环） |
 | `assets/audio/bgm_battle.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 对局 BGM（循环） |
 | `assets/audio/bgm_outcome.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 结算 BGM（循环） |

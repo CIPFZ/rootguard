@@ -400,3 +400,144 @@ fn save_without_skin_name_loads() {
         rootguard_core::events::SkinName::Default
     );
 }
+
+/// 回放某关脚本，返回全部音效 key 的出现次数（默认占位模式：音效不随渲染模式变化，ADR-010）。
+fn replay_sfx(level: &str) -> std::collections::BTreeMap<String, usize> {
+    let path =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join(format!("../../tests/scripts/{level}.ron"));
+    let script = Script::parse(&std::fs::read_to_string(path).expect("脚本")).expect("解析");
+    let scene = rootguard_app::BattleScene::new(script.level, script.cards.clone(), None);
+    let mut runner = common::runner_with(scene, &format!("sfx-{}", next_id()));
+    let mut replay = Replay::new(script);
+    runner.frame();
+    let mut counts = std::collections::BTreeMap::new();
+    for _ in 0..40_000 {
+        let s = state(&runner).expect("对局");
+        if matches!(s.phase, Phase::Won | Phase::Lost) {
+            break;
+        }
+        if s.phase == Phase::Playing {
+            for a in replay.due(s.level_tick) {
+                send(&mut runner, a);
+            }
+        }
+        runner.frame();
+        let log = runner.take_audio_log();
+        let bank = runner.app().world().resources.expect::<AudioBank>();
+        for req in &log {
+            if let AudioRequest::PlaySfx { clip, .. } = req
+                && let Some(k) = bank.key_of(*clip)
+            {
+                *counts.entry(k.to_owned()).or_insert(0) += 1;
+            }
+        }
+    }
+    counts
+}
+
+/// ART-SPEC 12 / ADR-016 第 7 节：美术阶段新增音效由对应事件或片段事件帧触发。
+#[test]
+fn art_phase_sfx_mapped() {
+    let counts = replay_sfx("1-10");
+    // 1-10 的卡组没有咬夹草、风铃花与葫芦壳（snap / gulp / gust / shell_crack 见 constructed_sfx_mapped）
+    for key in [
+        "sfx.drip",
+        "sfx.lantern",
+        "sfx.wood_crack",
+        "sfx.wilt",
+        "sfx.shoot_frost",
+        "sfx.hit_frost",
+        "sfx.prick",
+        "sfx.tuber_burst",
+        "sfx.ember_burst",
+        "sfx.twig_snap",
+        "sfx.pot_break",
+        "sfx.gourd_break",
+        "sfx.vault",
+        "sfx.seeds_spill",
+        "sfx.thud",
+        "sfx.sprout_down",
+    ] {
+        assert!(counts.contains_key(key), "1-10 中应有 {key}（{counts:?}）");
+    }
+    // 1-10 只用冰石：普通发射与命中不应出现
+    assert!(!counts.contains_key("sfx.shoot") && !counts.contains_key("sfx.hit"));
+    // 第 4 次生产才响铃（每只日灯笼约每 4 × 1440 tick 一次），远少于滴落
+    assert!(counts["sfx.lantern"] * 4 <= counts["sfx.drip"]);
+}
+
+/// ADR-016 第 7 节：咬夹草吞食 `sfx.snap` 与 snap 片段末帧 `sfx.gulp`、风铃花 `sfx.gust`、葫芦壳被吃光
+/// `sfx.shell_crack`（测试把葫芦壳生命改为 1 只为尽快被吃光）。
+#[test]
+fn constructed_sfx_mapped() {
+    use rootguard_core::components::OverlayOf;
+    use rootguard_core::resources::{BattleState, CardTray};
+    let mut runner = battle_runner("1-10", &["snapmaw", "gustbloom", "barkwall", "gourdshell"]);
+    while state(&runner).is_some_and(|s| s.phase != Phase::Playing) {
+        runner.frame();
+    }
+    let refill = |runner: &mut HeadlessRunner| {
+        let world = runner.app_mut().world_mut();
+        world.resources.expect_mut::<BattleState>().dew = 9990;
+        for c in &mut world.resources.expect_mut::<CardTray>().cards {
+            c.cooldown.remaining = 0;
+        }
+    };
+    let mut placed = 0;
+    let mut counts = std::collections::BTreeMap::new();
+    for _ in 0..8000 {
+        refill(&mut runner);
+        // 第 0 ～ 2 行第 7 列咬夹草，第 3 ～ 4 行第 7 列树皮墙 + 葫芦壳；有敌人后在第 1 行第 5 列放风铃花
+        let plan: [(usize, u8, u8); 8] = [
+            (0, 0, 7),
+            (0, 1, 7),
+            (0, 2, 7),
+            (2, 3, 7),
+            (2, 4, 7),
+            (3, 3, 7),
+            (3, 4, 7),
+            (1, 1, 5),
+        ];
+        let enemies = runner
+            .app()
+            .world()
+            .query::<&rootguard_core::components::EnemyRef>()
+            .iter()
+            .count();
+        if placed < plan.len() && (placed < 7 || enemies > 0) {
+            let (slot, row, col) = plan[placed];
+            send(&mut runner, UiAction::SelectCard(slot));
+            send(&mut runner, UiAction::PlaceAt { row, col });
+            placed += 1;
+        }
+        runner.frame();
+        {
+            let world = runner.app_mut().world_mut();
+            for (h, _) in world.entities.query_mut::<(&mut Health, &OverlayOf)>() {
+                h.hp = h.hp.min(1);
+            }
+        }
+        let log = runner.take_audio_log();
+        let bank = runner.app().world().resources.expect::<AudioBank>();
+        for req in &log {
+            if let AudioRequest::PlaySfx { clip, .. } = req
+                && let Some(k) = bank.key_of(*clip)
+            {
+                *counts.entry(k.to_owned()).or_insert(0) += 1;
+            }
+        }
+        if ["sfx.snap", "sfx.gulp", "sfx.gust", "sfx.shell_crack"]
+            .iter()
+            .all(|k| counts.contains_key(*k))
+        {
+            break;
+        }
+    }
+    for key in ["sfx.snap", "sfx.gulp", "sfx.gust", "sfx.shell_crack"] {
+        assert!(counts.contains_key(key), "应有 {key}（{counts:?}）");
+    }
+    assert_eq!(
+        counts["sfx.snap"], counts["sfx.gulp"],
+        "每次吞食一声 snap、一声 gulp"
+    );
+}

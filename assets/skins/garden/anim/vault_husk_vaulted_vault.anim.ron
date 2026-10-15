@@ -3,7 +3,7 @@ AnimationClip(
     name: "vault_husk_vaulted_vault",
     looping: false,
     frames: [
-        (frame: "vault_husk_vaulted_vault_0", ticks: 6),
+        (frame: "vault_husk_vaulted_vault_0", ticks: 6, event: "vault"),
         (frame: "vault_husk_vaulted_vault_1", ticks: 6),
         (frame: "vault_husk_vaulted_vault_2", ticks: 8),
         (frame: "vault_husk_vaulted_vault_3", ticks: 8),
