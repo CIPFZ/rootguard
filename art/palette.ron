@@ -1,0 +1,52 @@
+// Rootguard 调色板（ART-SPEC 1.3）。SVG 部件只能以 `@名` 引用这里的颜色，`@名.shade` 为一阶阴影
+// （ART-SPEC 1.2：守卫主色降 18% 明度、Husk 降 22%，按 HSV 明度计算）。`tools/artgen` 校验每个部件与
+// 每帧渲染结果只含这些颜色（ART-SPEC 9.2）。全局色之外每个角色至多 2 个专属色，出处见各条注释。
+Palette(
+    global: {
+        // 1.3 全局 14 色
+        "leaf": "#5DBB63",          // 守卫主绿
+        "leaf_light": "#A5E58A",    // 守卫高光绿 / 腹部
+        "leaf_dark": "#2E7D4F",     // 守卫暗部绿
+        "dew": "#FFD94A",           // 露水、金色
+        "dew_glow": "#FFF3B0",      // 露水光晕；也用作眼白与露珠高光（ADR-013）
+        "bark": "#8B5A2B",          // 树皮、木
+        "bark_dark": "#5C3A1A",     // 木暗部；也用作嘴内
+        "frost": "#BFE9FF",         // 霜、冰
+        "ember": "#FF6B35",         // 炽热、橙红
+        "straw": "#E3C27A",         // Husk 主色
+        "straw_dark": "#B8923F",    // Husk 暗部
+        "husk_crack": "#6B4F2A",    // Husk 裂纹
+        "terracotta": "#C8673B",    // 陶盆
+        "outline": "#2F3A2A",       // 守卫描边（1.2：深绿褐 3 px）
+        // 1.2 材质表中的 Husk 描边（未列入 1.3 表，ADR-013）
+        "husk_outline": "#4A3A24",  // Husk 描边（1.2：深褐 3 px）
+    },
+    shade: (guardian: 0.18, husk: 0.22),
+    characters: {
+        // 4.1 根须间的灰石子；6 章 pebble 弹丸同色
+        "pebble_pod": { "pebble": "#9A9A94" },
+        "pebble": { "pebble": "#9A9A94" },
+        // 4.4 悬浮霜晶
+        "frostpod": { "frost_shard": "#E8F7FF" },
+        // 4.6 米白短刺
+        "thornmat": { "thorn": "#EDE6D2" },
+        // 4.7 偏红的土棕
+        "tuberblast": { "tuber": "#A86A3C" },
+        // 4.9 偏棕的葫芦壳
+        "gourdshell": { "gourd": "#C9A15A" },
+        // 4.10 淡黄内里
+        "snapmaw": { "maw": "#F2E3A0" },
+        // 4.11 柔青
+        "gustbloom": { "bloom": "#7FD1C3" },
+        // 4.12 偏橙纸灯笼
+        "sunlantern": { "lantern": "#FFA54A" },
+        // 5.5 芦苇杆
+        "vault_husk": { "reed": "#D9C36A" },
+        // 5.6 褪色栅栏板
+        "shield_husk": { "plank": "#A98B63" },
+        // 5.7 溢出的淡色种子
+        "carrier_husk": { "seed": "#F1E7C6" },
+        // 5.8 偏深的葫芦身
+        "drum_husk": { "drum": "#C9A24E" },
+    },
+)

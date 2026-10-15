@@ -7,7 +7,9 @@
 #   - R1：rootguard-core 的完整（传递）依赖树中不得出现 trellia-gfx / trellia-audio /
 #         trellia-scene / egui / eframe；
 #   - R2：rootguard-core 源码中不得出现 Sprite / DrawList / AudioQueue / egui 等呈现类型；
-#   - R3：trellia 系列依赖必须来自 git 仓库且以 rev 锁定，禁止 path 依赖与 [patch]。
+#   - R3：trellia 系列依赖必须来自 git 仓库且以 rev 锁定，禁止 path 依赖与 [patch]；
+#   - ART-SPEC 12：tools/artgen 的渲染依赖（resvg / usvg / tiny-skia）不得进入三个游戏 crate 的
+#         （传递）依赖树（ADR-013）。
 #
 # 任一违规即打印 crate 名与违规项并以非零状态退出。
 #
@@ -43,7 +45,14 @@ ALLOWED = {
     # 3.1：app 允许全部 trellia crate、core、content、directories 与后端常用库
     "rootguard-app": ({"rootguard-core", "rootguard-content", "directories", "anyhow", "env_logger"}
                       | TRELLIA | COMMON, "3.1"),
+    # ART-SPEC 9.2 / 12：美术管线工具，额外允许 SVG 渲染依赖（ADR-013）
+    "artgen": ({"rootguard-core", "rootguard-content", "anyhow", "resvg", "usvg", "tiny-skia", "png"}
+               | COMMON, "ART-SPEC 12/ADR-013"),
 }
+# ART-SPEC 12：只允许 artgen 使用的渲染依赖
+# png 例外：引擎 trellia-assets 本身用它解码图像（引擎白名单）
+ART_ONLY = {"resvg", "usvg", "tiny-skia"}
+GAME_CRATES = {"rootguard-core", "rootguard-content", "rootguard-app"}
 # R1：core 传递依赖中禁止出现
 CORE_FORBIDDEN_TRANSITIVE = {"trellia-gfx", "trellia-audio", "trellia-scene", "egui", "eframe"}
 # R2：core 源码中禁止出现的呈现类型标识符
@@ -96,6 +105,24 @@ for core_id in core_ids:
         dep_name = packages[pid]["name"] if pid in packages else pid
         if dep_name in CORE_FORBIDDEN_TRANSITIVE:
             violations.append(f"rootguard-core =>(传递) {dep_name}  违反 R1")
+
+# ART-SPEC 12：游戏 crate 的传递依赖中不得出现 artgen 的渲染依赖
+for game_id in [pid for pid in members if packages[pid]["name"] in GAME_CRATES]:
+    seen, stack = set(), [game_id]
+    while stack:
+        cur = stack.pop()
+        if cur in seen:
+            continue
+        seen.add(cur)
+        for dep in nodes.get(cur, {}).get("deps", []):
+            kinds = {k.get("kind") for k in dep.get("dep_kinds", [])}
+            if kinds and kinds <= {"dev"}:
+                continue
+            stack.append(dep["pkg"])
+    for pid in sorted(seen):
+        dep_name = packages[pid]["name"] if pid in packages else pid
+        if dep_name in ART_ONLY:
+            violations.append(f"{packages[game_id]['name']} =>(传递) {dep_name}  违反 ART-SPEC 12")
 
 # R2：rootguard-core 源码中的呈现类型
 core_src = pathlib.Path("crates/rootguard-core/src")

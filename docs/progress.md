@@ -68,8 +68,11 @@
 
 ### A0 管线
 
-- [ ] ADR-013：`tools/artgen` 设计与白名单依赖；`check_deps.sh` 允许表
-- [ ] `art/palette.ron`；`tools/artgen` 解析 rig / clips → 合成 → 渲染 → 图集 → 引擎 RON；ART-SPEC 9.2 校验；确定性
+- [x] ADR-013：`tools/artgen` 设计与白名单依赖；`check_deps.sh` 登记 `artgen` 允许表，并新增“游戏 crate 传递依赖中
+  不得出现 resvg / usvg / tiny-skia”检查（临时给 app 加 resvg 时报 4 条违规，已撤销）
+- [x] `art/palette.ron`（14 色 + 1.2 的 `husk_outline`，13 个角色专属色）；`tools/artgen` 解析 rig / clips → 合成 →
+  resvg 渲染 → 去重打包 → 引擎 RON；9.2 校验（调色板、画布、1.4 尺寸、时长必需绑定、事件帧、图集 ≤ 4096）；
+  14 个单元测试；格式说明 `art/README.md`
 - [ ] 样板角色 `pebble_pod`（4.1）、`husk`（5.1）：全部片段、闪白帧、`attack` / `eat` 进度驱动
 - [ ] 游戏侧多皮肤（`default` / `garden`）；`attack` / `produce` / `fuse` / `arm` 进度驱动
 - [ ] 测试 `art_assets_up_to_date`、`art_clips_match_rules`、`skin_garden_loads`；golden 不变

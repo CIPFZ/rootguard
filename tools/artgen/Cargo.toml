@@ -1,0 +1,19 @@
+[package]
+name = "artgen"
+description = "Rootguard 美术管线：SVG 部件 + rig / 片段 → resvg 渲染 → 图集与引擎 RON（ART-SPEC 9）"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+# ART-SPEC 9.2 / 12：仅本工具允许的渲染依赖（ADR-013）；tiny-skia / usvg 经 resvg 的再导出使用
+resvg = { version = "0.48.1", default-features = false }
+rootguard-content.workspace = true
+rootguard-core.workspace = true
+ron.workspace = true
+serde.workspace = true
+
+[lints]
+workspace = true

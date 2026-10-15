@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/*"]
+members = ["crates/*", "tools/*"]
 
 [workspace.package]
 version = "0.1.0"
@@ -35,3 +35,19 @@ missing_docs = "warn"
 [workspace.lints.clippy]
 must_use_candidate = "warn"
 missing_errors_doc = "warn"
+
+# tools/artgen 的渲染依赖在 debug 下也开启优化，否则 `art_assets_up_to_date` 等测试过慢（ADR-013）
+[profile.dev.package.resvg]
+opt-level = 3
+
+[profile.dev.package.usvg]
+opt-level = 3
+
+[profile.dev.package.tiny-skia]
+opt-level = 3
+
+[profile.dev.package.tiny-skia-path]
+opt-level = 3
+
+[profile.dev.package.artgen]
+opt-level = 2
