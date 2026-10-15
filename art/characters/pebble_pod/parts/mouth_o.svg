@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- fire 帧嘴张成 O（ART-SPEC 4.1） -->
+  <ellipse cx="93" cy="92.5" rx="4" ry="4.6" fill="@bark_dark" stroke="@outline" stroke-width="2.5"/>
+</svg>

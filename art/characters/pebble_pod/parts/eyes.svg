@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <g transform="translate(74 64) scale(1.2) translate(-77 -64)">
+  <!-- 眯眼 + 压低的眉：较劲、认真（ART-SPEC 4.1，LORE 性格）；面向右（2.2） -->
+  <g stroke="@outline" stroke-width="2.4" stroke-linejoin="round">
+    <path d="M62 66 Q68 61.5 74.5 65 Q68 70.5 62 66 Z" fill="@dew_glow"/>
+    <path d="M77 66 Q84.5 60.5 92.5 64.5 Q85 71.5 77 66 Z" fill="@dew_glow"/>
+  </g>
+  <circle cx="70.5" cy="66" r="2.6" fill="@outline"/>
+  <circle cx="87.5" cy="66" r="3" fill="@outline"/>
+  <circle cx="88.4" cy="65" r="0.9" fill="@dew_glow"/>
+  <g fill="none" stroke="@outline" stroke-width="3.4" stroke-linecap="round">
+    <path d="M73 59.5 L62.5 57.5"/>
+    <path d="M78.5 59.5 L92 55"/>
+  </g>
+  </g>
+</svg>

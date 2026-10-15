@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 根须间夹着的石子（ART-SPEC 4.1；LORE：根部会吸附小石子，吐出来当弹药） -->
+  <g fill="none" stroke-linecap="round">
+    <g stroke="@outline" stroke-width="5.5">
+      <path d="M50 108 Q44 115 34 116"/>
+      <path d="M58 111 Q56 116 50 119"/>
+      <path d="M68 111 Q71 116 78 118"/>
+      <path d="M76 108 Q84 113 94 113"/>
+    </g>
+    <g stroke="@bark" stroke-width="2.6">
+      <path d="M50 108 Q44 115 34 116"/>
+      <path d="M58 111 Q56 116 50 119"/>
+      <path d="M68 111 Q71 116 78 118"/>
+      <path d="M76 108 Q84 113 94 113"/>
+    </g>
+  </g>
+  <g stroke="@outline" stroke-width="2.5">
+    <ellipse cx="40" cy="116" rx="5.5" ry="4" fill="@pebble"/>
+    <ellipse cx="57" cy="118" rx="4.5" ry="3.2" fill="@pebble"/>
+    <ellipse cx="80" cy="117" rx="5.5" ry="3.8" fill="@pebble"/>
+    <ellipse cx="93" cy="114" rx="4" ry="3" fill="@pebble"/>
+  </g>
+  <g fill="@pebble.shade">
+    <path d="M36 117.5 Q40 120 44.5 117.5 Q40 118.8 36 117.5 Z"/>
+    <path d="M76 118.5 Q80 121 84.5 118.5 Q80 119.8 76 118.5 Z"/>
+  </g>
+</svg>

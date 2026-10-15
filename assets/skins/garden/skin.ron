@@ -1,5 +1,14 @@
 // 由 tools/artgen 生成，勿手改（ART-SPEC 9）
 Skin(
     atlases: [
+        (
+            atlas: "skins/garden/garden_defenders.atlas.ron",
+            clips: [
+                "pebble_pod_idle",
+                "pebble_pod_hurt_idle",
+                "pebble_pod_attack",
+                "pebble_pod_hurt_attack",
+            ],
+        ),
     ],
 )

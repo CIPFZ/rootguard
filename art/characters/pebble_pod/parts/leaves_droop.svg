@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 受损：hp ≤ 3 时叶片下垂（ART-SPEC 4.1） -->
+  <path d="M67 39 C67 35 68 32 70 31" fill="none" stroke="@outline" stroke-width="5" stroke-linecap="round"/>
+  <path d="M67 39 C67 35 68 32 70 31" fill="none" stroke="@leaf_dark" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="@outline" stroke-width="2.5">
+    <ellipse cx="61" cy="38" rx="9" ry="5" transform="rotate(-62 61 38)" fill="@leaf.shade"/>
+    <ellipse cx="78" cy="37" rx="9" ry="5" transform="rotate(58 78 37)" fill="@leaf.shade"/>
+  </g>
+  <g fill="none" stroke="@leaf_dark" stroke-width="1.5" stroke-linecap="round">
+    <path d="M66 32 L57 45"/>
+    <path d="M72 32 L82 44"/>
+  </g>
+</svg>

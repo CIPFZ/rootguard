@@ -1,0 +1,22 @@
+// 石籽荚 Pebble Pod（ART-SPEC 4.1）：部件层级与枢轴。面向右（2.2），画布 128 × 128、锚点 (0.5, 0.94)。
+Rig(
+    kind: Guardian,
+    rest: "idle",
+    // 会被啃食：每帧附闪白帧（2.3）
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (63, 120), z: 0),
+        (name: "leaves", parent: Some("body"), pivot: (67, 39), z: 1, variants: ["droop"]),
+        (name: "roots", pivot: (63, 112), z: 2),
+        // 身体以底部为枢轴：呼吸缩放、蓄力后仰、发射前倾
+        (name: "body", pivot: (62, 114), z: 3),
+        (name: "cheek", parent: Some("body"), pivot: (86, 86), z: 4),
+        (name: "mouth", parent: Some("body"), pivot: (90, 90), z: 5, variants: ["o"]),
+        (name: "eyes", parent: Some("body"), pivot: (77, 65), z: 6, variants: ["closed", "glance"]),
+    ],
+    states: [
+        (name: "", set: {}),
+        // 4.1 受损：hp ≤ 3 时叶片下垂
+        (name: "hurt", set: {"leaves": "droop"}),
+    ],
+)

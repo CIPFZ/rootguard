@@ -1,0 +1,67 @@
+// 石籽荚片段（ART-SPEC 3.1 / 4.1）。tick 为片段内时间。
+Clips([
+    // idle：90 tick 呼吸，片段含 3 个呼吸周期——第 2 周期向身后张望，第 3 周期眨眼一次
+    (
+        name: "idle",
+        looping: true,
+        duration: Ticks(270),
+        frames: Every(10),
+        keys: {
+            "body": [
+                (t: 0), (t: 45, sx: 0.99, sy: 1.03), (t: 90),
+                (t: 135, sx: 0.99, sy: 1.03), (t: 180),
+                (t: 225, sx: 0.99, sy: 1.03), (t: 270),
+            ],
+            "leaves": [
+                (t: 0, rot: -2), (t: 45, rot: 3), (t: 90, rot: -2),
+                (t: 135, rot: 3), (t: 180, rot: -2),
+                (t: 225, rot: 3), (t: 270, rot: -2),
+            ],
+        },
+        swaps: {
+            "eyes": [(0, "base"), (120, "glance"), (160, "base"), (230, "closed"), (240, "base")],
+        },
+    ),
+    // attack：时长 = Shooter.interval_ticks，相位由射手计时器驱动（3.1）。
+    // 弹丸在计时器重置的那个 tick 生成，此时片段时间为 0，因此 fire 帧在 0（≡ 进度 1.0，ADR-014）：
+    // 猛地前倾、嘴张成 O → 后坐回弹 2 帧 → idle 姿态 → 60 起蓄力：腮帮鼓起、后仰 6 px。
+    (
+        name: "attack",
+        looping: true,
+        duration: Rule("defenders.pebble_pod.shooter.interval_ticks"),
+        frames: List([4, 4, 4, 12, 12, 12, 12, 8, 8, 9]),
+        events: [(0, "fire")],
+        keys: {
+            "body": [
+                (t: 0, dx: 3, rot: 7, ease: Linear),
+                (t: 4, dx: -1, rot: -3, ease: Linear),
+                (t: 8, rot: 1, ease: Linear),
+                (t: 12),
+                (t: 36, sx: 0.99, sy: 1.03),
+                (t: 59, ease: Linear),
+                (t: 60, dx: -2, rot: -2, ease: Linear),
+                (t: 76, dx: -6, rot: -6),
+            ],
+            "cheek": [
+                (t: 0, sx: 0.8, sy: 0.8, ease: Linear),
+                (t: 4, sx: 0.95, sy: 0.95, ease: Linear),
+                (t: 12, ease: Linear),
+                (t: 59, ease: Linear),
+                (t: 60, sx: 1.08, sy: 1.08, ease: Linear),
+                (t: 76, sx: 1.22, sy: 1.22),
+            ],
+            "leaves": [
+                (t: 0, rot: -12, ease: Linear),
+                (t: 4, rot: 7, ease: Linear),
+                (t: 8, rot: -3, ease: Linear),
+                (t: 12, rot: -2),
+                (t: 36, rot: 3),
+                (t: 59, rot: -2, ease: Linear),
+                (t: 76, rot: 4),
+            ],
+        },
+        swaps: {
+            "mouth": [(0, "o"), (4, "base")],
+        },
+    ),
+])

@@ -1,0 +1,17 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "pebble_pod_hurt_attack",
+    looping: true,
+    frames: [
+        (frame: "pebble_pod_hurt_attack_0", ticks: 4, event: "fire"),
+        (frame: "pebble_pod_hurt_attack_1", ticks: 4),
+        (frame: "pebble_pod_hurt_attack_2", ticks: 4),
+        (frame: "pebble_pod_hurt_attack_3", ticks: 12),
+        (frame: "pebble_pod_hurt_attack_4", ticks: 12),
+        (frame: "pebble_pod_hurt_attack_5", ticks: 12),
+        (frame: "pebble_pod_hurt_attack_6", ticks: 12),
+        (frame: "pebble_pod_hurt_attack_7", ticks: 8),
+        (frame: "pebble_pod_hurt_attack_8", ticks: 8),
+        (frame: "pebble_pod_hurt_attack_9", ticks: 9),
+    ],
+)
