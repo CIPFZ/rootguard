@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 流一滴露水的口水（ART-SPEC 4.10） -->
+  <path d="M98 69 C98.5 72 100.5 74 100.5 77 C100.5 79.5 98.6 80.5 97.2 79.6 C95.8 78.6 96 76 97 73.5 Z" fill="@dew" stroke="@outline" stroke-width="1.8" stroke-linejoin="round"/>
+</svg>

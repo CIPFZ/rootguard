@@ -1,0 +1,13 @@
+// 咬夹草 Snapmaw（ART-SPEC 4.10）：粗茎顶着横向大嘴荚、圆钝叶齿、饥饿的眼长在荚顶、一滴露水口水、两片短叶当手。
+Rig(
+    kind: Guardian,
+    rest: "idle",
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (60, 120), z: 0),
+        (name: "stem", pivot: (56, 120), z: 1),
+        (name: "head", pivot: (56, 70), z: 2),
+        (name: "eyes", parent: Some("head"), pivot: (72, 44), z: 3),
+        (name: "drool", parent: Some("head"), pivot: (98, 69), z: 4),
+    ],
+)

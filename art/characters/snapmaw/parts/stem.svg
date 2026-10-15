@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 粗茎，两片短叶当手（ART-SPEC 4.10） -->
+  <path d="M56 120 C52 108 60 96 56 84 C54 78 54 74 56 70" fill="none" stroke="@outline" stroke-width="10" stroke-linecap="round"/>
+  <path d="M56 120 C52 108 60 96 56 84 C54 78 54 74 56 70" fill="none" stroke="@leaf_dark" stroke-width="6" stroke-linecap="round"/>
+  <g stroke="@outline" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M57 98 C64 92 74 92 80 96 C74 101 64 102 57 98 Z" fill="@leaf"/>
+    <path d="M55 104 C48 99 39 100 35 105 C41 109 50 108 55 104 Z" fill="@leaf"/>
+  </g>
+</svg>

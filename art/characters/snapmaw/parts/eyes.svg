@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 饥饿的眼（ART-SPEC 4.10）：嵌在上荚瓣表面，瞳孔大、直勾勾盯着前方，眉头压向前（LORE“永远饿”） -->
+  <g stroke="@outline" stroke-width="2.4">
+    <ellipse cx="64" cy="44" rx="5.2" ry="5.6" fill="@dew_glow"/>
+    <ellipse cx="80" cy="43" rx="5.8" ry="6.2" fill="@dew_glow"/>
+  </g>
+  <circle cx="66.4" cy="45" r="3.3" fill="@outline"/><circle cx="82.6" cy="44" r="3.6" fill="@outline"/>
+  <circle cx="83.6" cy="42.6" r="1.1" fill="@dew_glow"/>
+  <g fill="none" stroke="@outline" stroke-width="3.2" stroke-linecap="round">
+    <path d="M58 36.5 L69 39"/><path d="M75 38 L87 35"/>
+  </g>
+</svg>

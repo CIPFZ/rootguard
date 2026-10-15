@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 茎顶一只横向大嘴荚（ART-SPEC 4.10）：两头尖的豆荚，上下两片荚瓣在后端相连、前端张开；
+       leaf_dark 外壳、淡黄内里（专属色 maw）；叶齿为圆钝的叶状缺刻（1.5 禁止獠牙） -->
+  <path d="M28 59 C44 58 64 56 104 53 L103 68 C88 64 66 61 30 61 Z" fill="@maw"/>
+  <path d="M60 58.5 C74 58 88 60 100 64" fill="none" stroke="@maw.shade" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M24 56 C34 46 52 37 74 37 C90 37 101 44 106 52 C96 53 80 54 62 56 C48 57 34 57.5 24 56 Z" fill="@leaf_dark"/>
+  <path d="M24 56 C34 46 52 37 74 37 C56 41 44 48 38 57 C32 57 27 56.8 24 56 Z" fill="@leaf_dark.shade"/>
+  <path d="M28 60 C40 61 58 61 74 62 C86 63 96 65 103 68 C98 76 86 82 68 82 C50 82 36 74 28 60 Z" fill="@leaf_dark"/>
+  <path d="M28 60 C40 61 58 61 74 62 C60 64 46 68 40 72 C34 68 30 64 28 60 Z" fill="@leaf_dark.shade"/>
+  <g fill="@leaf" stroke="@outline" stroke-width="1.7" stroke-linejoin="round">
+    <path d="M64 55.7 C65 59 68.6 59 69.6 55.3 Z"/><path d="M78 54.6 C79 57.8 82.6 57.8 83.6 54.1 Z"/>
+    <path d="M91 53.5 C92 56.5 95.4 56.4 96.4 52.9 Z"/>
+    <path d="M70 62.4 C71 59.4 74.6 59.6 75.6 62.8 Z"/><path d="M84 64 C85 61.1 88.6 61.4 89.6 64.6 Z"/>
+  </g>
+  <g fill="none" stroke="@outline" stroke-width="3" stroke-linejoin="round">
+    <path d="M24 56 C34 46 52 37 74 37 C90 37 101 44 106 52 C96 53 80 54 62 56 C48 57 34 57.5 24 56 Z"/><path d="M28 60 C40 61 58 61 74 62 C86 63 96 65 103 68 C98 76 86 82 68 82 C50 82 36 74 28 60 Z"/>
+  </g>
+  <path d="M36 50 C50 43 66 41 80 42" fill="none" stroke="@leaf" stroke-width="2" stroke-linecap="round"/>
+  <path d="M40 70 C52 77 68 78 84 76" fill="none" stroke="@leaf" stroke-width="2" stroke-linecap="round"/>
+</svg>
