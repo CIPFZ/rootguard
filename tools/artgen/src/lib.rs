@@ -577,7 +577,7 @@ pub fn write(root: &Path, built: &Built) -> Result<()> {
 }
 
 /// PNG 像素比较的容差（每通道）：x86_64 Linux（生成资产的平台）要求逐字节一致；其他平台的 tiny-skia
-/// SIMD 路径可能在抗锯齿边缘产生 ±1 级差异（ADR-013）。
+/// SIMD 路径与系统数学库在抗锯齿边缘、半透明叠加处会有差异（ADR-013 第 8 条）。
 #[must_use]
 pub fn pixel_tolerance() -> u8 {
     if cfg!(all(target_os = "linux", target_arch = "x86_64")) {
@@ -585,6 +585,27 @@ pub fn pixel_tolerance() -> u8 {
     } else {
         2
     }
+}
+
+/// 非参考平台上允许超过容差的通道比例（‰）：真实的美术改动会改变远多于此的像素，参考平台仍逐字节把关。
+pub const OUTLIER_PER_MILLE: usize = 1;
+
+/// 两张图的差异统计：(超过容差的通道数, 总通道数, 最大差)；尺寸不同为 `None`。
+#[must_use]
+pub fn pixel_diff(a: &Image, b: &Image, tolerance: u8) -> Option<(usize, usize, u8)> {
+    if a.w != b.w || a.h != b.h {
+        return None;
+    }
+    let mut bad = 0;
+    let mut max = 0;
+    for (x, y) in a.data.iter().zip(&b.data) {
+        let d = x.abs_diff(*y);
+        max = max.max(d);
+        if d > tolerance {
+            bad += 1;
+        }
+    }
+    Some((bad, a.data.len(), max))
 }
 
 /// 去掉回车符：Windows 检出时 git 可能把文本文件转换为 CRLF（`core.autocrlf`），文本输出按 LF 比较。
@@ -610,14 +631,15 @@ pub fn diff(root: &Path, built: &Built) -> Result<Vec<String>> {
         }
         if rel.ends_with(".png") && tolerance > 0 {
             let (a, b) = (Image::decode_png(&disk)?, Image::decode_png(bytes)?);
-            let close = a.w == b.w
-                && a.h == b.h
-                && a.data
-                    .iter()
-                    .zip(&b.data)
-                    .all(|(x, y)| x.abs_diff(*y) <= tolerance);
-            if close {
-                continue;
+            match pixel_diff(&a, &b, tolerance) {
+                Some((bad, total, _)) if bad * 1000 <= total * OUTLIER_PER_MILLE => continue,
+                Some((bad, total, max)) => {
+                    problems.push(format!(
+                        "{rel} 与生成结果不一致（{bad} / {total} 个通道差超过 {tolerance}，最大差 {max}）"
+                    ));
+                    continue;
+                }
+                None => {}
             }
         }
         problems.push(format!("{rel} 与生成结果不一致"));
@@ -628,4 +650,29 @@ pub fn diff(root: &Path, built: &Built) -> Result<Vec<String>> {
         }
     }
     Ok(problems)
+}
+
+#[cfg(test)]
+mod diff_tests {
+    use super::*;
+
+    #[test]
+    fn pixel_diff_counts_outliers() {
+        let a = Image {
+            w: 2,
+            h: 1,
+            data: vec![10, 10, 10, 255, 0, 0, 0, 0],
+        };
+        let mut b = a.clone();
+        b.data[0] = 12;
+        assert_eq!(pixel_diff(&a, &b, 2), Some((0, 8, 2)));
+        b.data[1] = 60;
+        assert_eq!(pixel_diff(&a, &b, 2), Some((1, 8, 50)));
+        let c = Image {
+            w: 1,
+            h: 2,
+            data: a.data.clone(),
+        };
+        assert_eq!(pixel_diff(&a, &c, 2), None);
+    }
 }
