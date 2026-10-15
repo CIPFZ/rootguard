@@ -1,0 +1,21 @@
+// 背篓枯壳 Carrier Husk（ART-SPEC 5.7）：以枯壳怪为模板（裁决六），驼背背着干花序编的篓、溢出种子、累得龇牙。面向左（2.2），画布 128 × 160、锚点 (0.5, 0.95)。
+Rig(
+    kind: Husk,
+    rest: "walk",
+    // 受击闪白 6 tick（2.3 / 5 共同）
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (64, 152), z: 0),
+        (name: "arm_back", parent: Some("body"), pivot: (83, 80), z: 1),
+        (name: "leg_back", pivot: (73, 113), z: 2),
+        (name: "leg_front", pivot: (60, 113), z: 3),
+        (name: "basket", parent: Some("body"), pivot: (90, 80), z: 3),
+        // 身体以髋部为枢轴：行走左右摇摆 ± 4°、啃食俯身
+        (name: "body", pivot: (65, 116), z: 4),
+        (name: "head", parent: Some("body"), pivot: (56, 88), z: 6),
+        (name: "mouth", parent: Some("head"), pivot: (46, 82), z: 7, variants: ["chomp"]),
+        // 前臂在头后：驼背时头压在前肩上
+        (name: "arm_front", parent: Some("body"), pivot: (52, 93), z: 5),
+        (name: "crumbs", pivot: (34, 86), z: 8, hidden: true),
+    ],
+)

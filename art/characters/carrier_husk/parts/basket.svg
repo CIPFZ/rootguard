@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- 背上一只由干花序编成的篓（straw_dark，ART-SPEC 5.7），溢出淡色种子（专属色 seed）；
+       结了籽才枯死的植物，背着自己的种子（LORE） -->
+  <g fill="@seed" stroke="@husk_outline" stroke-width="1.4">
+    <ellipse cx="78" cy="58" rx="3" ry="2.2"/><ellipse cx="85" cy="55" rx="3" ry="2.2"/><ellipse cx="92" cy="56" rx="3" ry="2.2"/>
+    <ellipse cx="99" cy="58" rx="3" ry="2.2"/><ellipse cx="82" cy="61" rx="3" ry="2.2"/><ellipse cx="89" cy="60" rx="3" ry="2.2"/>
+    <ellipse cx="96" cy="61" rx="3" ry="2.2"/><ellipse cx="104" cy="62" rx="3" ry="2.2"/>
+    <ellipse cx="108" cy="70" rx="2.6" ry="2" transform="rotate(30 108 70)"/>
+  </g>
+  <path d="M72 62 C84 58 98 59 108 64 L104 100 C94 104 82 104 76 100 Z" fill="@straw_dark"/>
+  <path d="M72 62 C76 61 79 60.5 82 60.2 L83 103.4 C80 103 78 101.5 76 100 Z" fill="@straw_dark.shade"/>
+  <g fill="none" stroke="@husk_crack" stroke-width="1.6" stroke-linecap="round">
+    <path d="M73 72 C84 69 96 70 106 74"/><path d="M74 82 C85 79 96 80 105 84"/><path d="M75 92 C85 89 95 90 104 93"/>
+    <path d="M82 61 L83 103"/><path d="M92 60 L92 104"/><path d="M101 62 L99 102"/>
+  </g>
+  <path d="M72 62 C84 58 98 59 108 64 L104 100 C94 104 82 104 76 100 Z" fill="none" stroke="@husk_outline" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M72 62 C84 58 98 59 108 64" fill="none" stroke="@husk_outline" stroke-width="4.6" stroke-linecap="round"/>
+  <path d="M72 62 C84 58 98 59 108 64" fill="none" stroke="@straw" stroke-width="2" stroke-linecap="round"/>
+  <!-- 背带也是干花序编的，长在肩上 -->
+  <path d="M74 66 C68 72 66 80 70 88" fill="none" stroke="@husk_outline" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M74 66 C68 72 66 80 70 88" fill="none" stroke="@straw_dark" stroke-width="2" stroke-linecap="round"/>
+</svg>

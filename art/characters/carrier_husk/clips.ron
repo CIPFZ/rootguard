@@ -1,0 +1,17 @@
+// A1：只有默认位姿（静态）：比枯壳怪更驼（ART-SPEC 5.7），动画在 A2。
+Clips([
+    (
+        name: "walk",
+        looping: true,
+        duration: Ticks(48),
+        frames: Every(48),
+        keys: {
+            "body": [(t: 0, rot: -9, dy: 2)],
+            "head": [(t: 0, rot: 2)],
+            "leg_front": [(t: 0, rot: 10)],
+            "leg_back": [(t: 0, rot: -8)],
+            "arm_front": [(t: 0, rot: -6)],
+            "arm_back": [(t: 0, rot: 8)],
+        },
+    ),
+])
