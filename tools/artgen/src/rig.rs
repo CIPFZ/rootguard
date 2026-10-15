@@ -75,6 +75,12 @@ impl Kind {
         }
     }
 
+    /// 是否有卡牌头像（守卫才有卡牌，ART-SPEC 4.13）。
+    #[must_use]
+    pub fn has_portrait(self) -> bool {
+        matches!(self, Self::Guardian | Self::GuardianGround | Self::Overlay)
+    }
+
     /// 可见像素外接框的尺寸上限（宽, 高）（ART-SPEC 1.4）；无规定时为画布。
     #[must_use]
     pub fn size_limit(self) -> (u32, u32) {
@@ -135,6 +141,9 @@ pub struct Rig {
     pub flash: bool,
     /// 默认位姿取自哪个片段的第 0 帧（审核表、卡牌与尺寸校验用）。
     pub rest: String,
+    /// 卡牌头像取景窗口 `(x, y, 宽)`（画布坐标，高按 80 × 100 推出）；缺省时按默认位姿可见范围自动取景。
+    #[serde(default)]
+    pub portrait: Option<(f32, f32, f32)>,
 }
 
 /// 片段时长。

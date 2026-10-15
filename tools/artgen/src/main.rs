@@ -4,6 +4,7 @@
 //! cargo run --release -p artgen -- build            # 生成 assets/skins/garden/
 //! cargo run --release -p artgen -- check            # 只比较，不写盘；不一致时退出码 1
 //! cargo run --release -p artgen -- preview <id>     # 自查图写到 tmp/artgen/（不入库）
+//! cargo run --release -p artgen -- review [--partial] # A1 审核表写到 docs/art/
 //! ```
 //!
 //! 任意目录执行均可：仓库根由本 crate 位置推出，或用 `--root <dir>` 指定。
@@ -24,7 +25,7 @@ use resvg::tiny_skia;
 const PREVIEW_SCALE: u32 = 3;
 
 fn usage() -> &'static str {
-    "用法: artgen [--root <仓库根>] <build | check | preview <角色 id>>"
+    "用法: artgen [--root <仓库根>] <build | check | preview <角色 id> | review [--partial]>"
 }
 
 fn main() -> ExitCode {
@@ -72,6 +73,12 @@ fn run() -> Result<ExitCode> {
                 eprintln!("artgen: 请运行 `cargo run --release -p artgen -- build` 并提交结果");
                 Ok(ExitCode::FAILURE)
             }
+        }
+        ["review"] | ["review", "--partial"] => {
+            for path in artgen::review::review(&root, args.len() == 2)? {
+                println!("artgen: 写出 {path}");
+            }
+            Ok(ExitCode::SUCCESS)
         }
         ["preview", id] => {
             preview(&root, id)?;

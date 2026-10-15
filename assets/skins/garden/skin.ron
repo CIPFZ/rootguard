@@ -17,5 +17,12 @@ Skin(
                 "husk_eat",
             ],
         ),
+        (
+            atlas: "skins/garden/garden_ui.atlas.ron",
+            clips: [
+                "pebble_pod_portrait",
+                "pebble_pod_portrait_off",
+            ],
+        ),
     ],
 )

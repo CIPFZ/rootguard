@@ -12,6 +12,7 @@
 pub mod atlas;
 pub mod compose;
 pub mod palette;
+pub mod review;
 pub mod rig;
 pub mod rules;
 
@@ -31,6 +32,13 @@ pub const OUT_DIR: &str = "assets/skins/garden";
 
 /// 输出路径在引擎资产根（`assets/`）下的前缀。
 const ASSET_PREFIX: &str = "skins/garden";
+
+/// 卡牌头像尺寸（ART-SPEC 2.1）。
+pub const PORTRAIT: (u32, u32) = (80, 100);
+/// 卡牌头像所在图集（ART-SPEC 2.1）。
+const UI_ATLAS: &str = "garden_ui";
+/// “不可用”头像的去饱和比例（ART-SPEC 4.13）。
+const PORTRAIT_OFF_DESAT: f32 = 0.85;
 
 /// 尺寸校验的 alpha 阈值：抗锯齿边缘的半透明像素不计入外接框。
 const SIZE_ALPHA: u8 = 64;
@@ -236,6 +244,39 @@ pub fn render_rest(ch: &Character, palette: &Palette) -> Result<Image> {
     ch.parts.render(&pose, palette)
 }
 
+/// 卡牌头像（ART-SPEC 4.13）：默认位姿的胸像，以及去饱和的“不可用”版。取景窗口取 rig 的 `portrait`，
+/// 缺省时以默认位姿可见范围为准：宽 = 可见宽 + 8，顶部留 4 px，水平居中。
+///
+/// # Errors
+///
+/// `rest` 片段不存在或渲染失败时返回错误。
+pub fn render_portrait(ch: &Character, palette: &Palette) -> Result<(Image, Image)> {
+    let clip = ch
+        .clips
+        .iter()
+        .find(|c| c.name == ch.rig.rest)
+        .with_context(|| format!("{}：rest 片段 {} 不存在", ch.id, ch.rig.rest))?;
+    let base = rig::StateDef {
+        name: String::new(),
+        set: BTreeMap::new(),
+    };
+    let pose = ch.rig.pose(clip, &base, 0);
+    let window = match ch.rig.portrait {
+        Some(w) => w,
+        None => {
+            let rest = ch.parts.render(&pose, palette)?;
+            let (x0, y0, x1, _) = rest
+                .opaque_bounds(SIZE_ALPHA)
+                .unwrap_or((0, 0, rest.w - 1, 0));
+            let w = (x1 - x0 + 1) as f32 + 8.0;
+            ((x0 + x1) as f32 / 2.0 - w / 2.0, y0 as f32 - 4.0, w)
+        }
+    };
+    let img = ch.parts.render_window(&pose, palette, window, PORTRAIT)?;
+    let off = img.desaturate(PORTRAIT_OFF_DESAT);
+    Ok((img, off))
+}
+
 fn check_keys(ch: &Character, clip: &ClipDef) -> Result<()> {
     for part in clip.keys.keys() {
         if ch.rig.part(part).is_none() {
@@ -292,6 +333,22 @@ pub fn build(root: &Path) -> Result<Built> {
                     "{}：默认位姿可见范围 {w} × {h} 超过 {lw} × {lh}（ART-SPEC 1.4）",
                     ch.id
                 );
+            }
+        }
+        if kind.has_portrait() {
+            let (on, off) = render_portrait(&ch, &palette)?;
+            for (suffix, image) in [("portrait", on), ("portrait_off", off)] {
+                let name = format!("{}_{suffix}", ch.id);
+                atlas_frames.entry(UI_ATLAS).or_default().push(FrameIn {
+                    name: format!("{name}_0"),
+                    image,
+                    anchor: (0.5, 0.5),
+                });
+                atlas_clips.entry(UI_ATLAS).or_default().push(ClipOut {
+                    frames: vec![(format!("{name}_0"), 60, None)],
+                    name,
+                    looping: false,
+                });
             }
         }
         for clip in &ch.clips {

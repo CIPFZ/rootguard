@@ -52,7 +52,12 @@ AGENT 4.2）。ART-SPEC 未规定部件 / rig / 片段文件的具体格式、�
    文本输出（RON）忽略换行风格比较：Windows 检出时 `core.autocrlf` 会把它们转成 CRLF（首次推送时 Windows CI
    因此失败，本地把副本转成 CRLF 复现后修正；SVG 源文件含 CRLF 不影响渲染结果）。
 9. **命令**：`cargo run --release -p artgen -- build | check | preview <id>`；`preview` 把默认位姿与每个
-   片段的帧条写到 `tmp/artgen/` 供自查（不入库）。A1 的审核表命令 `review` 届时加入。
+   片段的帧条写到 `tmp/artgen/` 供自查（不入库）。
+10. **A1 补充（2026-10-16）**：守卫类别额外输出卡牌头像 `<id>_portrait` 与去饱和 85% 的 `<id>_portrait_off`
+    （80 × 100，图集 `garden_ui`，ART-SPEC 2.1 / 4.13）：默认位姿按 rig `portrait` 窗口（缺省按可见范围自动取景）
+    直接以矢量缩放渲染，不是位图缩放；费用角标由 HUD 绘制（管线不渲染文字）。`artgen review [--partial]`
+    输出 `docs/art/review-A1(-partial).png` 与剪影版：每格为各状态默认位姿 + 头像，序号按 SPEC 7.1 / 8.1 顺序，
+    用内置点阵数字绘制，对照表 `docs/art/review-A1.md`。
 
 ## 后果
 

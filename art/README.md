@@ -6,6 +6,7 @@
 cargo run --release -p artgen -- preview <id>   # 自查图写到 tmp/artgen/（不入库）
 cargo run --release -p artgen -- build          # 生成 assets/skins/garden/
 cargo run --release -p artgen -- check          # 只比较；CI 中由 art_assets_up_to_date 执行
+cargo run --release -p artgen -- review [--partial]  # A1 审核表写到 docs/art/
 ```
 
 设计依据：每个造型特征必须能指向 `LORE.md` 或 `ART-SPEC.md` 设计卡中的一句话，并在部件 SVG 的注释里
@@ -38,7 +39,8 @@ art/
 ```ron
 Rig(
     kind: Guardian,        // Guardian | GuardianGround | Overlay | Husk | HuskLarge | HuskSmall | Projectile | Dew
-    rest: "idle",          // 默认位姿 = 该片段第 0 帧（尺寸校验、审核表）
+    rest: "idle",          // 默认位姿 = 该片段第 0 帧（尺寸校验、审核表、卡牌头像）
+    portrait: Some((24, 30, 80)),  // 可选：卡牌头像取景 (x, y, 宽)，缺省按可见范围自动取景
     flash: true,           // 每帧另出 <帧名>_flash 闪白帧（ART-SPEC 2.3）
     parts: [
         // parent：叠加父部件的变换；pivot：旋转 / 缩放枢轴；z：绘制顺序；variants：可切换的变体文件

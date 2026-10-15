@@ -67,6 +67,25 @@ impl Image {
         }
     }
 
+    /// 去饱和版：每个像素混向其亮度灰（`amount` 0..1），用于“不可用”的卡牌头像（ART-SPEC 4.13）。
+    #[must_use]
+    pub fn desaturate(&self, amount: f32) -> Self {
+        let mut data = self.data.clone();
+        for px in data.as_chunks_mut::<4>().0 {
+            let [r, g, b, _] = px.map(f32::from);
+            let lum = 0.299 * r + 0.587 * g + 0.114 * b;
+            for c in &mut px[..3] {
+                // 预乘值混合后仍 ≤ alpha，转换不越界
+                *c = (f32::from(*c) + (lum - f32::from(*c)) * amount).round() as u8;
+            }
+        }
+        Self {
+            w: self.w,
+            h: self.h,
+            data,
+        }
+    }
+
     /// alpha ≥ `threshold` 的像素外接框 `(x0, y0, x1, y1)`（含端点）；全透明时为 `None`。
     #[must_use]
     pub fn opaque_bounds(&self, threshold: u8) -> Option<(u32, u32, u32, u32)> {
@@ -279,6 +298,23 @@ impl Parts {
     ///
     /// 合成、解析失败或出现调色板外颜色时返回错误。
     pub fn render(&self, pose: &Pose<'_>, palette: &Palette) -> Result<Image> {
+        let (w, h) = self.canvas;
+        self.render_window(pose, palette, (0.0, 0.0, w as f32), (w, h))
+    }
+
+    /// 合成并把画布中以 `(x, y)` 为左上角、宽 `win_w` 的窗口缩放渲染到 `out` 尺寸（卡牌头像，ART-SPEC 4.13）；
+    /// 窗口高度按输出宽高比推出。颜色校验同 [`Parts::render`]。
+    ///
+    /// # Errors
+    ///
+    /// 同 [`Parts::render`]。
+    pub fn render_window(
+        &self,
+        pose: &Pose<'_>,
+        palette: &Palette,
+        (x, y, win_w): (f32, f32, f32),
+        (out_w, out_h): (u32, u32),
+    ) -> Result<Image> {
         let svg = self.compose(pose, palette)?;
         let tree = usvg::Tree::from_str(&svg, &usvg::Options::default())
             .with_context(|| format!("{}：合成后的 SVG 无法解析", self.character))?;
@@ -289,16 +325,13 @@ impl Parts {
                 self.character
             )
         })?;
-        let (w, h) = self.canvas;
-        let mut pixmap = tiny_skia::Pixmap::new(w, h).context("画布尺寸为 0")?;
-        resvg::render(
-            &tree,
-            tiny_skia::Transform::identity(),
-            &mut pixmap.as_mut(),
-        );
+        let mut pixmap = tiny_skia::Pixmap::new(out_w, out_h).context("画布尺寸为 0")?;
+        let k = out_w as f32 / win_w;
+        let t = tiny_skia::Transform::from_row(k, 0.0, 0.0, k, -x * k, -y * k);
+        resvg::render(&tree, t, &mut pixmap.as_mut());
         Ok(Image {
-            w,
-            h,
+            w: out_w,
+            h: out_h,
             data: pixmap.take(),
         })
     }
