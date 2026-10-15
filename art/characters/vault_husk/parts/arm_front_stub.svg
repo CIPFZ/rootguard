@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- 跨越落地后芦苇杆断掉丢弃，替换为短臂（ART-SPEC 5.5） -->
+  <g transform="translate(-4 12)">
+    <path d="M53 80 C51 86 50 92 49 98 C49 101 54 102 55 99 C56 94 57 88 60 83 Z" fill="@straw" stroke="@husk_outline" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M49.5 99 L48 103 L51 101 L53 104 L54.5 100" fill="@reed" stroke="@husk_outline" stroke-width="1.6" stroke-linejoin="round"/>
+  </g>
+</svg>

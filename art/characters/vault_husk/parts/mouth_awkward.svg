@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- 落地后表情从得意变尴尬（ART-SPEC 5.5）：抿成一道波浪的小口 -->
+  <g transform="translate(4 10) rotate(-24 50 80)">
+    <path d="M35 71 Q38 69 41 71.5 Q44 74 48 71" fill="none" stroke="@husk_outline" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="44" cy="73.4" rx="1.2" ry="1.5" fill="@straw" stroke="@husk_outline" stroke-width="1.2"/>
+  </g>
+</svg>

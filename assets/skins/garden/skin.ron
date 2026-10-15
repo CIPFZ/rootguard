@@ -37,6 +37,8 @@ Skin(
                 "twig_husk_walk",
                 "twig_husk_cracked_walk",
                 "twig_husk_bare_walk",
+                "vault_husk_walk",
+                "vault_husk_vaulted_walk",
             ],
         ),
         (
