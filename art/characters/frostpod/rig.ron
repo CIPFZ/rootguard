@@ -1,0 +1,15 @@
+// 霜籽荚 Frostpod（ART-SPEC 4.4）：与石籽荚同体型，霜色、白腹、眉上结霜、牙齿打颤、悬浮霜晶。
+Rig(
+    kind: Guardian,
+    rest: "idle",
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (63, 120), z: 0),
+        (name: "leaf", parent: Some("body"), pivot: (67, 41), z: 1),
+        (name: "roots", pivot: (63, 112), z: 2),
+        (name: "body", pivot: (62, 114), z: 3),
+        (name: "mouth", parent: Some("body"), pivot: (89, 89), z: 5),
+        (name: "eyes", parent: Some("body"), pivot: (77, 65), z: 6),
+        (name: "crystals", pivot: (64, 70), z: 7),
+    ],
+)

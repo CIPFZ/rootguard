@@ -5,8 +5,10 @@ Atlas(
         (name: "barkwall_portrait_0", x: 0, y: 0, w: 80, h: 100, anchor: (0.5, 0.5)),
         (name: "barkwall_portrait_off_0", x: 82, y: 0, w: 80, h: 100, anchor: (0.5, 0.5)),
         (name: "dewcup_portrait_0", x: 164, y: 0, w: 80, h: 100, anchor: (0.5, 0.5)),
-        (name: "dewcup_portrait_off_0", x: 0, y: 102, w: 80, h: 100, anchor: (0.5, 0.5)),
-        (name: "pebble_pod_portrait_0", x: 82, y: 102, w: 80, h: 100, anchor: (0.5, 0.5)),
-        (name: "pebble_pod_portrait_off_0", x: 164, y: 102, w: 80, h: 100, anchor: (0.5, 0.5)),
+        (name: "dewcup_portrait_off_0", x: 246, y: 0, w: 80, h: 100, anchor: (0.5, 0.5)),
+        (name: "frostpod_portrait_0", x: 328, y: 0, w: 80, h: 100, anchor: (0.5, 0.5)),
+        (name: "frostpod_portrait_off_0", x: 410, y: 0, w: 80, h: 100, anchor: (0.5, 0.5)),
+        (name: "pebble_pod_portrait_0", x: 0, y: 102, w: 80, h: 100, anchor: (0.5, 0.5)),
+        (name: "pebble_pod_portrait_off_0", x: 82, y: 102, w: 80, h: 100, anchor: (0.5, 0.5)),
     ],
 )

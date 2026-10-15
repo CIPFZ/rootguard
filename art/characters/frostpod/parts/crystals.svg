@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 周身 4 粒悬浮霜晶（专属色 frost_shard，ART-SPEC 4.4） -->
+  <g fill="@frost_shard" stroke="@outline" stroke-width="2" stroke-linejoin="round">
+    <path d="M24 58 L28 52 L32 58 L28 64 Z"/>
+    <path d="M100 42 L103.5 37 L107 42 L103.5 47 Z"/>
+    <path d="M101 94 L104 90 L107 94 L104 98 Z"/>
+    <path d="M22 92 L25 88 L28 92 L25 96 Z"/>
+  </g>
+  <g fill="@frost">
+    <path d="M28 54 L30.5 58 L28 62 Z"/><path d="M103.5 39 L105.5 42 L103.5 45 Z"/>
+  </g>
+</svg>

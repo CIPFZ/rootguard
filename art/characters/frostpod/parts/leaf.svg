@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 短茎上一片结霜的卷叶（与石籽荚同体型，4.4） -->
+  <path d="M67 41 C67 35 69 31 73 28" fill="none" stroke="@outline" stroke-width="5" stroke-linecap="round"/>
+  <path d="M67 41 C67 35 69 31 73 28" fill="none" stroke="@leaf_dark" stroke-width="2" stroke-linecap="round"/>
+  <path d="M72 29 C76 22 85 21 89 26 C85 31 77 32 72 29 Z" fill="@leaf" stroke="@outline" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M76 24.5 C80 23 85 23.5 88 25.5" fill="none" stroke="@frost_shard" stroke-width="2.4" stroke-linecap="round"/>
+</svg>

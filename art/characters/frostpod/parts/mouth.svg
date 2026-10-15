@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 牙齿打颤的表情（ART-SPEC 4.4）：咬紧的嘴里一道上下错开的齿线 -->
+  <path d="M82 86 Q89 83.5 96 85.5 L95.5 92 Q88.5 94.5 82.5 92 Z" fill="@frost_shard" stroke="@outline" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M82.5 89 L85 87.5 L87.5 90 L90 87.5 L92.5 90 L95.5 88.5" fill="none" stroke="@outline" stroke-width="1.6" stroke-linejoin="round"/>
+</svg>

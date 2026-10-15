@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 地面阴影（ART-SPEC 2.1 底部 8 px 阴影区） -->
+  <ellipse cx="63" cy="120" rx="30" ry="4.5" fill="@outline" opacity="0.22"/>
+</svg>
