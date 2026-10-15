@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 176">
+  <g transform="translate(88 167) scale(0.93) translate(-88 -167)">
+  <!-- 短粗根腿（ART-SPEC 5.8）：几股干根拧成，落地散成须根 -->
+  <g transform="translate(34 0)">
+    <path d="M62 140 L80 140 C80 150 78 158 76 163 C72 166 66 166 63 163 C62 156 62 148 62 140 Z" fill="@straw_dark.shade" stroke="@husk_outline" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M70 143 C68 150 70 156 68 162" fill="none" stroke="@husk_crack" stroke-width="1.6" stroke-linecap="round"/>
+    <g fill="none" stroke-linecap="round">
+      <g stroke="@husk_outline" stroke-width="3.8"><path d="M64 163 C60 164 57 166 54 166"/><path d="M69 165 C69 167 68 168 67 169"/><path d="M75 163 C79 164 82 166 85 166"/></g>
+      <g stroke="@straw_dark.shade" stroke-width="1.7"><path d="M64 163 C60 164 57 166 54 166"/><path d="M69 165 C69 167 68 168 67 169"/><path d="M75 163 C79 164 82 166 85 166"/></g>
+    </g>
+  </g>
+  </g>
+</svg>

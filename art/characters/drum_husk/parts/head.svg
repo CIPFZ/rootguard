@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 176">
+  <g transform="translate(88 167) scale(0.93) translate(-88 -167)">
+  <!-- 小头、得意微笑（ART-SPEC 5.8）：干种荚头缩小版，半闭椭圆眼、2 粒以内干种子（v1.1 1.2） -->
+  <g transform="translate(0 0)">
+    <g stroke="@husk_outline" stroke-width="1.8" stroke-linejoin="round">
+      <path d="M88 22 C89 17 92 14 96 13 C93 17 92 20 91 24 Z" fill="@straw"/>
+      <path d="M89 23 C93 21 97 21 100 23 C96 24 93 25 91 27 Z" fill="@straw.shade"/>
+      <path d="M86 23 C85 19 86 16 88 14 C88 17 88 20 89 23 Z" fill="@straw_dark"/>
+    </g>
+    <path d="M88 52 C80 52 76 46 76 38 C76 30 81 24 88 20 C95 24 100 30 100 38 C100 46 96 52 88 52 Z" fill="@straw"/>
+    <path d="M94 26 C98 31 100 35 100 39 C100 46 96 51 90 52 C94 46 96 40 95 34 Z" fill="@straw.shade"/>
+    <path d="M88 52 C80 52 76 46 76 38 C76 30 81 24 88 20 C95 24 100 30 100 38 C100 46 96 52 88 52 Z" fill="none" stroke="@husk_outline" stroke-width="2.6" stroke-linejoin="round"/>
+    <g stroke="@husk_outline" stroke-width="1.6" stroke-linejoin="round">
+      <ellipse cx="82.5" cy="37" rx="3.4" ry="2.8" fill="@dew_glow"/><ellipse cx="91.5" cy="36.5" rx="3" ry="2.5" fill="@dew_glow"/>
+    </g>
+    <g fill="@husk_outline"><circle cx="81.6" cy="38.4" r="1"/><circle cx="90.6" cy="37.8" r="0.9"/></g>
+    <g stroke="@husk_outline" stroke-width="1.6" stroke-linejoin="round" fill="@straw.shade">
+      <path d="M79 37.6 C79 33.4 86 33.4 86 37.4 C83.6 37 81.4 37.2 79 37.6 Z"/><path d="M88.4 37 C88.4 33.2 94.6 33.2 94.6 36.8 C92.4 36.4 90.6 36.6 88.4 37 Z"/>
+    </g>
+    <path d="M80.5 44 Q85 47 90 43.5" fill="none" stroke="@husk_outline" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="84" cy="45.2" rx="0.9" ry="1.1" fill="@straw" stroke="@husk_outline" stroke-width="0.9"/>
+  </g>
+  </g>
+</svg>

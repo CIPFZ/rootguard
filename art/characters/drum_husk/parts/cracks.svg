@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 176">
+  <g transform="translate(88 167) scale(0.93) translate(-88 -167)">
+  <!-- Drum 第 2 级：葫芦身裂开一道（ART-SPEC 5.8 / 2.4） -->
+  <path d="M120 66 L114 80 L122 90 L114 104 L120 116" fill="none" stroke="@husk_outline" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

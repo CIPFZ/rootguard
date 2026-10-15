@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 176">
+  <g transform="translate(88 167) scale(0.93) translate(-88 -167)">
+  <!-- 巨大圆葫芦身（专属色 drum，环形纹路，ART-SPEC 5.8）：干透的大葫芦，中空所以是鼓（LORE） -->
+  <path d="M88 52 C120 54 140 78 140 106 C140 136 118 154 88 154 C58 154 36 136 36 106 C36 78 56 54 88 52 Z" fill="@drum"/>
+  <path d="M88 52 C56 54 36 78 36 106 C36 136 58 154 88 154 C70 146 60 128 60 106 C60 82 70 62 88 52 Z" fill="@drum.shade"/>
+  <g fill="none" stroke="@husk_crack" stroke-width="2.2" stroke-linecap="round">
+    <path d="M42 84 C60 92 116 92 134 84"/><path d="M37 108 C58 118 118 118 139 108"/><path d="M44 134 C62 142 114 142 132 134"/>
+  </g>
+  <g fill="none" stroke="@husk_crack" stroke-width="1.5" stroke-linecap="round"><path d="M110 64 L114 72 L110 78"/><path d="M66 120 L62 128"/></g>
+  <path d="M80 54 C80 48 84 45 88 45 C92 45 96 48 96 54" fill="@drum" stroke="@husk_outline" stroke-width="2.6" stroke-linejoin="round"/>
+  <path d="M88 52 C120 54 140 78 140 106 C140 136 118 154 88 154 C58 154 36 136 36 106 C36 78 56 54 88 52 Z" fill="none" stroke="@husk_outline" stroke-width="3" stroke-linejoin="round"/>
+  </g>
+</svg>

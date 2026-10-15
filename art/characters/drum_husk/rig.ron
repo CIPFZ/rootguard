@@ -1,0 +1,23 @@
+// 鼓腹枯壳 Drum Husk（ART-SPEC 5.8）：176 × 176，巨大圆葫芦身、环形纹路、小头得意微笑、短粗根腿。
+// Husk 共同特征同枯壳怪模板（裁决六）：干种荚头、半闭椭圆眼、根须腿、下垂的臂。
+Rig(
+    kind: HuskLarge,
+    rest: "walk",
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (88, 167), z: 0),
+        (name: "leg_back", pivot: (105, 140), z: 1),
+        (name: "leg_front", pivot: (71, 140), z: 2),
+        (name: "core", pivot: (88, 142), z: 3, hidden: true),
+        (name: "arms", parent: Some("drum"), pivot: (88, 92), z: 4),
+        (name: "drum", pivot: (88, 150), z: 5),
+        (name: "cracks", parent: Some("drum"), pivot: (118, 90), z: 6, hidden: true),
+        (name: "head", parent: Some("drum"), pivot: (88, 52), z: 7, variants: ["panic"]),
+    ],
+    // ART-SPEC 2.4 / 5.8：Drum 2 级裂纹；破碎时葫芦身炸开露出瘦小的真身（速度不变但表情慌张）
+    states: [
+        (name: "", set: {}),
+        (name: "cracked", set: {"cracks": "base"}),
+        (name: "bare", set: {"drum": "hidden", "arms": "hidden", "core": "base", "head": "panic"}),
+    ],
+)

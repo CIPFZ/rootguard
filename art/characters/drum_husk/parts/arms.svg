@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 176">
+  <g transform="translate(88 167) scale(0.93) translate(-88 -167)">
+  <!-- 葫芦身两侧下垂的小短臂（与 Husk 共同的垂臂姿势一致，v1.1 1.2） -->
+  <g stroke="@husk_outline" stroke-width="2.4" stroke-linejoin="round">
+    <path d="M42 92 C36 100 34 108 34 116 C36 118 39 118 40 116 C41 108 44 100 48 94 Z" fill="@straw"/>
+    <path d="M134 92 C140 100 142 108 142 116 C140 118 137 118 136 116 C135 108 132 100 128 94 Z" fill="@straw.shade"/>
+  </g>
+  </g>
+</svg>
