@@ -97,6 +97,7 @@
 提交 da89f41（artgen）、0791a00（pebble_pod）、ee6e6e3（husk）、5dcc6db（游戏侧）。
 CI run 38699227013（049b3c4）：Ubuntu / macOS 通过（macOS arm64 上 PNG 近似比较生效）；Windows `cargo test` 失败——
 日志页无法加载，推断并在本地复现为 CRLF 检出导致 RON 逐字节比较失败，修正见下一提交（ADR-013 第 8 条）。
+CI run 38700772389（f4aa88c）三平台全部通过。
 
 ## 收尾期（SPEC v1.2 第 20 章，2026-10-14 起）
 
