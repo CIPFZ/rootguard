@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 第 3 级受损：裂纹贯穿侧面（ART-SPEC 4.3） -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M84 41 L88 47 L85 54 L92 62 L88 72 L93 82 L90 92" stroke="@outline" stroke-width="3.6"/>
+    <path d="M74 46 L78 50 L76 55" stroke="@bark_dark" stroke-width="2.4"/>
+    <path d="M44 40 L41 48 L44 55 L39 63" stroke="@outline" stroke-width="3"/>
+    <path d="M58 104 L62 110 L60 116" stroke="@bark_dark" stroke-width="2.4"/>
+  </g>
+</svg>

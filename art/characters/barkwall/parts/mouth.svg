@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 紧咬的下巴：咬紧的嘴（ART-SPEC 4.3） -->
+  <path d="M56 91 Q59 88.5 62 91 Q65 93.5 68 91 Q71 88.5 75 91" fill="none" stroke="@outline" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M53 94 Q65 98 78 94" fill="none" stroke="@bark_dark" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

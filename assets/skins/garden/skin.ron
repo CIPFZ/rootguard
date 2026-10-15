@@ -4,6 +4,9 @@ Skin(
         (
             atlas: "skins/garden/garden_defenders.atlas.ron",
             clips: [
+                "barkwall_idle",
+                "barkwall_cracked_idle",
+                "barkwall_split_idle",
                 "dewcup_idle",
                 "pebble_pod_idle",
                 "pebble_pod_hurt_idle",
@@ -21,6 +24,8 @@ Skin(
         (
             atlas: "skins/garden/garden_ui.atlas.ron",
             clips: [
+                "barkwall_portrait",
+                "barkwall_portrait_off",
                 "dewcup_portrait",
                 "dewcup_portrait_off",
                 "pebble_pod_portrait",

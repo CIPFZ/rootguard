@@ -1,0 +1,20 @@
+// 树皮墙 Barkwall（ART-SPEC 4.3）：年轮顶、苔藓发、木纹脸。以石籽荚为模板（裁决五）。
+Rig(
+    kind: Guardian,
+    rest: "idle",
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (64, 120), z: 0),
+        (name: "stump", pivot: (64, 118), z: 1),
+        (name: "cracks", parent: Some("stump"), pivot: (86, 50), z: 2, variants: ["deep"], hidden: true),
+        (name: "moss", parent: Some("stump"), pivot: (55, 40), z: 3),
+        (name: "eyes", parent: Some("stump"), pivot: (66, 70), z: 4, variants: ["wide"]),
+        (name: "mouth", parent: Some("stump"), pivot: (66, 92), z: 5),
+    ],
+    // ART-SPEC 2.4：3 级（hp > 2/3 完好、> 1/3 裂纹、其余重裂）；第 3 级苔藓掉落、眼睛更大（4.3）
+    states: [
+        (name: "", set: {}),
+        (name: "cracked", set: {"cracks": "base"}),
+        (name: "split", set: {"cracks": "deep", "moss": "hidden", "eyes": "wide"}),
+    ],
+)

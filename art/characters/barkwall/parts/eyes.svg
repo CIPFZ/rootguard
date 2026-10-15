@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 木纹里的脸：大而惊恐的眼（ART-SPEC 4.3）；眉头上扬——勇敢但其实很紧张（LORE） -->
+  <g stroke="@outline" stroke-width="2.6">
+    <ellipse cx="54" cy="70" rx="8.5" ry="9.5" fill="@dew_glow"/>
+    <ellipse cx="77" cy="70" rx="8.5" ry="9.5" fill="@dew_glow"/>
+  </g>
+  <circle cx="56" cy="72" r="3" fill="@outline"/><circle cx="79" cy="72" r="3" fill="@outline"/>
+  <circle cx="57" cy="70.8" r="1" fill="@dew_glow"/><circle cx="80" cy="70.8" r="1" fill="@dew_glow"/>
+  <g fill="none" stroke="@outline" stroke-width="3.2" stroke-linecap="round">
+    <path d="M46 57 Q51 53 59 56"/><path d="M71 56 Q79 53 85 57"/>
+  </g>
+</svg>

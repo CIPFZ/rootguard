@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 粗短树桩：bark 主色、bark_dark 暗部（ART-SPEC 4.3）；根部外撇（LORE：根母掉下的一段枝） -->
+  <path d="M31 44 L30 104 C26 109 22 113 20 117 C28 118 34 116 40 114 C46 117 54 118 64 118 C74 118 82 117 88 114 C94 116 100 118 108 117 C106 113 102 109 98 104 L97 44 Z" fill="@bark"/>
+  <path d="M31 44 L30 104 C26 109 22 113 20 117 C28 118 34 116 40 114 C38 104 39 72 41 46 Z" fill="@bark.shade"/>
+  <g fill="none" stroke="@bark_dark" stroke-width="2" stroke-linecap="round">
+    <path d="M36 54 C35 70 36 88 35 106"/>
+    <path d="M47 60 C46 72 48 82 46 94"/>
+    <path d="M88 52 C90 66 89 82 91 102"/>
+    <path d="M81 98 C82 104 82 110 80 115"/>
+  </g>
+  <path d="M31 44 L30 104 C26 109 22 113 20 117 C28 118 34 116 40 114 C46 117 54 118 64 118 C74 118 82 117 88 114 C94 116 100 118 108 117 C106 113 102 109 98 104 L97 44" fill="none" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+  <!-- 顶面年轮 -->
+  <ellipse cx="64" cy="44" rx="33.5" ry="9" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <g fill="none" stroke="@bark_dark" stroke-width="1.6">
+    <ellipse cx="66" cy="44.5" rx="24" ry="6"/>
+    <ellipse cx="67" cy="45" rx="14" ry="3.6"/>
+    <ellipse cx="67.5" cy="45" rx="5" ry="1.4"/>
+  </g>
+</svg>

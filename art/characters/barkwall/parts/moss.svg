@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 苔藓簇当头发（ART-SPEC 4.3） -->
+  <path d="M33 47 C30 40 35 33 43 34 C45 28 54 27 58 32 C62 28 70 29 72 34 C75 33 79 36 78 40 C72 43 66 40 62 43 C57 40 50 44 46 42 C42 45 37 44 35 50 Z" fill="@leaf_dark" stroke="@outline" stroke-width="2.6" stroke-linejoin="round"/>
+  <g fill="@leaf">
+    <circle cx="44" cy="37" r="2.2"/><circle cx="56" cy="34" r="2"/><circle cx="67" cy="35.5" r="1.8"/>
+  </g>
+</svg>
