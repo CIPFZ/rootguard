@@ -6,16 +6,16 @@ Rig(
     flash: true,
     parts: [
         (name: "shadow", pivot: (64, 152), z: 0),
-        (name: "arm_back", parent: Some("body"), pivot: (83, 80), z: 1),
+        (name: "arm_back", parent: Some("body"), pivot: (85, 78), z: 1),
         (name: "leg_back", pivot: (73, 113), z: 2),
         (name: "leg_front", pivot: (60, 113), z: 3),
         // 身体以髋部为枢轴：行走左右摇摆 ± 4°、啃食俯身
         (name: "body", pivot: (65, 116), z: 4),
-        (name: "head", parent: Some("body"), pivot: (56, 88), z: 6),
+        (name: "head", parent: Some("body"), pivot: (46, 103), z: 6),
         (name: "helm", parent: Some("head"), pivot: (50, 40), z: 9, variants: ["cracked"]),
-        (name: "mouth", parent: Some("head"), pivot: (46, 82), z: 7, variants: ["chomp", "surprised"]),
+        (name: "mouth", parent: Some("head"), pivot: (40, 95), z: 7, variants: ["chomp", "surprised"]),
         // 前臂在头后：驼背时头压在前肩上
-        (name: "arm_front", parent: Some("body"), pivot: (52, 93), z: 5),
+        (name: "arm_front", parent: Some("body"), pivot: (52, 94), z: 5),
         (name: "crumbs", pivot: (34, 86), z: 8, hidden: true),
     ],
     // ART-SPEC 2.4 / 5.2：Helm 2 级（> 1/2 完好、≤ 1/2 缺一角）；归零时枝冠炸飞、露出光头、表情惊讶

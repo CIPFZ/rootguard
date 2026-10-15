@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
   <!-- Helm ≤ 1/2：陶盆裂纹加深、崩掉一角（ART-SPEC 5.3 / 2.4）；倒扣的陶盆压到眉毛，只露下半张脸（ART-SPEC 5.3）；被丢弃的盆栽，连着碎花盆（LORE） -->
-  <g transform="translate(4 10) rotate(-24 50 80) translate(0 -5)">
+  <g transform="translate(45 105) rotate(-14) scale(0.85) translate(-48 -84) translate(0 -5)">
     <path d="M28 58 L34 28 C40 26 54 25 62 28 L70 56 C58 60 40 61 28 58 Z" fill="@terracotta"/>
     <path d="M28 58 L34 28 C37 27 40 26.5 43 26.4 L39 60 C35 59.6 31 59 28 58 Z" fill="@terracotta.shade"/>
     <path d="M27 55 C40 58.6 58 58 71 53 L72 59 C58 64 40 64.6 26 61 Z" fill="@terracotta" stroke="@husk_outline" stroke-width="2.4" stroke-linejoin="round"/>

@@ -1,27 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
-  <!-- 一条手臂长成了芦苇杆（专属色 reed，ART-SPEC 5.5），斜持，顶端蓬松下垂的芦花；长在芦苇塘边（LORE）；附件长在身上（1.5） -->
+  <!-- 一条手臂长成了芦苇杆（专属色 reed，ART-SPEC 5.5），斜持；附件长在身上（1.5）。
+       裁决（七）：杆 8 px、杆上端高出头顶 ≥ 30 px，芦花绒穗体积加倍、下垂到杆长的 1/3 处 -->
   <g transform="translate(-4 12)">
     <path d="M53 80 C49 91 47 101 46 110 C46 113.5 51 114.5 52.5 111.5 C53.5 102 56 92 60 83 Z" fill="@straw" stroke="@husk_outline" stroke-width="2.6" stroke-linejoin="round"/>
   </g>
-  <!-- 杆沿自身方向下移，满足 1.4 的 130 px 上限 -->
-  <g transform="translate(3 13)">
   <g fill="none" stroke-linecap="round">
-    <path d="M58 138 L34 34" stroke="@husk_outline" stroke-width="6.4"/>
-    <path d="M58 138 L34 34" stroke="@reed" stroke-width="3.2"/>
+    <path d="M62 150 L37 32" stroke="@husk_outline" stroke-width="8"/>
+    <path d="M62 150 L37 32" stroke="@reed" stroke-width="4.6"/>
   </g>
   <g fill="none" stroke="@husk_outline" stroke-width="1.6" stroke-linecap="round">
-    <path d="M51 114 L55 113"/><path d="M45 90 L49 89"/><path d="M39 64 L43 63"/>
+    <path d="M55 118 L60 117"/><path d="M48 84 L53 83"/><path d="M41 52 L46 51"/>
   </g>
   <!-- 沿杆长出的两片窄叶：杆是长在身上的芦苇，不是拿着的东西 -->
   <g stroke="@husk_outline" stroke-width="1.8" stroke-linejoin="round">
-    <path d="M47 96 C51 88 57 84 63 84 C59 90 53 94 47 96 Z" fill="@reed.shade"/>
-    <path d="M40 66 C34 62 28 62 23 65 C28 68 34 68 40 66 Z" fill="@reed.shade"/>
+    <path d="M53 104 C58 96 64 92 70 92 C66 98 60 102 53 104 Z" fill="@reed.shade"/>
+    <path d="M46 74 C40 70 34 70 29 73 C34 76 40 76 46 74 Z" fill="@reed.shade"/>
   </g>
-  <!-- 芦花：一条蓬松、向后弯垂的绒穗（不是尖头） -->
-  <path d="M34 36 C31 28 32 19 38 14 C44 10 50 13 49 19 C48 26 42 32 34 36 Z" fill="@straw" stroke="@husk_outline" stroke-width="2" stroke-linejoin="round"/>
-  <path d="M36 33 C40 29 44 24 45 18" fill="none" stroke="@straw_dark" stroke-width="1.4" stroke-linecap="round"/>
+  <!-- 芦花：一大束蓬松、向后弯垂的绒穗，垂到杆长约 1/3 处（不是尖头） -->
+  <path d="M37 31 C44 28 54 31 59 39 C64 47 64 59 60 69 C58 73 55 75 52 75 C50 67 47 59 43 51 C40 45 38 38 37 31 Z" fill="@straw" stroke="@husk_outline" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M41 32 C47 30 54 33 57 41 C60 49 59 57 56 66" fill="none" stroke="@straw_dark" stroke-width="1.6" stroke-linecap="round"/>
   <g fill="none" stroke="@straw_dark" stroke-width="1.2" stroke-linecap="round">
-    <path d="M38 22 L35 20"/><path d="M41 18 L39 15"/><path d="M42 27 L46 27"/><path d="M38 30 L40 33"/>
-  </g>
+    <path d="M58 36 L61 33"/><path d="M62 46 L66 45"/><path d="M62 57 L66 58"/><path d="M58 68 L61 71"/><path d="M45 47 L42 49"/><path d="M49 59 L46 61"/>
   </g>
 </svg>

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
   <!-- 歪斜张开的小口：2 粒零散干种子、垂一片干叶当舌头；禁止成排牙齿与下颌线（v1.1 1.2 / 1.5） -->
-  <g transform="translate(4 10) rotate(-24 50 80)">
+  <g transform="translate(45 105) rotate(-14) scale(0.85) translate(-48 -84)">
     <path d="M35 71 Q40 76.5 47 70.5 Q41.5 72.6 35 71 Z" fill="@bark_dark" stroke="@husk_outline" stroke-width="2" stroke-linejoin="round"/>
     <path d="M40.5 73.4 C39.5 77 40.5 80.5 43 83 C44 79.5 43.8 76 42.6 73.4 Z" fill="@straw_dark" stroke="@husk_outline" stroke-width="1.6" stroke-linejoin="round"/>
     <g fill="@straw" stroke="@husk_outline" stroke-width="1.2">

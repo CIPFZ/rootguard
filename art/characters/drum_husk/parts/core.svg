@@ -1,8 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 176">
   <g transform="translate(88 167) scale(0.93) translate(-88 -167)">
   <!-- 葫芦身炸开露出里面瘦小的真身（ART-SPEC 5.8）：一根细干茎 -->
-  <!-- 根部：细茎落在两条根腿上 -->
-  <path d="M64 140 C66 134 76 132 88 132 C100 132 110 134 112 140 C110 144 100 145 88 145 C76 145 66 144 64 140 Z" fill="@straw_dark" stroke="@husk_outline" stroke-width="2.6" stroke-linejoin="round"/>
   <path d="M84 102 C82 116 82 130 82 142 L94 142 C94 130 94 116 92 102 C90 100 86 100 84 102 Z" fill="@straw" stroke="@husk_outline" stroke-width="2.6" stroke-linejoin="round"/>
   <path d="M88 106 C86 118 90 128 88 140" fill="none" stroke="@husk_crack" stroke-width="1.4" stroke-linecap="round"/>
   <g stroke="@husk_outline" stroke-width="2.2" stroke-linejoin="round">

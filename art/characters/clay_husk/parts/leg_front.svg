@@ -1,26 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
-  <!-- 缠结的枯根当腿（ART-SPEC 5 共同，LORE 3.4）：几股干根拧在一起，落地处散成须根 -->
+  <!-- 缠结的枯根当腿（ART-SPEC 5 共同，LORE 3.4）：几股干根拧在一起，落地处缠成一团根须球 -->
   <g transform="translate(0 0)">
     <path d="M53 111 L66 111 C65 122 63 132 62 142 C61 145 58 147 55 147 C52 147 50 145 50 142 C51 132 52 122 53 111 Z" fill="@straw_dark" stroke="@husk_outline" stroke-width="3" stroke-linejoin="round"/>
     <g fill="none" stroke="@husk_crack" stroke-width="1.6" stroke-linecap="round">
       <path d="M57 113 C59 122 54 130 56 144"/>
       <path d="M62 114 C60 124 61 132 59 142"/>
     </g>
+    <!-- 脚：一团缠结的根须球，不分趾、不外撇，边缘毛糙，末端零散垂下 3 缕（v1.2 1.2，禁止三趾爪形） -->
+    <path d="M47 147 C45 145 46 142 48 141 C48 138 52 137 54 138 C56 136 60 137 61 139 C64 138 67 141 66 144 C68 146 67 149 65 150 C64 152 60 153 57 152 C54 153 50 152 49 150 C47 150 46 149 47 147 Z" fill="@straw_dark" stroke="@husk_outline" stroke-width="2.6" stroke-linejoin="round"/>
+    <g fill="none" stroke="@husk_crack" stroke-width="1.3" stroke-linecap="round"><path d="M50 145 C54 141 58 148 63 143"/><path d="M51 149 C55 145 58 151 63 147"/><path d="M55 140 C54 143 56 146 55 150"/></g>
     <g fill="none" stroke-linecap="round">
-      <g stroke="@husk_outline" stroke-width="3.8">
-        <path d="M51 145 C47 145 45 148 41 148 C39 148 38 146 36 147"/>
-        <path d="M53 146 C51 148 49 150 46 151"/>
-        <path d="M56 147 C57 149 56 151 57 152"/>
-        <path d="M59 146 C61 149 64 148 66 151"/>
-        <path d="M61 144 C64 145 67 143 70 145"/>
-      </g>
-      <g stroke="@straw_dark" stroke-width="1.7">
-        <path d="M51 145 C47 145 45 148 41 148 C39 148 38 146 36 147"/>
-        <path d="M53 146 C51 148 49 150 46 151"/>
-        <path d="M56 147 C57 149 56 151 57 152"/>
-        <path d="M59 146 C61 149 64 148 66 151"/>
-        <path d="M61 144 C64 145 67 143 70 145"/>
-      </g>
+      <g stroke="@husk_outline" stroke-width="3"><path d="M50 151 C48 153 47 155 44 155"/><path d="M58 152 C58 154 59 155 58 157"/><path d="M64 150 C66 152 66 154 68 155"/></g>
+      <g stroke="@straw_dark" stroke-width="1.3"><path d="M50 151 C48 153 47 155 44 155"/><path d="M58 152 C58 154 59 155 58 157"/><path d="M64 150 C66 152 66 154 68 155"/></g>
     </g>
   </g>
 </svg>

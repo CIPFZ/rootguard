@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
   <!-- 头是一枚干种荚 / 玉米苞叶尖（v1.1 1.2，5.1）：顶部戴枝冠，枝冠炸掉后即是光头（ART-SPEC 5.2）；禁止颅骨形（1.5）。
        眼：半闭的椭圆眼皮盖住上半，小瞳孔无高光，困倦下垂（v1.1 1.2）；无下颌线 -->
-  <g transform="translate(4 10) rotate(-24 50 80)">
+  <g transform="translate(45 105) rotate(-14) scale(0.85) translate(-48 -84)">
     <path d="M48 84 C36 84 30 74 30 62 C30 49 39 39 48 32 C57 39 66 49 66 62 C66 74 60 84 48 84 Z" fill="@straw"/>
     <path d="M57 41 C63 48 66 55 66 63 C66 74 60 83 50 84 C58 76 61 66 60 56 C60 50 59 45 57 41 Z" fill="@straw.shade"/>
     <path d="M57 41 C63 48 66 55 66 63 C66 74 60 83 50 84 C58 76 61 66 60 56 C60 50 59 45 57 41" fill="none" stroke="@husk_outline" stroke-width="1.8"/>

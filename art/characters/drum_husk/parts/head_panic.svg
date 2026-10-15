@@ -2,10 +2,10 @@
   <g transform="translate(88 167) scale(0.93) translate(-88 -167)">
   <!-- 葫芦身炸开后的真身：小头下移到细身上，表情慌张（ART-SPEC 5.8）；仍是小瞳孔无高光 -->
   <g transform="translate(0 52)">
+    <!-- 鞘尖向后倒伏、贴着头顶（v1.2 1.2） -->
     <g stroke="@husk_outline" stroke-width="1.8" stroke-linejoin="round">
-      <path d="M88 22 C89 17 92 14 96 13 C93 17 92 20 91 24 Z" fill="@straw"/>
-      <path d="M89 23 C93 21 97 21 100 23 C96 24 93 25 91 27 Z" fill="@straw.shade"/>
-      <path d="M86 23 C85 19 86 16 88 14 C88 17 88 20 89 23 Z" fill="@straw_dark"/>
+      <path d="M86 23 C90 21 95 22 98 26 C94 26 91 27 88 28 Z" fill="@straw_dark"/>
+      <path d="M88 22 C93 21 98 25 101 31 C97 29 93 28 90 28 Z" fill="@straw"/>
     </g>
     <path d="M88 52 C80 52 76 46 76 38 C76 30 81 24 88 20 C95 24 100 30 100 38 C100 46 96 52 88 52 Z" fill="@straw"/>
     <path d="M94 26 C98 31 100 35 100 39 C100 46 96 51 90 52 C94 46 96 40 95 34 Z" fill="@straw.shade"/>

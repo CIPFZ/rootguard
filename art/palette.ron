@@ -20,6 +20,8 @@ Palette(
         "outline": "#2F3A2A",       // 守卫描边（1.2：深绿褐 3 px）
         // 1.2 材质表中的 Husk 描边（未列入 1.3 表，ADR-013）
         "husk_outline": "#4A3A24",  // Husk 描边（1.2：深褐 3 px）
+        // v1.2 1.3 表新增（裁决七批准）：憋气 / 涨红的腮（块茎雷）
+        "flush": "#B57BA6",
     },
     shade: (guardian: 0.18, husk: 0.22),
     characters: {
@@ -30,8 +32,8 @@ Palette(
         "frostpod": { "frost_shard": "#E8F7FF" },
         // 4.6 米白短刺
         "thornmat": { "thorn": "#EDE6D2" },
-        // 4.7 偏红的土棕；“腮帮憋到发紫”
-        "tuberblast": { "tuber": "#A86A3C", "flush": "#9C6B9E" },
+        // 4.7 偏红的土棕（“腮帮憋到发紫”的 flush 已按 v1.2 1.3 移为全局色）
+        "tuberblast": { "tuber": "#A86A3C" },
         // 4.9 偏棕的葫芦壳
         "gourdshell": { "gourd": "#C9A15A" },
         // 4.10 淡黄内里

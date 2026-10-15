@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
-  <!-- 小碎步的根须脚（ART-SPEC 5.9 / 5 共同） -->
-  <g fill="none" stroke-linecap="round">
-    <g stroke="@husk_outline" stroke-width="3.6"><path d="M42 84 C40 87 37 89 34 89"/><path d="M45 85 L44 90"/><path d="M54 84 C56 87 59 89 62 89"/><path d="M51 85 L52 90"/></g>
-    <g stroke="@straw_dark" stroke-width="1.6"><path d="M42 84 C40 87 37 89 34 89"/><path d="M45 85 L44 90"/><path d="M54 84 C56 87 59 89 62 89"/><path d="M51 85 L52 90"/></g>
+  <!-- 小根须球当脚（v1.2 1.2：不分趾），各垂下一缕（ART-SPEC 5.9 / 5 共同） -->
+  <g fill="@straw_dark" stroke="@husk_outline" stroke-width="2" stroke-linejoin="round">
+    <path d="M37 87 C36 85 38 83 40 83 C42 82 45 83 45 85 C46 87 44 89 41 89 C39 89 37 89 37 87 Z"/>
+    <path d="M51 87 C50 85 52 83 54 83 C56 82 59 83 59 85 C60 87 58 89 55 89 C53 89 51 89 51 87 Z"/>
   </g>
+  <g fill="none" stroke="@husk_outline" stroke-width="1.6" stroke-linecap="round"><path d="M39 89 L37 91"/><path d="M57 89 L59 91"/></g>
 </svg>

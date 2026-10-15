@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
-  <!-- 头是一枚干种荚 / 玉米苞叶尖（v1.1 1.2，5.1）：顶部 4 片翘起的干鞘尖当乱发，向后乱翘、聚在荚尖（不排成一圈）；禁止颅骨形（1.5）。
+  <!-- 头是一枚干种荚 / 玉米苞叶尖（v1.1 1.2，5.1）：顶部 3 片干鞘尖向后倒伏贴着头顶；头直接坐在肩上、无脖颈（v1.2 1.2 / 1.5）；禁止颅骨形（1.5）。
        眼：半闭的椭圆眼皮盖住上半，小瞳孔无高光，眼皮压得更低：累（ART-SPEC 5.7）；无下颌线 -->
-  <g transform="translate(4 10) rotate(-24 50 80)">
+  <g transform="translate(45 105) rotate(-14) scale(0.85) translate(-48 -84)">
+    <!-- 3 片干鞘尖向后倒伏、贴着头顶（v1.2 1.2：禁止竖立成冠） -->
     <g stroke="@husk_outline" stroke-width="2" stroke-linejoin="round">
-      <path d="M49 33 C52 26 57 22 63 21 C59 25 56 29 53 35 Z" fill="@straw"/>
-      <path d="M50 34 C56 30 63 30 69 33 C63 33 58 35 54 38 Z" fill="@straw.shade"/>
-      <path d="M51 36 C57 36 62 39 66 44 C61 41 57 40 53 40 Z" fill="@straw_dark"/>
-      <path d="M47 34 C46 29 47 25 50 22 C49 26 50 30 50 34 Z" fill="@straw_dark"/>
+      <path d="M44 38 C49 35 56 36 61 41 C56 41 51 42 46 45 Z" fill="@straw_dark"/>
+      <path d="M48 37 C56 37 64 43 69 52 C63 48 57 45 51 44 Z" fill="@straw.shade"/>
+      <path d="M46 34 C52 31 60 34 66 42 C60 40 54 39 49 40 Z" fill="@straw"/>
     </g>
     <path d="M48 84 C36 84 30 74 30 62 C30 49 39 39 48 32 C57 39 66 49 66 62 C66 74 60 84 48 84 Z" fill="@straw"/>
     <path d="M57 41 C63 48 66 55 66 63 C66 74 60 83 50 84 C58 76 61 66 60 56 C60 50 59 45 57 41 Z" fill="@straw.shade"/>

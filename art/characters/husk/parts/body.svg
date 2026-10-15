@@ -1,20 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
-  <!-- 层叠干鞘身体（ART-SPEC 5.1，裁决（五）保留）：straw 主色、straw_dark 暗部、husk_crack 裂纹；
-       背部隆起成驼背（v1.1 1.2 姿势），颈部两片干鞘尖托住种荚头 -->
-  <g stroke="@husk_outline" stroke-width="2.5" stroke-linejoin="round">
-    <path d="M50 84 C46 80 43 76 40 70 C46 72 51 75 55 79 Z" fill="@straw_dark"/>
-  </g>
-  <path d="M64 125 C50 125 42 114 43 101 C44 90 47 82 52 77 C58 71 70 69 78 74 C86 80 90 92 89 104 C88 117 80 125 64 125 Z" fill="@straw"/>
-  <path d="M64 125 C79 121 88 110 87 96 C86 86 81 78 74 74 C80 88 78 108 64 125 Z" fill="@straw.shade"/>
-  <path d="M64 125 C50 122 44 110 46 97 C48 87 52 81 57 77 C54 90 55 106 64 125 Z" fill="@straw_dark"/>
+  <!-- 层叠干鞘身体（ART-SPEC 5.1，裁决五 / 六保留）：straw 主色、straw_dark 暗部、husk_crack 裂纹；
+       驼背：背部隆起是最高点，头直接坐在前肩上、无脖颈（v1.2 1.2） -->
+  <path d="M64 126 C51 126 43 118 42 106 C41 98 43 91 48 86 C51 70 60 57 74 53 C88 52 94 68 93 86 C92 106 83 126 64 126 Z" fill="@straw"/>
+  <path d="M64 126 C78 122 90 108 91 92 C92 76 86 60 76 54 C84 70 82 102 64 126 Z" fill="@straw.shade"/>
+  <path d="M64 126 C50 122 44 112 45 100 C46 92 49 87 53 83 C52 96 54 110 64 126 Z" fill="@straw_dark"/>
   <g fill="none" stroke-linecap="round">
-    <path d="M64 125 C79 121 88 110 87 96 C86 86 81 78 74 74 C80 88 78 108 64 125" stroke="@husk_outline" stroke-width="2"/>
-    <path d="M64 125 C50 122 44 110 46 97 C48 87 52 81 57 77 C54 90 55 106 64 125" stroke="@husk_outline" stroke-width="2"/>
+    <path d="M64 126 C78 122 90 108 91 92 C92 76 86 60 76 54 C84 70 82 102 64 126" stroke="@husk_outline" stroke-width="2"/>
+    <path d="M64 126 C50 122 44 112 45 100 C46 92 49 87 53 83 C52 96 54 110 64 126" stroke="@husk_outline" stroke-width="2"/>
     <g stroke="@husk_crack" stroke-width="1.6">
-      <path d="M65 84 L67 92 L64 99"/>
+      <path d="M66 70 L68 78 L65 85"/>
       <path d="M71 104 L74 111"/>
-      <path d="M50 99 L52 106"/>
+      <path d="M56 98 L58 105"/>
     </g>
   </g>
-  <path d="M64 125 C50 125 42 114 43 101 C44 90 47 82 52 77 C58 71 70 69 78 74 C86 80 90 92 89 104 C88 117 80 125 64 125 Z" fill="none" stroke="@husk_outline" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M64 126 C51 126 43 118 42 106 C41 98 43 91 48 86 C51 70 60 57 74 53 C88 52 94 68 93 86 C92 106 83 126 64 126 Z" fill="none" stroke="@husk_outline" stroke-width="3" stroke-linejoin="round"/>
 </svg>

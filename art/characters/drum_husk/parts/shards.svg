@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 176">
+  <!-- 葫芦身炸开后散落两侧的碎壳（ART-SPEC 5.8，裁决七：不留半个葫芦） -->
+  <g transform="translate(88 167) scale(0.93) translate(-88 -167)">
+    <g fill="@drum" stroke="@husk_outline" stroke-width="2.4" stroke-linejoin="round">
+      <path d="M34 166 C36 156 46 150 56 152 L52 160 L58 166 Z"/>
+      <path d="M60 162 L66 154 L72 160 L68 166 Z"/>
+      <path d="M118 166 L114 156 C124 150 136 154 142 166 Z"/>
+      <path d="M104 164 L108 156 L114 162 Z"/>
+    </g>
+    <g fill="none" stroke="@husk_crack" stroke-width="1.6" stroke-linecap="round">
+      <path d="M40 162 C44 158 48 157 52 158"/><path d="M122 162 C126 159 132 159 136 162"/>
+    </g>
+  </g>
+</svg>

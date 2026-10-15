@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
-  <g transform="translate(0 13)">
+  <g transform="translate(0 92) scale(1 0.82) translate(0 -72)">
   <!-- 胸前长着一块风化木板（专属色 plank，ART-SPEC 5.6），只露眼睛和头顶；爬在木栅栏上的藤，连着一块栅栏板（LORE） -->
   <path d="M22 72 L60 66 L64 134 L26 140 Z" fill="@plank"/>
   <path d="M22 72 L32 70.4 L36 138.4 L26 140 Z" fill="@plank.shade"/>

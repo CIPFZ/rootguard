@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
   <!-- eat 咬合帧：小口合上，干叶舌头缩回（ART-SPEC 5.1） -->
-  <g transform="translate(4 10) rotate(-24 50 80)">
+  <g transform="translate(56 84) rotate(-10) scale(0.85) translate(-48 -84)">
     <path d="M35.5 72 Q41 74.5 46.5 71.5" fill="none" stroke="@husk_outline" stroke-width="2.4" stroke-linecap="round"/>
     <ellipse cx="44" cy="73.4" rx="1.2" ry="1.5" fill="@straw" stroke="@husk_outline" stroke-width="1.2"/>
   </g>
