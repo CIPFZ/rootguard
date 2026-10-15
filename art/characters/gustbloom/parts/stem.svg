@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 茎微弯（ART-SPEC 4.11），根部两片叶 -->
+  <path d="M60 120 C58 108 66 96 60 86 C52 78 44 70 38 58" fill="none" stroke="@outline" stroke-width="7" stroke-linecap="round"/>
+  <path d="M60 120 C58 108 66 96 60 86 C52 78 44 70 38 58" fill="none" stroke="@leaf" stroke-width="3.4" stroke-linecap="round"/>
+  <g stroke="@outline" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M59 116 C51 118 43 115 38 109 C46 107 54 110 59 116 Z" fill="@leaf"/>
+    <path d="M62 112 C70 113 78 110 82 104 C74 103 66 106 62 112 Z" fill="@leaf"/>
+  </g>
+</svg>

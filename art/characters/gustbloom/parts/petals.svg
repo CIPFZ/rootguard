@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 花瓣呈风车状扭转（ART-SPEC 4.11）：从朝右的宽钟口沿伸出、同向扭转的 5 片；朝左的几片被钟身挡住 -->
+  <g transform="translate(90 56) scale(0.82 1) translate(-90 -56)">
+    <g fill="@bloom" stroke="@outline" stroke-width="2.4" stroke-linejoin="round">
+      <g><path d="M90 56 C94 42 104 32 116 32 C114 44 104 53 90 56 Z"/></g>
+      <g transform="rotate(72 90 56)"><path d="M90 56 C94 42 104 32 116 32 C114 44 104 53 90 56 Z"/></g>
+      <g transform="rotate(144 90 56)"><path d="M90 56 C94 42 104 32 116 32 C114 44 104 53 90 56 Z"/></g>
+      <g transform="rotate(216 90 56)"><path d="M90 56 C94 42 104 32 116 32 C114 44 104 53 90 56 Z"/></g>
+      <g transform="rotate(288 90 56)"><path d="M90 56 C94 42 104 32 116 32 C114 44 104 53 90 56 Z"/></g>
+    </g>
+    <g fill="none" stroke="@bloom.shade" stroke-width="1.6" stroke-linecap="round">
+      <g><path d="M94 48 C99 42 105 37 111 35"/></g>
+      <g transform="rotate(72 90 56)"><path d="M94 48 C99 42 105 37 111 35"/></g>
+      <g transform="rotate(288 90 56)"><path d="M94 48 C99 42 105 37 111 35"/></g>
+    </g>
+  </g>
+  <ellipse cx="89" cy="56" rx="7" ry="25" fill="@bloom.shade" stroke="@outline" stroke-width="2.6"/>
+  <ellipse cx="90.5" cy="56" rx="3.4" ry="16" fill="@leaf_dark"/>
+</svg>

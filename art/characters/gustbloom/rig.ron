@@ -1,0 +1,14 @@
+// 风铃花 Gustbloom（ART-SPEC 4.11）：横卧的喇叭钟形柔青花、风车状扭转的花瓣围着朝右的宽钟口、闭眼鼓腮、茎微弯。
+Rig(
+    kind: Guardian,
+    rest: "idle",
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (62, 120), z: 0),
+        (name: "stem", pivot: (60, 120), z: 1),
+        (name: "bell", pivot: (40, 58), z: 2),
+        (name: "petals", parent: Some("bell"), pivot: (90, 56), z: 3),
+        (name: "cheeks", parent: Some("bell"), pivot: (66, 71), z: 4),
+        (name: "face", parent: Some("bell"), pivot: (66, 55), z: 5),
+    ],
+)

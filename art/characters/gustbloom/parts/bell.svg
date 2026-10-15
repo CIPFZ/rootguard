@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 钟形花，柔青（专属色 bloom，ART-SPEC 4.11）：横卧的喇叭钟，茎端窄、向右张开成宽钟口（风吹出的方向）；
+       温室通风口旁的花（LORE） -->
+  <path d="M38 52 C44 46 56 41 68 38 C76 36 83 33 88 31 L90 81 C84 79 76 76 68 74 C56 71 44 66 38 60 C35 58 35 54 38 52 Z" fill="@bloom"/>
+  <path d="M38 52 C44 46 56 41 68 38 C58 44 52 52 52 60 C52 64 54 68 57 70.5 C48 67 42 63 38 60 C35 58 35 54 38 52 Z" fill="@bloom.shade"/>
+  <path d="M70 41 C76 39 81 37 85 36" fill="none" stroke="@dew_glow" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M38 52 C44 46 56 41 68 38 C76 36 83 33 88 31 L90 81 C84 79 76 76 68 74 C56 71 44 66 38 60 C35 58 35 54 38 52 Z" fill="none" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+</svg>

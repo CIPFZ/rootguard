@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 鼓腮：憋一口气（ART-SPEC 4.11，LORE）——钟身下缘的两处鼓包，只描外侧弧线（同石籽荚的腮） -->
+  <g fill="@bloom">
+    <circle cx="56" cy="69" r="7.5"/>
+    <circle cx="76" cy="73" r="7.5"/>
+  </g>
+  <g fill="none" stroke="@outline" stroke-width="3" stroke-linecap="round">
+    <path d="M48.6 70.5 A7.5 7.5 0 0 0 63.4 70.5"/>
+    <path d="M68.6 74.5 A7.5 7.5 0 0 0 83.4 74.5"/>
+  </g>
+</svg>
