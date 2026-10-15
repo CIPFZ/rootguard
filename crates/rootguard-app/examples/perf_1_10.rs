@@ -1,7 +1,7 @@
 //! 性能测量（SPEC 16.3）：release 下 headless 回放 1-10 脚本解，逐帧计时（模拟 + 呈现层 DrawList 生成，
 //! 不含 GPU 与 egui 绘制），报告最大场面附近的帧耗时。
 //!
-//! `cargo run --release -p rootguard-app --example perf_1_10 [-- --skinned] [--stress]`
+//! `cargo run --release -p rootguard-app --example perf_1_10 [-- --skinned [--garden]] [--stress]`
 //!
 //! `--stress`：不回放脚本，而是把 45 格全部种满双籽荚并持续保持约 40 个鼓腹枯壳在场，
 //! 达到 SPEC 16.3 假设的“≈ 40 敌人、45 防御者、100 弹丸”（直接改对局状态，仅用于测量）。
@@ -61,6 +61,8 @@ fn stress_step(runner: &mut HeadlessRunner, frame: u32) {
 fn main() {
     let skinned = std::env::args().any(|a| a == "--skinned");
     let stress = std::env::args().any(|a| a == "--stress");
+    // 美术阶段：花园皮肤（特效、两层生产者、片段事件帧都只在 garden 中，ADR-016）
+    let garden = std::env::args().any(|a| a == "--garden");
     let path =
         std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/scripts/1-10.ron");
     let Ok(text) = std::fs::read_to_string(&path) else {
@@ -84,6 +86,13 @@ fn main() {
             .world_mut()
             .events
             .send(UiAction::SetSkin(SkinMode::Skinned));
+        if garden {
+            runner
+                .app_mut()
+                .world_mut()
+                .events
+                .send(UiAction::SetSkinName(rootguard_core::events::SkinName::Garden));
+        }
     }
     let mut replay = Replay::new(script);
     let mut frame = 0_u32;
@@ -138,7 +147,11 @@ fn main() {
     all.sort_unstable();
     println!(
         "模式 {}{}；共 {} 帧，全程 p50 {} µs、p99 {} µs、最大 {} µs",
-        if skinned { "Skinned" } else { "Placeholder" },
+        match (skinned, garden) {
+            (true, true) => "Skinned（garden）",
+            (true, false) => "Skinned（default）",
+            _ => "Placeholder",
+        },
         if stress { "（压力场景）" } else { "" },
         all.len(),
         all[all.len() / 2],
