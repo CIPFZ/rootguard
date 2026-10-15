@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 怒眉、咬牙（ART-SPEC 4.8）：常年暴躁（LORE） -->
+  <g stroke="@outline" stroke-width="2.4">
+    <ellipse cx="55" cy="82" rx="6" ry="5.5" fill="@dew_glow"/>
+    <ellipse cx="74" cy="81.5" rx="6.5" ry="6" fill="@dew_glow"/>
+  </g>
+  <circle cx="57" cy="83" r="2.6" fill="@outline"/><circle cx="76" cy="82.5" r="2.8" fill="@outline"/>
+  <circle cx="77" cy="81.5" r="0.9" fill="@dew_glow"/>
+  <g fill="none" stroke="@outline" stroke-width="4" stroke-linecap="round">
+    <path d="M47 72 L62 77.5"/><path d="M67 77 L83 71"/>
+  </g>
+  <rect x="55" y="94" width="20" height="8" rx="2.5" fill="@dew_glow" stroke="@outline" stroke-width="2.4"/>
+  <g fill="none" stroke="@outline" stroke-width="1.6">
+    <path d="M55 98 L75 98"/><path d="M60 94 L60 102"/><path d="M65 94 L65 102"/><path d="M70 94 L70 102"/>
+  </g>
+</svg>

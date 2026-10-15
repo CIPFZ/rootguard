@@ -1,0 +1,13 @@
+// 炽球 Emberbulb（ART-SPEC 4.8）：洋葱球茎、发光裂纹、怒眉咬牙、耳侧蒸汽、叶尖发红。
+Rig(
+    kind: Guardian,
+    rest: "idle",
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (64, 120), z: 0),
+        (name: "leaves", parent: Some("bulb"), pivot: (64, 48), z: 1),
+        (name: "bulb", pivot: (64, 114), z: 2),
+        (name: "face", parent: Some("bulb"), pivot: (65, 86), z: 3),
+        (name: "steam", parent: Some("bulb"), pivot: (64, 66), z: 4),
+    ],
+)

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 顶部干叶尖发红（ART-SPEC 4.8） -->
+  <g stroke="@outline" stroke-width="2.4" stroke-linejoin="round">
+    <path d="M60 50 C56 40 52 32 47 26 C55 30 61 38 64 48 Z" fill="@leaf_dark"/>
+    <path d="M64 48 C66 38 70 29 77 22 C74 31 70 40 68 50 Z" fill="@leaf_dark"/>
+  </g>
+  <g stroke="@outline" stroke-width="1.8" stroke-linejoin="round" fill="@ember">
+    <path d="M47 26 C50 27.5 52.5 29.5 54.5 31.5 L51.5 33 Z"/>
+    <path d="M77 22 C75.5 25 74 27.5 73 30 L70.5 28 Z"/>
+  </g>
+</svg>
