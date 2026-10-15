@@ -1,0 +1,15 @@
+// plant_dust：放置落地：4 粒土屑（4.13），10 tick
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(10),
+        frames: Every(2),
+        keys: {
+            "soil0": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 1, dx: -2.4, dy: -1.75, rot: 0, ease: Linear), (t: 2, dx: -4.8, dy: -3, rot: 0, ease: Linear), (t: 3, dx: -7.2, dy: -3.75, rot: 0, ease: Linear), (t: 4, dx: -9.6, dy: -4, rot: 0, ease: Linear), (t: 5, dx: -12, dy: -3.75, rot: 0, ease: Linear), (t: 6, dx: -14.4, dy: -3, rot: 0, ease: Linear, op: 1), (t: 7, dx: -16.8, dy: -1.75, rot: 0, ease: Linear, op: 0.75), (t: 8, dx: -19.2, dy: 0, rot: 0, ease: Linear, op: 0.5), (t: 9, dx: -21.6, dy: 2.25, rot: 0, ease: Linear, op: 0.25), (t: 10, dx: -24, dy: 5, rot: 0, ease: Linear, op: 0)],
+            "soil1": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 1, dx: -1, dy: -2.55, rot: 0, ease: Linear), (t: 2, dx: -2, dy: -4.6, rot: 0, ease: Linear), (t: 3, dx: -3, dy: -6.15, rot: 0, ease: Linear), (t: 4, dx: -4, dy: -7.2, rot: 0, ease: Linear), (t: 5, dx: -5, dy: -7.75, rot: 0, ease: Linear), (t: 6, dx: -6, dy: -7.8, rot: 0, ease: Linear, op: 1), (t: 7, dx: -7, dy: -7.35, rot: 0, ease: Linear, op: 0.75), (t: 8, dx: -8, dy: -6.4, rot: 0, ease: Linear, op: 0.5), (t: 9, dx: -9, dy: -4.95, rot: 0, ease: Linear, op: 0.25), (t: 10, dx: -10, dy: -3, rot: 0, ease: Linear, op: 0)],
+            "soil2": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 1, dx: 1, dy: -2.55, rot: 0, ease: Linear), (t: 2, dx: 2, dy: -4.6, rot: 0, ease: Linear), (t: 3, dx: 3, dy: -6.15, rot: 0, ease: Linear), (t: 4, dx: 4, dy: -7.2, rot: 0, ease: Linear), (t: 5, dx: 5, dy: -7.75, rot: 0, ease: Linear), (t: 6, dx: 6, dy: -7.8, rot: 0, ease: Linear, op: 1), (t: 7, dx: 7, dy: -7.35, rot: 0, ease: Linear, op: 0.75), (t: 8, dx: 8, dy: -6.4, rot: 0, ease: Linear, op: 0.5), (t: 9, dx: 9, dy: -4.95, rot: 0, ease: Linear, op: 0.25), (t: 10, dx: 10, dy: -3, rot: 0, ease: Linear, op: 0)],
+            "soil3": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 1, dx: 2.4, dy: -1.75, rot: 0, ease: Linear), (t: 2, dx: 4.8, dy: -3, rot: 0, ease: Linear), (t: 3, dx: 7.2, dy: -3.75, rot: 0, ease: Linear), (t: 4, dx: 9.6, dy: -4, rot: 0, ease: Linear), (t: 5, dx: 12, dy: -3.75, rot: 0, ease: Linear), (t: 6, dx: 14.4, dy: -3, rot: 0, ease: Linear, op: 1), (t: 7, dx: 16.8, dy: -1.75, rot: 0, ease: Linear, op: 0.75), (t: 8, dx: 19.2, dy: 0, rot: 0, ease: Linear, op: 0.5), (t: 9, dx: 21.6, dy: 2.25, rot: 0, ease: Linear, op: 0.25), (t: 10, dx: 24, dy: 5, rot: 0, ease: Linear, op: 0)],
+        },
+    ),
+])

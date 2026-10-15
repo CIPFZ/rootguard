@@ -1,0 +1,14 @@
+// sprout_fold：小芽怪倒下：叶子合拢缩回种壳（5.9，伏笔），16 tick
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(16),
+        frames: Every(2),
+        keys: {
+            "shell": [(t: 0), (t: 10, sy: 0.9), (t: 12), (t: 16, op: 0.6)],
+            "leaf0": [(t: 0, ease: Linear), (t: 8, rot: -50, sx: 0.7, sy: 0.7, ease: Linear), (t: 14, rot: -70, sx: 0.2, sy: 0.2, dy: 8, op: 0)],
+            "leaf1": [(t: 0, ease: Linear), (t: 8, rot: 50, sx: 0.7, sy: 0.7, ease: Linear), (t: 14, rot: 70, sx: 0.2, sy: 0.2, dy: 8, op: 0)],
+        },
+    ),
+])

@@ -83,6 +83,29 @@
 5. 测试：`armor_break_spawns_effects`（1-10 回放；全部 10 关脚本解里门板从未破碎——都死于无视 Shield 的伤害，
    因此对一只门板枯壳注入一次破碎事件）、`defender_damage_states`。
 
+### 6. 特效（2026-10-16）
+
+ART-SPEC 7 全表加 4.1 / 4.4 的口部特效，均为 `art/fx/<id>/` 并由 `fx::capture` 按事件生成：
+
+| 事件 | 特效 | 位置 / 尺寸 |
+|---|---|---|
+| `ProjectileFired` | `muzzle_dust`（石子）/ `muzzle_frost`（冰石） | 发射者格子 + 弹丸出口偏移 |
+| `ProjectileHit` | `hit_puff` / `hit_frost` | 目标左缘、弹丸高度；目标同 tick 死亡时用 `EnemyDied.x` |
+| `EnemyDied` | `crumble`；小芽怪 `sprout_fold`；被吞（同 tick `EnemyDamaged::Chomp`）不播 | 脚底上方 |
+| `EnemyDamaged::Spikes` | `plant_dust` 缩小（4.6 被扎脚下小尘） | 敌人脚底 |
+| `DefenderPlaced` | `plant_dust`；防御者本身 1.2 → 1.0 弹性缩放 10 tick | 格子脚底 |
+| `DefenderRemoved` | Killed → `wilt`；Shovel → 残影（idle 第 0 帧上升淡出 12 tick）；Consumed → `tuber_burst` / `ember_wave`（300 × 345）/ `gust_ring`（从格子左缘拉伸到 x = 1260） | |
+| `DewSpawned(Producer)` | `dew_pop` | 露水位置 |
+| `HoseTriggered` | `hose_burst`（拉伸到 x 235 ～ 1160） | 车道中心 |
+| Chill（状态，非事件） | `frost_crown` 循环，画在 Husk 头顶 | 每种 Husk 头顶高度表 |
+
+1. 命中特效需要弹丸种类，`ProjectileHit` 不带：`capture` 在 `ProjectileFired`（带 id）时记下“弹丸实体 → id”，
+   弹丸消失后删除。
+2. 咬夹草的 `snap` 叶齿残影与 `chew` 结束小气泡（4.10）未做：没有对应事件（咀嚼结束只是状态变回 Ready），
+   效果很小；记录为未实现。
+3. 测试：`battle_effects_follow_events`（1-10：十类特效与 Chill 霜晶）、`constructed_effects`（石子口部 / 命中、
+   风环拉伸、铲除残影、放置缩放——1-10 脚本解没用到双籽荚、风铃花与铲子）。
+
 ## 后果
 
 - 新片段都由模拟状态唯一决定，暂停、回放、切换渲染模式都不会让动画与模拟错位。

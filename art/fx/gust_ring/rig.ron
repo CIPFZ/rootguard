@@ -1,0 +1,15 @@
+// 特效 gust_ring（ART-SPEC 7）：风铃花：车道宽风环向右扫出、几片飘叶（4.11），24 tick，游戏中沿车道拉伸
+Rig(
+    kind: Fx(256, 128),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "arc0", pivot: (40, 64), z: 0),
+        (name: "arc1", pivot: (40, 64), z: 1),
+        (name: "arc2", pivot: (40, 64), z: 2),
+        (name: "leaf0", pivot: (40, 30), z: 3),
+        (name: "leaf1", pivot: (40, 52), z: 4),
+        (name: "leaf2", pivot: (40, 74), z: 5),
+        (name: "leaf3", pivot: (40, 96), z: 6),
+    ],
+)

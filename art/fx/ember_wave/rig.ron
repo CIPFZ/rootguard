@@ -1,0 +1,19 @@
+// 特效 ember_wave（ART-SPEC 7）：炽球爆炸：3 × 3 热浪环 + 中心火花（4.8），20 tick，游戏中拉伸到 300 × 345
+Rig(
+    kind: Fx(256, 128),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "glow", pivot: (128, 64), z: 0),
+        (name: "ring", pivot: (128, 64), z: 1),
+        (name: "ring2", pivot: (128, 64), z: 2),
+        (name: "spark0", pivot: (128, 64), z: 3),
+        (name: "spark1", pivot: (128, 64), z: 4),
+        (name: "spark2", pivot: (128, 64), z: 5),
+        (name: "spark3", pivot: (128, 64), z: 6),
+        (name: "spark4", pivot: (128, 64), z: 7),
+        (name: "spark5", pivot: (128, 64), z: 8),
+        (name: "spark6", pivot: (128, 64), z: 9),
+        (name: "spark7", pivot: (128, 64), z: 10),
+    ],
+)

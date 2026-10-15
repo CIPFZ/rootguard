@@ -1,0 +1,19 @@
+// 特效 crumble（ART-SPEC 7）：Husk 死亡：干屑 + 一片干鞘飘落（5.1），20 tick
+Rig(
+    kind: Fx(128, 128),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "cloud", pivot: (64, 74), z: 0),
+        (name: "chaff0", pivot: (64, 74), z: 1),
+        (name: "chaff1", pivot: (64, 74), z: 2),
+        (name: "chaff2", pivot: (64, 74), z: 3),
+        (name: "chaff3", pivot: (64, 74), z: 4),
+        (name: "chaff4", pivot: (64, 74), z: 5),
+        (name: "chaff5", pivot: (64, 74), z: 6),
+        (name: "chaff6", pivot: (64, 74), z: 7),
+        (name: "chaff7", pivot: (64, 74), z: 8),
+        (name: "chaff8", pivot: (64, 74), z: 9),
+        (name: "sheath", pivot: (64, 64), z: 10),
+    ],
+)

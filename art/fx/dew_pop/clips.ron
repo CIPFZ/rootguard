@@ -1,0 +1,15 @@
+// dew_pop：露水产出：4 点星光（4.2），8 tick
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(8),
+        frames: Every(2),
+        keys: {
+            "star0": [(t: 0, sx: 0.3, sy: 0.3, ease: Linear), (t: 4, dx: 0, dy: -12, sx: 1.4, sy: 1.4, ease: Linear), (t: 8, dx: 0, dy: -16, op: 0)],
+            "star1": [(t: 0, sx: 0.3, sy: 0.3, ease: Linear), (t: 4, dx: 12, dy: 0, sx: 1.4, sy: 1.4, ease: Linear), (t: 8, dx: 16, dy: 0, op: 0)],
+            "star2": [(t: 0, sx: 0.3, sy: 0.3, ease: Linear), (t: 4, dx: 0, dy: 12, sx: 1.4, sy: 1.4, ease: Linear), (t: 8, dx: 0, dy: 16, op: 0)],
+            "star3": [(t: 0, sx: 0.3, sy: 0.3, ease: Linear), (t: 4, dx: -12, dy: 0, sx: 1.4, sy: 1.4, ease: Linear), (t: 8, dx: -16, dy: 0, op: 0)],
+        },
+    ),
+])

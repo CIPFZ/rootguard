@@ -1,0 +1,14 @@
+// 特效 hit_frost（ART-SPEC 7）：冰石命中：冰晶四散，10 tick
+Rig(
+    kind: Fx(64, 64),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "mist", pivot: (32, 32), z: 0),
+        (name: "ice0", pivot: (32, 32), z: 1),
+        (name: "ice1", pivot: (32, 32), z: 2),
+        (name: "ice2", pivot: (32, 32), z: 3),
+        (name: "ice3", pivot: (32, 32), z: 4),
+        (name: "ice4", pivot: (32, 32), z: 5),
+    ],
+)

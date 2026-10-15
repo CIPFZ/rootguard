@@ -1,0 +1,15 @@
+// muzzle_frost：霜籽荚发射：口部白气 4 帧（4.4），8 tick
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(8),
+        frames: Every(2),
+        keys: {
+            "p0": [(t: 0, sx: 0.4, sy: 0.4, ease: Linear), (t: 8, dx: 9, sx: 1.6, sy: 1.6, op: 0)],
+            "p1": [(t: 0, sx: 0.4, sy: 0.4, ease: Linear), (t: 8, dx: 9, sx: 1.6, sy: 1.6, op: 0)],
+            "p2": [(t: 0, sx: 0.4, sy: 0.4, ease: Linear), (t: 8, dx: 9, sx: 1.6, sy: 1.6, op: 0)],
+            "p3": [(t: 0, sx: 0.4, sy: 0.4, ease: Linear), (t: 8, dx: 9, sx: 1.6, sy: 1.6, op: 0)],
+        },
+    ),
+])

@@ -1,0 +1,10 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "muzzle_dust_play",
+    looping: false,
+    frames: [
+        (frame: "muzzle_dust_play_0", ticks: 2),
+        (frame: "muzzle_dust_play_1", ticks: 2),
+        (frame: "muzzle_dust_play_2", ticks: 2),
+    ],
+)

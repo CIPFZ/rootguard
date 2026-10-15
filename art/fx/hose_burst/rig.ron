@@ -1,0 +1,15 @@
+// 特效 hose_burst（ART-SPEC 7）：Hose 冲水：水流沿车道冲出、泡沫（LORE 2.5），30 tick，游戏中拉伸到车道全长
+Rig(
+    kind: Fx(256, 128),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "sheet", pivot: (0, 64), z: 0),
+        (name: "foam0", pivot: (20, 64), z: 1),
+        (name: "foam1", pivot: (64, 64), z: 2),
+        (name: "foam2", pivot: (108, 64), z: 3),
+        (name: "foam3", pivot: (152, 64), z: 4),
+        (name: "foam4", pivot: (196, 64), z: 5),
+        (name: "foam5", pivot: (240, 64), z: 6),
+    ],
+)

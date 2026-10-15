@@ -1,0 +1,15 @@
+// hit_puff：弹丸命中：石子碎成 3 粒 + 小尘，8 tick
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(8),
+        frames: Every(2),
+        keys: {
+            "dust": [(t: 0, sx: 0.4, sy: 0.4, ease: Linear), (t: 1, sx: 0.53, sy: 0.53, ease: Linear), (t: 2, sx: 0.65, sy: 0.65, ease: Linear), (t: 3, sx: 0.77, sy: 0.77, ease: Linear), (t: 4, sx: 0.9, sy: 0.9, ease: Linear, op: 0.8), (t: 5, sx: 1.02, sy: 1.02, ease: Linear, op: 0.6), (t: 6, sx: 1.15, sy: 1.15, ease: Linear, op: 0.4), (t: 7, sx: 1.27, sy: 1.27, ease: Linear, op: 0.2), (t: 8, sx: 1.4, sy: 1.4, ease: Linear, op: 0)],
+            "grain0": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 1, dx: -1.6, dy: -1.6, rot: 30, ease: Linear), (t: 2, dx: -3.2, dy: -2.8, rot: 60, ease: Linear), (t: 3, dx: -4.8, dy: -3.6, rot: 90, ease: Linear), (t: 4, dx: -6.4, dy: -4, rot: 120, ease: Linear, op: 1), (t: 5, dx: -8, dy: -4, rot: 150, ease: Linear, op: 0.75), (t: 6, dx: -9.6, dy: -3.6, rot: 180, ease: Linear, op: 0.5), (t: 7, dx: -11.2, dy: -2.8, rot: 210, ease: Linear, op: 0.25), (t: 8, dx: -12.8, dy: -1.6, rot: 240, ease: Linear, op: 0)],
+            "grain1": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 1, dx: 0.4, dy: -2.2, rot: -40, ease: Linear), (t: 2, dx: 0.8, dy: -4, rot: -80, ease: Linear), (t: 3, dx: 1.2, dy: -5.4, rot: -120, ease: Linear), (t: 4, dx: 1.6, dy: -6.4, rot: -160, ease: Linear, op: 1), (t: 5, dx: 2, dy: -7, rot: -200, ease: Linear, op: 0.75), (t: 6, dx: 2.4, dy: -7.2, rot: -240, ease: Linear, op: 0.5), (t: 7, dx: 2.8, dy: -7, rot: -280, ease: Linear, op: 0.25), (t: 8, dx: 3.2, dy: -6.4, rot: -320, ease: Linear, op: 0)],
+            "grain2": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 1, dx: 1.8, dy: -0.8, rot: 36, ease: Linear), (t: 2, dx: 3.6, dy: -1.2, rot: 72, ease: Linear), (t: 3, dx: 5.4, dy: -1.2, rot: 108, ease: Linear), (t: 4, dx: 7.2, dy: -0.8, rot: 144, ease: Linear, op: 1), (t: 5, dx: 9, dy: 0, rot: 180, ease: Linear, op: 0.75), (t: 6, dx: 10.8, dy: 1.2, rot: 216, ease: Linear, op: 0.5), (t: 7, dx: 12.6, dy: 2.8, rot: 252, ease: Linear, op: 0.25), (t: 8, dx: 14.4, dy: 4.8, rot: 288, ease: Linear, op: 0)],
+        },
+    ),
+])

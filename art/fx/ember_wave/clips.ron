@@ -1,0 +1,22 @@
+// ember_wave：炽球爆炸：3 × 3 热浪环 + 中心火花（4.8），20 tick，游戏中拉伸到 300 × 345
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(20),
+        frames: Every(2),
+        keys: {
+            "glow": [(t: 0, sx: 0.3, sy: 0.3, ease: Linear), (t: 1, sx: 0.33, sy: 0.33, ease: Linear), (t: 2, sx: 0.37, sy: 0.37, ease: Linear), (t: 3, sx: 0.4, sy: 0.4, ease: Linear), (t: 4, sx: 0.44, sy: 0.44, ease: Linear), (t: 5, sx: 0.47, sy: 0.47, ease: Linear), (t: 6, sx: 0.51, sy: 0.51, ease: Linear), (t: 7, sx: 0.54, sy: 0.54, ease: Linear, op: 0.93), (t: 8, sx: 0.58, sy: 0.58, ease: Linear, op: 0.86), (t: 9, sx: 0.61, sy: 0.61, ease: Linear, op: 0.79), (t: 10, sx: 0.65, sy: 0.65, ease: Linear, op: 0.71), (t: 11, sx: 0.68, sy: 0.68, ease: Linear, op: 0.64), (t: 12, sx: 0.72, sy: 0.72, ease: Linear, op: 0.57), (t: 13, sx: 0.75, sy: 0.75, ease: Linear, op: 0.5), (t: 14, sx: 0.79, sy: 0.79, ease: Linear, op: 0.43), (t: 15, sx: 0.82, sy: 0.82, ease: Linear, op: 0.36), (t: 16, sx: 0.86, sy: 0.86, ease: Linear, op: 0.29), (t: 17, sx: 0.9, sy: 0.9, ease: Linear, op: 0.21), (t: 18, sx: 0.93, sy: 0.93, ease: Linear, op: 0.14), (t: 19, sx: 0.96, sy: 0.96, ease: Linear, op: 0.07), (t: 20, sx: 1, sy: 1, ease: Linear, op: 0)],
+            "ring": [(t: 0, sx: 0.15, sy: 0.15, ease: Linear), (t: 1, sx: 0.2, sy: 0.2, ease: Linear), (t: 2, sx: 0.25, sy: 0.25, ease: Linear), (t: 3, sx: 0.3, sy: 0.3, ease: Linear), (t: 4, sx: 0.35, sy: 0.35, ease: Linear), (t: 5, sx: 0.4, sy: 0.4, ease: Linear), (t: 6, sx: 0.45, sy: 0.45, ease: Linear), (t: 7, sx: 0.5, sy: 0.5, ease: Linear), (t: 8, sx: 0.55, sy: 0.55, ease: Linear), (t: 9, sx: 0.6, sy: 0.6, ease: Linear), (t: 10, sx: 0.65, sy: 0.65, ease: Linear), (t: 11, sx: 0.7, sy: 0.7, ease: Linear, op: 0.9), (t: 12, sx: 0.75, sy: 0.75, ease: Linear, op: 0.8), (t: 13, sx: 0.8, sy: 0.8, ease: Linear, op: 0.7), (t: 14, sx: 0.85, sy: 0.85, ease: Linear, op: 0.6), (t: 15, sx: 0.9, sy: 0.9, ease: Linear, op: 0.5), (t: 16, sx: 0.95, sy: 0.95, ease: Linear, op: 0.4), (t: 17, sx: 1, sy: 1, ease: Linear, op: 0.3), (t: 18, sx: 1.05, sy: 1.05, ease: Linear, op: 0.2), (t: 19, sx: 1.1, sy: 1.1, ease: Linear, op: 0.1), (t: 20, sx: 1.15, sy: 1.15, ease: Linear, op: 0)],
+            "ring2": [(t: 0, sx: 0.1, sy: 0.1, ease: Linear), (t: 1, sx: 0.15, sy: 0.15, ease: Linear), (t: 2, sx: 0.21, sy: 0.21, ease: Linear), (t: 3, sx: 0.27, sy: 0.27, ease: Linear), (t: 4, sx: 0.32, sy: 0.32, ease: Linear), (t: 5, sx: 0.38, sy: 0.38, ease: Linear), (t: 6, sx: 0.43, sy: 0.43, ease: Linear), (t: 7, sx: 0.48, sy: 0.48, ease: Linear), (t: 8, sx: 0.54, sy: 0.54, ease: Linear), (t: 9, sx: 0.59, sy: 0.59, ease: Linear, op: 0.92), (t: 10, sx: 0.65, sy: 0.65, ease: Linear, op: 0.83), (t: 11, sx: 0.7, sy: 0.7, ease: Linear, op: 0.75), (t: 12, sx: 0.76, sy: 0.76, ease: Linear, op: 0.67), (t: 13, sx: 0.81, sy: 0.81, ease: Linear, op: 0.58), (t: 14, sx: 0.87, sy: 0.87, ease: Linear, op: 0.5), (t: 15, sx: 0.92, sy: 0.92, ease: Linear, op: 0.42), (t: 16, sx: 0.98, sy: 0.98, ease: Linear, op: 0.33), (t: 17, sx: 1.03, sy: 1.03, ease: Linear, op: 0.25), (t: 18, sx: 1.09, sy: 1.09, ease: Linear, op: 0.17), (t: 19, sx: 1.15, sy: 1.15, ease: Linear, op: 0.08), (t: 20, sx: 1.2, sy: 1.2, ease: Linear, op: 0)],
+            "spark0": [(t: 0, ease: Linear), (t: 12, dx: 60, dy: 0, rot: 0), (t: 20, dx: 80, dy: 0, op: 0)],
+            "spark1": [(t: 0, ease: Linear), (t: 12, dx: 42.43, dy: 21.21, rot: 45), (t: 20, dx: 56.57, dy: 28.28, op: 0)],
+            "spark2": [(t: 0, ease: Linear), (t: 12, dx: 0, dy: 30, rot: 90), (t: 20, dx: 0, dy: 40, op: 0)],
+            "spark3": [(t: 0, ease: Linear), (t: 12, dx: -42.43, dy: 21.21, rot: 135), (t: 20, dx: -56.57, dy: 28.28, op: 0)],
+            "spark4": [(t: 0, ease: Linear), (t: 12, dx: -60, dy: 0, rot: 180), (t: 20, dx: -80, dy: 0, op: 0)],
+            "spark5": [(t: 0, ease: Linear), (t: 12, dx: -42.43, dy: -21.21, rot: 225), (t: 20, dx: -56.57, dy: -28.28, op: 0)],
+            "spark6": [(t: 0, ease: Linear), (t: 12, dx: -0, dy: -30, rot: 270), (t: 20, dx: -0, dy: -40, op: 0)],
+            "spark7": [(t: 0, ease: Linear), (t: 12, dx: 42.43, dy: -21.21, rot: 315), (t: 20, dx: 56.57, dy: -28.28, op: 0)],
+        },
+    ),
+])

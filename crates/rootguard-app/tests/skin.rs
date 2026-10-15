@@ -1044,3 +1044,185 @@ fn defender_damage_states() {
         }
     }
 }
+
+/// ART-SPEC 7 / ADR-016 第 6 节：回放 1-10，各类事件生成对应特效；Chill 中的 Husk 头顶画霜晶（3.3）。
+#[test]
+fn battle_effects_follow_events() {
+    use rootguard_core::components::{EnemyRef, StatusEffects as St};
+    let script = script("1-10");
+    let cards: Vec<String> = script.cards.iter().map(|c| c.as_str().to_owned()).collect();
+    let scene = BattleScene::new(script.level, script.cards.clone(), None);
+    let mut runner = runner_with(scene, &format!("fx-{}", next_id()));
+    let mut replay = Replay::new(script);
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    runner.frame();
+    let mut seen = std::collections::BTreeSet::new();
+    let mut crown_checked = 0;
+    for _ in 0..40_000 {
+        let s = state(&runner).expect("对局");
+        if matches!(s.phase, Phase::Won | Phase::Lost) {
+            break;
+        }
+        if s.phase == Phase::Playing {
+            for a in replay.due(s.level_tick) {
+                send(&mut runner, a);
+            }
+        }
+        runner.frame();
+        let world = runner.app().world();
+        let rs = world
+            .resources
+            .expect::<rootguard_app::render::RenderState>();
+        for f in rs.effects() {
+            seen.insert(f.clip.trim_end_matches("_play").to_owned());
+        }
+        let chilled = world
+            .query::<(&EnemyRef, &St)>()
+            .iter()
+            .filter(|(_, st)| st.chilled())
+            .count();
+        if chilled > 0 {
+            let garden = world
+                .resources
+                .expect::<Skins>()
+                .get(SkinName::Garden)
+                .expect("garden");
+            let crown = world
+                .resources
+                .expect::<Assets<Atlas>>()
+                .get(garden.atlas_of("frost_crown_play").expect("霜晶"))
+                .expect("图集")
+                .frames
+                .iter()
+                .filter(|f| f.name.starts_with("frost_crown_play_"))
+                .map(|f| f.src_px)
+                .collect::<Vec<_>>();
+            let drawn = runner
+                .last_draw_list()
+                .iter()
+                .filter(|c| matches!(&c.kind, DrawKind::Sprite { src_px, .. } if crown.contains(src_px)))
+                .count();
+            assert!(
+                drawn >= chilled,
+                "每个 Chill 中的 Husk 应画霜晶（{drawn} < {chilled}）"
+            );
+            crown_checked += 1;
+        }
+    }
+    let _ = cards;
+    // 1-10 脚本解没有用到双籽荚（石子）与风铃花，这两类在 constructed_effects 中检查
+    for fx in [
+        "muzzle_frost",
+        "hit_frost",
+        "crumble",
+        "sprout_fold",
+        "plant_dust",
+        "dew_pop",
+        "wilt",
+        "tuber_burst",
+        "ember_wave",
+        "hose_burst",
+    ] {
+        assert!(seen.contains(fx), "1-10 中应见到 {fx}（{seen:?}）");
+    }
+    assert!(
+        crown_checked > 100,
+        "应在有 Chill 敌人的帧上检查霜晶（{crown_checked}）"
+    );
+}
+
+/// ADR-016 第 6 节：脚本解里没有出现的特效——石籽荚的口部小尘与石子命中、风铃花风环（沿车道拉伸到右端）、
+/// 铲除残影（4.13，12 tick 上升淡出）、放置的弹性缩放。测试给足 Dew 只为放置。
+#[test]
+fn constructed_effects() {
+    use rootguard_core::resources::BattleState;
+    let mut runner = common::battle_runner("1-10", &["pebble_pod", "gustbloom", "dewcup"]);
+    while state(&runner).is_some_and(|s| s.phase != Phase::Playing) {
+        runner.frame();
+    }
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    let refill = |runner: &mut HeadlessRunner| {
+        let world = runner.app_mut().world_mut();
+        world.resources.expect_mut::<BattleState>().dew = 9990;
+        for card in &mut world
+            .resources
+            .expect_mut::<rootguard_core::resources::CardTray>()
+            .cards
+        {
+            card.cooldown.remaining = 0;
+        }
+    };
+    refill(&mut runner);
+    runner.frame();
+    for row in 0..5 {
+        refill(&mut runner);
+        send(&mut runner, UiAction::SelectCard(0));
+        send(&mut runner, UiAction::PlaceAt { row, col: 0 });
+        runner.frame();
+    }
+    refill(&mut runner);
+    send(&mut runner, UiAction::SelectCard(2));
+    send(&mut runner, UiAction::PlaceAt { row: 0, col: 4 });
+    runner.frame();
+    let mut seen = std::collections::BTreeMap::new();
+    let mut gust_placed = false;
+    let mut shoveled = false;
+    for _ in 0..6000 {
+        let s = state(&runner).expect("对局");
+        refill(&mut runner);
+        let enemies = runner.app().world().query::<&EnemyRef>().iter().count();
+        if !gust_placed && enemies >= 2 {
+            send(&mut runner, UiAction::SelectCard(1));
+            send(&mut runner, UiAction::PlaceAt { row: 2, col: 2 });
+            gust_placed = true;
+        }
+        if !shoveled && s.level_tick > 600 {
+            send(&mut runner, UiAction::ToggleShovel);
+            send(&mut runner, UiAction::ShovelAt { row: 0, col: 4 });
+            shoveled = true;
+        }
+        runner.frame();
+        let world = runner.app().world();
+        let rs = world
+            .resources
+            .expect::<rootguard_app::render::RenderState>();
+        for f in rs.effects() {
+            seen.entry(f.clip.clone())
+                .or_insert((f.size, f.pos, f.ghost));
+        }
+        if [
+            "muzzle_dust_play",
+            "hit_puff_play",
+            "gust_ring_play",
+            "dewcup_idle",
+        ]
+        .iter()
+        .all(|k| seen.contains_key(*k))
+        {
+            break;
+        }
+    }
+    for k in [
+        "muzzle_dust_play",
+        "hit_puff_play",
+        "gust_ring_play",
+        "dewcup_idle",
+    ] {
+        assert!(
+            seen.contains_key(k),
+            "应见到 {k}（{:?}）",
+            seen.keys().collect::<Vec<_>>()
+        );
+    }
+    let (size, pos, _) = seen["gust_ring_play"];
+    let size = size.expect("风环拉伸");
+    assert!(
+        (pos.x + size.x / 2.0 - rootguard_core::Grid::GUST_CLAMP_X).abs() < 0.5,
+        "风环应扫到车道右端"
+    );
+    assert!(seen["dewcup_idle"].2, "铲除应生成残影");
+    assert!((rootguard_app::render::plant_scale(0) - 1.2).abs() < 1e-3);
+    assert!((rootguard_app::render::plant_scale(10) - 1.0).abs() < 1e-6);
+}

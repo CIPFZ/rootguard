@@ -1,0 +1,12 @@
+// 特效 hit_puff（ART-SPEC 7）：弹丸命中：石子碎成 3 粒 + 小尘，8 tick
+Rig(
+    kind: Fx(48, 48),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "dust", pivot: (24, 24), z: 0),
+        (name: "grain0", pivot: (24, 24), z: 1),
+        (name: "grain1", pivot: (24, 24), z: 2),
+        (name: "grain2", pivot: (24, 24), z: 3),
+    ],
+)

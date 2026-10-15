@@ -1,0 +1,12 @@
+// 特效 dew_pop（ART-SPEC 7）：露水产出：4 点星光（4.2），8 tick
+Rig(
+    kind: Fx(48, 48),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "star0", pivot: (24, 24), z: 0),
+        (name: "star1", pivot: (24, 24), z: 1),
+        (name: "star2", pivot: (24, 24), z: 2),
+        (name: "star3", pivot: (24, 24), z: 3),
+    ],
+)

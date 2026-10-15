@@ -1,0 +1,17 @@
+// 特效 tuber_burst（ART-SPEC 7）：块茎雷爆炸：土块 + 中心白气 + 尘环（4.7“终于呼出来”），18 tick
+Rig(
+    kind: Fx(128, 128),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "ring", pivot: (64, 88), z: 0),
+        (name: "puff", pivot: (64, 64), z: 1),
+        (name: "clod0", pivot: (64, 72), z: 2),
+        (name: "clod1", pivot: (64, 72), z: 3),
+        (name: "clod2", pivot: (64, 72), z: 4),
+        (name: "clod3", pivot: (64, 72), z: 5),
+        (name: "clod4", pivot: (64, 72), z: 6),
+        (name: "clod5", pivot: (64, 72), z: 7),
+        (name: "clod6", pivot: (64, 72), z: 8),
+    ],
+)

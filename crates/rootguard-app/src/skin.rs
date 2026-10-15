@@ -301,6 +301,26 @@ impl<'w> Painter<'w> {
         true
     }
 
+    /// 按缩放绘制（以锚点为中心，ART-SPEC 4.13 放置的弹性缩放）；片段缺失时返回 false。
+    pub fn draw_scaled(
+        &self,
+        list: &mut DrawList,
+        layer: Layer,
+        pos: Vec2,
+        sort_y: f32,
+        pose: Pose<'_>,
+        scale: f32,
+    ) -> bool {
+        let Some((image, frame)) = self.frame(&pose) else {
+            return false;
+        };
+        let size = frame.src_px.size() * scale;
+        let dst = Rect::from_min_size(pos - frame.anchor * size, size);
+        list.sprite(layer, sort_y, image, frame.src_px, dst)
+            .tint(pose.tint);
+        true
+    }
+
     /// 按指定尺寸绘制（锚点相同），用于需要拉伸的特效（ART-SPEC 7）；片段缺失时返回 false。
     pub fn draw_sized(
         &self,

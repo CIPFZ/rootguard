@@ -1,0 +1,11 @@
+// 特效 frost_crown（ART-SPEC 7）：Chill：头顶 3 粒霜晶（3.3），30 tick 循环
+Rig(
+    kind: Fx(32, 32),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "crystal0", pivot: (8, 18), z: 0),
+        (name: "crystal1", pivot: (16, 13), z: 1),
+        (name: "crystal2", pivot: (24, 18), z: 2),
+    ],
+)

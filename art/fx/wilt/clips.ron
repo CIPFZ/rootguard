@@ -1,0 +1,15 @@
+// wilt：守卫被吃光：几片叶子飘落（4.13），15 tick
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(15),
+        frames: Every(3),
+        keys: {
+            "leaf0": [(t: 0, dx: 0, dy: 0, rot: 0, op: 1, ease: Linear), (t: 3, dx: 6.52, dy: 6, rot: 23.3, op: 1, ease: Linear), (t: 6, dx: 4.73, dy: 12, rot: 16.89, op: 1, ease: Linear), (t: 9, dx: -3.1, dy: 18, rot: -11.06, op: 1, ease: Linear), (t: 12, dx: -6.97, dy: 24, rot: -24.9, op: 0.5, ease: Linear), (t: 15, dx: -1.96, dy: 30, rot: -6.99, op: 0, ease: Linear)],
+            "leaf1": [(t: 0, dx: 5.89, dy: 0, rot: 21.04, op: 1, ease: Linear), (t: 3, dx: 5.66, dy: 6, rot: 20.21, op: 1, ease: Linear), (t: 6, dx: -1.79, dy: 12, rot: -6.39, op: 1, ease: Linear), (t: 9, dx: -6.96, dy: 18, rot: -24.84, op: 1, ease: Linear), (t: 12, dx: -3.25, dy: 24, rot: -11.62, op: 0.5, ease: Linear), (t: 15, dx: 4.6, dy: 30, rot: 16.42, op: 0, ease: Linear)],
+            "leaf2": [(t: 0, dx: 6.37, dy: 0, rot: 22.73, op: 1, ease: Linear), (t: 3, dx: -0.41, dy: 6, rot: -1.46, op: 1, ease: Linear), (t: 6, dx: -6.66, dy: 12, rot: -23.79, op: 1, ease: Linear), (t: 9, dx: -4.42, dy: 18, rot: -15.78, op: 1, ease: Linear), (t: 12, dx: 3.46, dy: 24, rot: 12.35, op: 0.5, ease: Linear), (t: 15, dx: 6.93, dy: 30, rot: 24.73, op: 0, ease: Linear)],
+            "leaf3": [(t: 0, dx: 0.99, dy: 0, rot: 3.53, op: 1, ease: Linear), (t: 3, dx: -6.1, dy: 6, rot: -21.79, op: 1, ease: Linear), (t: 6, dx: -5.41, dy: 12, rot: -19.32, op: 1, ease: Linear), (t: 9, dx: 2.18, dy: 18, rot: 7.79, op: 1, ease: Linear), (t: 12, dx: 6.99, dy: 24, rot: 24.96, op: 0.5, ease: Linear), (t: 15, dx: 2.88, dy: 30, rot: 10.3, op: 0, ease: Linear)],
+        },
+    ),
+])

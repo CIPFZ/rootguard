@@ -115,6 +115,10 @@
   按 tick 播放）；`armor_break_twig / pot / plank / gourd`（`art/fx/`，`artgen` 新增 Fx 类别与不透明度关键帧）；树皮墙 /
   葫芦壳三级受损接入游戏、葫芦壳闪白抖动。帧条 `docs/screenshots/a2-armor.png`。测试 `armor_break_spawns_effects`、
   `defender_damage_states`。**发现**：10 关脚本解中门板（Shield）从未被打碎，门板碎片特效在实际对局里少见。
+- [x] 第 6 类 特效（2026-10-16，ADR-016 第 6 节）：ART-SPEC 7 全表（hit_puff / hit_frost / crumble / sprout_fold / wilt /
+  plant_dust / tuber_burst / ember_wave / gust_ring / dew_pop / hose_burst / frost_crown）+ 口部小尘 / 白气，按事件生成；
+  Chill 霜晶；放置弹性缩放与铲除残影（4.13）。帧条 `docs/screenshots/a2-fx.png`。测试 `battle_effects_follow_events`、
+  `constructed_effects`。未做：咬夹草叶齿残影与咀嚼结束气泡（无对应事件）。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 

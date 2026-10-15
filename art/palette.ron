@@ -53,6 +53,9 @@ Palette(
         // 特效沿用对应角色的专属色（ART-SPEC 7 护甲破碎：碎片即该角色的护甲）
         "armor_break_plank": { "plank": "#A98B63" },
         "armor_break_gourd": { "drum": "#C9A24E" },
+        "hit_puff": { "pebble": "#9A9A94" },
+        "muzzle_dust": { "pebble": "#9A9A94" },
+        "gust_ring": { "bloom": "#7FD1C3" },
     },
     // ART-SPEC 8.1 战场设计卡的背景专属色（不受每角色 ≤ 2 的限制，只用于 art/bg/ 与 artgen 生成的 L0 / L2）
     background: {

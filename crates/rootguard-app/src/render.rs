@@ -97,6 +97,12 @@ pub struct RenderState {
     pub(crate) fx: Vec<crate::fx::Fx>,
     /// 上一帧生成特效的事件键（去重双缓冲事件，[`crate::fx::capture`]）。
     pub(crate) fx_keys: std::collections::BTreeSet<String>,
+    /// 飞行中的弹丸：实体位 → 弹丸 id（命中特效用，[`crate::fx::capture`]）。
+    pub(crate) projectile_kinds: BTreeMap<u64, String>,
+    /// 防御者实体位 → 呈现层首次看到它的 `fixed_tick`（放置时的弹性缩放，ART-SPEC 4.13）。
+    defender_born: BTreeMap<u64, u64>,
+    /// 是否已过进入对局的第一帧。
+    anim_started: bool,
 }
 
 impl RenderState {
@@ -172,12 +178,30 @@ fn track_enemies(world: &mut World) {
         .iter()
         .map(|(e, _)| e.to_bits().get())
         .collect();
+    let defenders: Vec<u64> = world
+        .query::<(Entity, &DefenderRef)>()
+        .iter()
+        .map(|(e, _)| e.to_bits().get())
+        .collect();
     if let Some(state) = world.resources.get_mut::<RenderState>() {
         let mut next = BTreeMap::new();
         for key in alive {
             next.insert(key, state.first_seen.get(&key).copied().unwrap_or(tick));
         }
         state.first_seen = next;
+        // 进入对局第一帧已存在的防御者不做放置动画
+        let first = state.anim_started;
+        let mut born = BTreeMap::new();
+        for key in defenders {
+            let at = state
+                .defender_born
+                .get(&key)
+                .copied()
+                .unwrap_or(if first { tick } else { 0 });
+            born.insert(key, at);
+        }
+        state.defender_born = born;
+        state.anim_started = true;
     }
 }
 
@@ -965,6 +989,35 @@ pub fn producer_pose(world: &World, e: Entity) -> Option<(String, u64)> {
     producer_overlay(&painter, d.id.as_str(), p)
 }
 
+/// 放置时的弹性缩放时长（ART-SPEC 4.13“1.2 → 1.0，10 tick”）。
+const PLANT_POP_TICKS: u64 = 10;
+/// 放置时的起始缩放。
+const PLANT_POP_SCALE: f32 = 1.2;
+
+/// 放置后 `age` tick 的缩放：1.2 → 1.0，带一次轻微回弹（纯视觉）。
+#[must_use]
+pub fn plant_scale(age: u64) -> f32 {
+    if age >= PLANT_POP_TICKS {
+        return 1.0;
+    }
+    let k = age as f32 / PLANT_POP_TICKS as f32;
+    let wobble = (k * std::f32::consts::PI * 2.0).sin() * 0.04 * (1.0 - k);
+    1.0 + (PLANT_POP_SCALE - 1.0) * (1.0 - k) * (1.0 - k) - wobble
+}
+
+/// Chill 霜晶的片段（ART-SPEC 7 `frost_crown`）。
+const FROST_CROWN_CLIP: &str = "frost_crown_play";
+
+/// 霜晶相对脚底的高度（px）：各 Husk 头顶的大致位置（ART-SPEC 2.1 画布与 5 章造型）。
+fn crown_height(enemy: &str) -> f32 {
+    match enemy {
+        "drum_husk" => -146.0,
+        "sproutling" => -60.0,
+        "sprinter_husk" => -120.0,
+        _ => -104.0,
+    }
+}
+
 /// 受伤抖动的幅度（px，ART-SPEC 4.3）。
 const HURT_SHAKE_PX: f32 = 2.0;
 
@@ -1093,7 +1146,9 @@ fn draw_defenders(
             // 受伤时左右抖 2 px（ART-SPEC 4.3 / 4.9“被啃时轻微抖动”），与闪白同时长
             let shake = if flash { hurt_shake(tick) } else { 0.0 };
             let at = skin::foot(pos) + Vec2::new(shake, 0.0);
-            if sk.draw(list, WORLD, at, y, pose) {
+            let born = hurt_at.and_then(|st| st.defender_born.get(&e.to_bits().get()).copied());
+            let scale = born.map_or(1.0, |b| plant_scale(tick.saturating_sub(b)));
+            if sk.draw_scaled(list, WORLD, at, y, pose, scale) {
                 // 生产者叠层画在身体之上（同 sort_y，后提交）
                 if let Some((clip, elapsed)) =
                     producer.and_then(|p| producer_overlay(sk, d.id.as_str(), p))
@@ -1249,6 +1304,17 @@ fn draw_enemies(
                 tint,
             };
             if sk.draw(list, WORLD, skin::foot(pos), y, pose) {
+                // Chill：头顶 3 粒霜晶（ART-SPEC 3.3）
+                if status.chilled() {
+                    let crown = Pose {
+                        clip: FROST_CROWN_CLIP,
+                        elapsed: phase(e, tick),
+                        flash: false,
+                        tint: Color::WHITE,
+                    };
+                    let head = skin::foot(pos) + Vec2::new(0.0, crown_height(enemy.id.as_str()));
+                    sk.draw(list, WORLD, head, y, crown);
+                }
                 continue;
             }
         }

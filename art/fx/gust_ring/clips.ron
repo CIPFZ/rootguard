@@ -1,0 +1,18 @@
+// gust_ring：风铃花：车道宽风环向右扫出、几片飘叶（4.11），24 tick，游戏中沿车道拉伸
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(24),
+        frames: Every(2),
+        keys: {
+            "arc0": [(t: 0, dx: -30, ease: Linear), (t: 16, dx: 120), (t: 24, dx: 170, op: 0)],
+            "arc1": [(t: 0, dx: -30, ease: Linear), (t: 16, dx: 130), (t: 24, dx: 180, op: 0)],
+            "arc2": [(t: 0, dx: -30, ease: Linear), (t: 16, dx: 140), (t: 24, dx: 190, op: 0)],
+            "leaf0": [(t: 0, dx: -20, dy: 0, rot: 0, op: 1, ease: Linear), (t: 3, dx: 5.5, dy: 5.98, rot: 75, op: 1, ease: Linear), (t: 6, dx: 31, dy: 0.85, rot: 150, op: 1, ease: Linear), (t: 9, dx: 56.5, dy: -5.87, rot: 225, op: 1, ease: Linear), (t: 12, dx: 82, dy: -1.68, rot: 300, op: 1, ease: Linear), (t: 15, dx: 107.5, dy: 5.63, rot: 375, op: 1, ease: Linear), (t: 18, dx: 133, dy: 2.47, rot: 450, op: 1, ease: Linear), (t: 21, dx: 158.5, dy: -5.28, rot: 525, op: 0.5, ease: Linear), (t: 24, dx: 184, dy: -3.22, rot: 600, op: 0, ease: Linear)],
+            "leaf1": [(t: 0, dx: -20, dy: 5.05, rot: 0, op: 1, ease: Linear), (t: 3, dx: 5.5, dy: 3.59, rot: 75, op: 1, ease: Linear), (t: 6, dx: 31, dy: -4.54, rot: 150, op: 1, ease: Linear), (t: 9, dx: 56.5, dy: -4.23, rot: 225, op: 1, ease: Linear), (t: 12, dx: 82, dy: 3.94, rot: 300, op: 1, ease: Linear), (t: 15, dx: 107.5, dy: 4.79, rot: 375, op: 1, ease: Linear), (t: 18, dx: 133, dy: -3.26, rot: 450, op: 1, ease: Linear), (t: 21, dx: 158.5, dy: -5.25, rot: 525, op: 0.5, ease: Linear), (t: 24, dx: 184, dy: 2.52, rot: 600, op: 0, ease: Linear)],
+            "leaf2": [(t: 0, dx: -20, dy: 5.46, rot: 0, op: 1, ease: Linear), (t: 3, dx: 5.5, dy: -2.1, rot: 75, op: 1, ease: Linear), (t: 6, dx: 31, dy: -5.75, rot: 150, op: 1, ease: Linear), (t: 9, dx: 56.5, dy: 1.29, rot: 225, op: 1, ease: Linear), (t: 12, dx: 82, dy: 5.94, rot: 300, op: 1, ease: Linear), (t: 15, dx: 107.5, dy: -0.45, rot: 375, op: 1, ease: Linear), (t: 18, dx: 133, dy: -6, rot: 450, op: 1, ease: Linear), (t: 21, dx: 158.5, dy: -0.4, rot: 525, op: 0.5, ease: Linear), (t: 24, dx: 184, dy: 5.94, rot: 600, op: 0, ease: Linear)],
+            "leaf3": [(t: 0, dx: -20, dy: 0.85, rot: 0, op: 1, ease: Linear), (t: 3, dx: 5.5, dy: -5.87, rot: 75, op: 1, ease: Linear), (t: 6, dx: 31, dy: -1.68, rot: 150, op: 1, ease: Linear), (t: 9, dx: 56.5, dy: 5.63, rot: 225, op: 1, ease: Linear), (t: 12, dx: 82, dy: 2.47, rot: 300, op: 1, ease: Linear), (t: 15, dx: 107.5, dy: -5.28, rot: 375, op: 1, ease: Linear), (t: 18, dx: 133, dy: -3.22, rot: 450, op: 1, ease: Linear), (t: 21, dx: 158.5, dy: 4.82, rot: 525, op: 0.5, ease: Linear), (t: 24, dx: 184, dy: 3.9, rot: 600, op: 0, ease: Linear)],
+        },
+    ),
+])

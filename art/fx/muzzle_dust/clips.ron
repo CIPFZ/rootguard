@@ -1,0 +1,14 @@
+// muzzle_dust：石籽荚发射：口部 3 帧小尘雾（4.1），6 tick
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(6),
+        frames: Every(2),
+        keys: {
+            "p0": [(t: 0, sx: 0.5, sy: 0.5, ease: Linear), (t: 6, dx: 7, sx: 1.5, sy: 1.5, op: 0)],
+            "p1": [(t: 0, sx: 0.5, sy: 0.5, ease: Linear), (t: 6, dx: 7, sx: 1.5, sy: 1.5, op: 0)],
+            "p2": [(t: 0, sx: 0.5, sy: 0.5, ease: Linear), (t: 6, dx: 7, sx: 1.5, sy: 1.5, op: 0)],
+        },
+    ),
+])

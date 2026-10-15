@@ -1,0 +1,12 @@
+// 特效 muzzle_frost（ART-SPEC 7）：霜籽荚发射：口部白气 4 帧（4.4），8 tick
+Rig(
+    kind: Fx(48, 48),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "p0", pivot: (24, 24), z: 0),
+        (name: "p1", pivot: (24, 24), z: 1),
+        (name: "p2", pivot: (24, 24), z: 2),
+        (name: "p3", pivot: (24, 24), z: 3),
+    ],
+)

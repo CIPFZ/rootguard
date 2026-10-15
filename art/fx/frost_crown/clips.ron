@@ -1,0 +1,14 @@
+// frost_crown：Chill：头顶 3 粒霜晶（3.3），30 tick 循环
+Clips([
+    (
+        name: "play",
+        looping: true,
+        duration: Ticks(30),
+        frames: Every(6),
+        keys: {
+            "crystal0": [(t: 0, dy: 0), (t: 10, dy: -2), (t: 30, dy: 0)],
+            "crystal1": [(t: 0, dy: 0), (t: 15, dy: -2), (t: 30, dy: 0)],
+            "crystal2": [(t: 0, dy: 0), (t: 20, dy: -2), (t: 30, dy: 0)],
+        },
+    ),
+])

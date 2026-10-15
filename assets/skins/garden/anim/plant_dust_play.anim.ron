@@ -1,0 +1,12 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "plant_dust_play",
+    looping: false,
+    frames: [
+        (frame: "plant_dust_play_0", ticks: 2),
+        (frame: "plant_dust_play_1", ticks: 2),
+        (frame: "plant_dust_play_2", ticks: 2),
+        (frame: "plant_dust_play_3", ticks: 2),
+        (frame: "plant_dust_play_4", ticks: 2),
+    ],
+)

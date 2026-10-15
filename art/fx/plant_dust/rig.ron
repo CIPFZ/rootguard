@@ -1,0 +1,12 @@
+// 特效 plant_dust（ART-SPEC 7）：放置落地：4 粒土屑（4.13），10 tick
+Rig(
+    kind: Fx(96, 96),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "soil0", pivot: (48, 68), z: 0),
+        (name: "soil1", pivot: (48, 68), z: 1),
+        (name: "soil2", pivot: (48, 68), z: 2),
+        (name: "soil3", pivot: (48, 68), z: 3),
+    ],
+)

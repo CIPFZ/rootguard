@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 128">
+  <path d="M40 14 C70 40 70 88 40 114" fill="none" stroke="@bloom" stroke-width="8" stroke-linecap="round" opacity="0.75"/>
+</svg>

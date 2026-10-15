@@ -1,0 +1,12 @@
+// 特效 wilt（ART-SPEC 7）：守卫被吃光：几片叶子飘落（4.13），15 tick
+Rig(
+    kind: Fx(96, 96),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "leaf0", pivot: (36, 34), z: 0),
+        (name: "leaf1", pivot: (52, 28), z: 1),
+        (name: "leaf2", pivot: (62, 40), z: 2),
+        (name: "leaf3", pivot: (44, 44), z: 3),
+    ],
+)

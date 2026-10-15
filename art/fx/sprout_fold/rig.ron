@@ -1,0 +1,11 @@
+// 特效 sprout_fold（ART-SPEC 7）：小芽怪倒下：叶子合拢缩回种壳（5.9，伏笔），16 tick
+Rig(
+    kind: Fx(64, 64),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "shell", pivot: (32, 44), z: 0),
+        (name: "leaf0", pivot: (32, 36), z: 1),
+        (name: "leaf1", pivot: (32, 36), z: 2),
+    ],
+)
