@@ -525,3 +525,52 @@ fn attack_anim_phase_follows_shooter_timer() {
         "应观察到多次发射与就绪 idle（fired {fired}, idle {idle}）"
     );
 }
+
+/// 裁决（六）第 2 节：同一行的敌人重叠时按 x 从右到左绘制，最靠左者（弹丸先命中、正在闪白的那个，SPEC 2.5）
+/// 画在最上面——否则整只白色闪白剪影被后画的同伴遮住，只露出一圈白边，看起来像错位的白影。
+#[test]
+fn overlapping_enemies_draw_leftmost_on_top() {
+    use rootguard_core::components::{EnemyRef, Lane};
+    let mut runner = common::battle_runner("1-1", &[]);
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    let mut checked = 0;
+    for _ in 0..9000 {
+        let s = state(&runner).expect("对局");
+        if s.level_tick == 60 {
+            send(&mut runner, UiAction::SelectCard(0));
+            send(&mut runner, UiAction::PlaceAt { row: 2, col: 3 });
+        }
+        runner.frame();
+        let world = runner.app().world();
+        let enemies = world.query::<(&EnemyRef, &Lane)>().iter().count();
+        if enemies < 2 {
+            continue;
+        }
+        let garden = world
+            .resources
+            .expect::<Skins>()
+            .get(SkinName::Garden)
+            .expect("garden");
+        let husk_image = world
+            .resources
+            .expect::<Assets<Atlas>>()
+            .get(garden.atlas_of("husk_walk").expect("图集"))
+            .expect("图集")
+            .image;
+        let xs: Vec<f32> = runner
+            .last_draw_list()
+            .iter()
+            .filter_map(|c| match &c.kind {
+                DrawKind::Sprite { image, dst, .. } if *image == husk_image => Some(dst.min.x),
+                _ => None,
+            })
+            .collect();
+        assert!(
+            xs.windows(2).all(|w| w[0] >= w[1]),
+            "同一行的敌人应从右到左提交（{xs:?}）"
+        );
+        checked += 1;
+    }
+    assert!(checked > 100, "应在多只敌人同屏时检查（{checked}）");
+}

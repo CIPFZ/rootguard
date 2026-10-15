@@ -812,21 +812,27 @@ fn draw_enemies(
 ) {
     let hurt = world.resources.get::<RenderState>();
     let factor = chill_bite_factor(world);
-    for (e, t, p, h, lane, status, armor, enemy, walker, biter) in world
-        .query::<(
-            Entity,
-            &Transform2D,
-            &Placeholder,
-            &Health,
-            &rootguard_core::components::Lane,
-            &StatusEffects,
-            Option<&Armor>,
-            &EnemyRef,
-            &Walker,
-            Option<&Biter>,
-        )>()
-        .iter()
-    {
+    let mut query = world.query::<(
+        Entity,
+        &Transform2D,
+        &Placeholder,
+        &Health,
+        &rootguard_core::components::Lane,
+        &StatusEffects,
+        Option<&Armor>,
+        &EnemyRef,
+        &Walker,
+        Option<&Biter>,
+    )>();
+    let mut enemies: Vec<_> = query.iter().collect();
+    // 同一行内从右到左提交（sort_y 相同时按提交顺序叠放）：最靠左者画在最上面。它是弹丸最先命中的目标
+    // （SPEC 2.5），闪白时整只白色剪影可见，而不是被身后的同伴盖住只露出白边（裁决（六）第 2 节）。
+    enemies.sort_by(|a, b| {
+        (a.4.row, b.1.pos.x, a.0.to_bits())
+            .partial_cmp(&(b.4.row, a.1.pos.x, b.0.to_bits()))
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+    for (e, t, p, h, lane, status, armor, enemy, walker, biter) in enemies {
         if !h.alive() {
             continue;
         }
