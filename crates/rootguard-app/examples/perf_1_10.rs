@@ -91,7 +91,9 @@ fn main() {
                 .app_mut()
                 .world_mut()
                 .events
-                .send(UiAction::SetSkinName(rootguard_core::events::SkinName::Garden));
+                .send(UiAction::SetSkinName(
+                    rootguard_core::events::SkinName::Garden,
+                ));
         }
     }
     let mut replay = Replay::new(script);
