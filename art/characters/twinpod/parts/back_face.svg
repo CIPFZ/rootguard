@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 后荚皱眉：悲观（ART-SPEC 4.5，LORE）——眉头上抬、眼皮半垂、嘴角下撇 -->
+  <g transform="translate(42 84) rotate(-8) scale(0.62) translate(-62 -114)">
+    <g stroke="@outline" stroke-width="3.6">
+      <ellipse cx="70" cy="66" rx="5.5" ry="6" fill="@dew_glow"/>
+      <ellipse cx="86" cy="65" rx="6.5" ry="7" fill="@dew_glow"/>
+    </g>
+    <circle cx="71.5" cy="68" r="3" fill="@outline"/><circle cx="87.5" cy="67.5" r="3.4" fill="@outline"/>
+    <g stroke="@outline" stroke-width="3.6" stroke-linejoin="round">
+      <path d="M64 65 C64 58 76 58 76 65 Z" fill="@leaf"/>
+      <path d="M79 64 C79 56.5 93 56.5 93 64 Z" fill="@leaf"/>
+    </g>
+    <g fill="none" stroke="@outline" stroke-width="4.4" stroke-linecap="round">
+      <path d="M74 52 L63 56"/><path d="M80 51 L93 55"/>
+    </g>
+    <path d="M77 87 Q85 80 94 86" fill="none" stroke="@outline" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>

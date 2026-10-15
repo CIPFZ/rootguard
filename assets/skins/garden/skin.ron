@@ -13,6 +13,7 @@ Skin(
                 "pebble_pod_hurt_idle",
                 "pebble_pod_attack",
                 "pebble_pod_hurt_attack",
+                "twinpod_idle",
             ],
         ),
         (
@@ -33,6 +34,8 @@ Skin(
                 "frostpod_portrait_off",
                 "pebble_pod_portrait",
                 "pebble_pod_portrait_off",
+                "twinpod_portrait",
+                "twinpod_portrait_off",
             ],
         ),
     ],

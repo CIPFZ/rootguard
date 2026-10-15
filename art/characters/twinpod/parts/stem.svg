@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 一根茎上长出的双胞胎（LORE）：茎分叉托起两荚，根部两片叶 -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M62 120 C62 112 61 104 57 98 C53 92 48 88 44 84 M58 99 C66 104 73 109 78 112" stroke="@outline" stroke-width="7.5"/>
+    <path d="M62 120 C62 112 61 104 57 98 C53 92 48 88 44 84 M58 99 C66 104 73 109 78 112" stroke="@leaf_dark" stroke-width="3.8"/>
+  </g>
+  <g stroke="@outline" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M62 118 C54 120 45 118 40 112 C48 109 56 112 62 118 Z" fill="@leaf"/>
+    <path d="M66 118 C73 120 82 119 88 114 C81 110 72 112 66 118 Z" fill="@leaf"/>
+  </g>
+</svg>

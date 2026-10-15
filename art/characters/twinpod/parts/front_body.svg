@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 前荚：一茎双荚中较大、较低的一个（ART-SPEC 4.5）；描边按缩放加粗，显示约 3 px -->
+  <g transform="translate(80 114) scale(0.74) translate(-62 -114)">
+    <path d="M62 114 C39 114 28 98 29 79 C30 60 42 45 58 38 C62 36 68 35 71 38 C88 46 98 62 97 81 C96 101 86 114 62 114 Z" fill="@leaf"/>
+    <path d="M55 41 C41 49 31 63 31 80 C31 98 42 111 60 113 C49 107 41 95 41 80 C41 65 46 52 55 41 Z" fill="@leaf.shade"/>
+    <path d="M60 110 C74 112 88 104 92 92 C94 84 92 78 88 76 C82 86 70 96 58 102 C55 105 56 109 60 110 Z" fill="@leaf_light"/>
+    <path d="M61 42 C51 57 47 82 53 108" fill="none" stroke="@leaf_dark" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="84" cy="53" rx="4" ry="7" transform="rotate(-35 84 53)" fill="@dew_glow"/>
+    <path d="M62 114 C39 114 28 98 29 79 C30 60 42 45 58 38 C62 36 68 35 71 38 C88 46 98 62 97 81 C96 101 86 114 62 114 Z" fill="none" stroke="@outline" stroke-width="4" stroke-linejoin="round"/>
+  </g>
+</svg>
