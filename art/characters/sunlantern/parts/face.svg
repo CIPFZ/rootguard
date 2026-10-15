@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <g transform="translate(64 120) scale(0.9) translate(-64 -120)">
+  <!-- 茎上一张和蔼的老脸：细眯眼、笑纹（ART-SPEC 4.12）；慈祥、温暖（LORE） -->
+  <g transform="translate(45 80) scale(0.82) translate(-46 -80)">
+  <g fill="none" stroke="@outline" stroke-linecap="round">
+    <path d="M37 79 Q40.5 76 44 79" stroke-width="2.4"/>
+    <path d="M47.5 78.5 Q51 75.5 54.5 78.5" stroke-width="2.4"/>
+    <path d="M35.5 73.5 Q40 71 44.5 73" stroke="@leaf_light" stroke-width="2.6"/>
+    <path d="M47 72.5 Q51.5 70.5 56 73" stroke="@leaf_light" stroke-width="2.6"/>
+    <path d="M34 81 L32 83 M34.6 78.6 L32 79" stroke-width="1.4"/>
+    <path d="M57 80 L59 82 M56.6 77.8 L59 78" stroke-width="1.4"/>
+    <path d="M41 87 Q46 91 51 87" stroke-width="2.4"/>
+  </g>
+  <g fill="@ember" opacity="0.3">
+    <ellipse cx="37" cy="85" rx="3" ry="1.8"/><ellipse cx="55" cy="84.5" rx="3" ry="1.8"/>
+  </g>
+  </g>
+  </g>
+</svg>

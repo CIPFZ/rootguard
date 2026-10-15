@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <g transform="translate(64 120) scale(0.9) translate(-64 -120)">
+  <!-- 拱形茎（ART-SPEC 4.12）：粗茎从根部升起、向右拱出；根母最老的子嗣（LORE），茎上有老纹 -->
+  <path d="M42 120 C40 104 40 82 44 64 C48 46 62 32 80 30 C92 29 102 34 106 42" fill="none" stroke="@outline" stroke-width="14" stroke-linecap="round"/>
+  <path d="M42 120 C40 104 40 82 44 64 C48 46 62 32 80 30 C92 29 102 34 106 42" fill="none" stroke="@leaf_dark" stroke-width="10" stroke-linecap="round"/>
+  <!-- 下段是粗老的茎干，脸长在这里 -->
+  <path d="M42 120 C40 104 40 84 44 64" fill="none" stroke="@outline" stroke-width="26" stroke-linecap="round"/>
+  <path d="M42 120 C40 104 40 84 44 64" fill="none" stroke="@leaf_dark" stroke-width="22" stroke-linecap="round"/>
+  <path d="M34 114 C32 100 32 84 36 70" fill="none" stroke="@leaf_dark.shade" stroke-width="5" stroke-linecap="round"/>
+  <g fill="none" stroke="@leaf_dark.shade" stroke-width="1.6" stroke-linecap="round">
+    <path d="M46 98 C45 104 46 110 45 116"/><path d="M52 94 C53 100 52 106 53 112"/>
+  </g>
+  <g stroke="@outline" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M40 116 C32 117 24 113 20 106 C28 105 36 109 40 116 Z" fill="@leaf"/>
+    <path d="M58 37 C56 30 58 23 64 19 C66 26 64 33 58 37 Z" fill="@leaf"/>
+  </g>
+  </g>
+</svg>
