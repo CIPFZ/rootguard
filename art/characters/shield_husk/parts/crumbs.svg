@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- eat_hit 帧掉两粒碎屑（ART-SPEC 5.1） -->
+  <g fill="@straw_dark" stroke="@husk_outline" stroke-width="1.4">
+    <path d="M36 74 L40 72 L41 76 Z"/>
+    <path d="M42 82 L46 81 L45 85 Z"/>
+  </g>
+</svg>

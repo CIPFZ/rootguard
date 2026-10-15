@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <g transform="translate(0 13)">
+  <!-- 胸前长着一块风化木板（专属色 plank，ART-SPEC 5.6），只露眼睛和头顶；爬在木栅栏上的藤，连着一块栅栏板（LORE） -->
+  <path d="M22 72 L60 66 L64 134 L26 140 Z" fill="@plank"/>
+  <path d="M22 72 L32 70.4 L36 138.4 L26 140 Z" fill="@plank.shade"/>
+  <g fill="none" stroke="@bark_dark" stroke-width="1.6" stroke-linecap="round">
+    <path d="M42 70 C44 86 42 104 45 136"/><path d="M52 69 C51 84 54 100 53 134"/>
+  </g>
+  <ellipse cx="47" cy="98" rx="2.6" ry="3.6" fill="none" stroke="@bark_dark" stroke-width="1.6"/>
+  
+  <path d="M22 72 L60 66 L64 134 L26 140 Z" fill="none" stroke="@husk_outline" stroke-width="3" stroke-linejoin="round"/>
+  <!-- 板上缠着它自己的藤（5.6）：板是长在身上的，不是拿着的（1.5） -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M66 76 C54 80 38 76 24 84 M64 112 C52 110 36 118 26 116 M60 96 C64 92 68 92 70 94" stroke="@husk_outline" stroke-width="4.6"/>
+    <path d="M66 76 C54 80 38 76 24 84 M64 112 C52 110 36 118 26 116 M60 96 C64 92 68 92 70 94" stroke="@straw_dark" stroke-width="2"/>
+  </g>
+  <g stroke="@husk_outline" stroke-width="1.6" stroke-linejoin="round" fill="@straw_dark">
+    <path d="M36 80 C34 76 36 73 40 73 C40 77 39 79 36 80 Z"/><path d="M48 114 C47 118 49 121 53 121 C53 117 51 115 48 114 Z"/>
+  </g>
+  </g>
+</svg>
