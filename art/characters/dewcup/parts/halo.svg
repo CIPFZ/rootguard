@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 露珠的 dew_glow 光晕（ART-SPEC 4.2） -->
+  <circle cx="64" cy="44" r="18" fill="@dew_glow" opacity="0.45"/>
+</svg>

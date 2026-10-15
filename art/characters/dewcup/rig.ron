@@ -1,0 +1,16 @@
+// 露杯 Dewcup（ART-SPEC 4.2）：郁金香杯、闭眼微笑、头顶露珠。以石籽荚为模板（裁决五）。
+Rig(
+    kind: Guardian,
+    rest: "idle",
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (64, 120), z: 0),
+        (name: "stem", pivot: (64, 119), z: 1),
+        (name: "halo", parent: Some("cup"), pivot: (64, 44), z: 2),
+        (name: "cup", pivot: (64, 97), z: 3),
+        (name: "drop", parent: Some("cup"), pivot: (64, 60), z: 4),
+        (name: "blush", parent: Some("cup"), pivot: (66, 82), z: 5),
+        (name: "eyes", parent: Some("cup"), pivot: (65, 75), z: 6),
+        (name: "mouth", parent: Some("cup"), pivot: (65, 85), z: 7),
+    ],
+)

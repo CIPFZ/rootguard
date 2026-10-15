@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 腮红（ART-SPEC 4.2） -->
+  <g fill="@ember" opacity="0.35">
+    <ellipse cx="52" cy="82" rx="4" ry="2.4"/>
+    <ellipse cx="80" cy="81" rx="4" ry="2.4"/>
+  </g>
+</svg>

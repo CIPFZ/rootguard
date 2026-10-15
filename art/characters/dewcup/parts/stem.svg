@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 茎与两片叶：leaf 色（ART-SPEC 4.2） -->
+  <path d="M64 119 C63 110 64 102 64 94" fill="none" stroke="@outline" stroke-width="7" stroke-linecap="round"/>
+  <path d="M64 119 C63 110 64 102 64 94" fill="none" stroke="@leaf" stroke-width="3.4" stroke-linecap="round"/>
+  <g stroke="@outline" stroke-width="2.6" stroke-linejoin="round">
+    <path d="M62 116 C52 117 42 113 37 104 C47 102 57 106 62 116 Z" fill="@leaf"/>
+    <path d="M66 115 C76 115 86 110 91 101 C81 100 71 105 66 115 Z" fill="@leaf"/>
+  </g>
+  <g fill="none" stroke="@leaf_dark" stroke-width="1.5" stroke-linecap="round">
+    <path d="M60 114 C53 112 47 109 42 105"/><path d="M68 113 C75 110 81 107 86 103"/>
+  </g>
+</svg>

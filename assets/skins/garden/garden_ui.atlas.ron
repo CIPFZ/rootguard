@@ -2,7 +2,9 @@
 Atlas(
     image: "skins/garden/garden_ui.png",
     frames: [
-        (name: "pebble_pod_portrait_0", x: 0, y: 0, w: 80, h: 100, anchor: (0.5, 0.5)),
-        (name: "pebble_pod_portrait_off_0", x: 82, y: 0, w: 80, h: 100, anchor: (0.5, 0.5)),
+        (name: "dewcup_portrait_0", x: 0, y: 0, w: 80, h: 100, anchor: (0.5, 0.5)),
+        (name: "dewcup_portrait_off_0", x: 82, y: 0, w: 80, h: 100, anchor: (0.5, 0.5)),
+        (name: "pebble_pod_portrait_0", x: 164, y: 0, w: 80, h: 100, anchor: (0.5, 0.5)),
+        (name: "pebble_pod_portrait_off_0", x: 0, y: 102, w: 80, h: 100, anchor: (0.5, 0.5)),
     ],
 )

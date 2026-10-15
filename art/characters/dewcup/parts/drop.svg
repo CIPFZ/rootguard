@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 头顶托着一颗 dew 色大露珠（ART-SPEC 4.2）；A2 中随生产进度由小变大 -->
+  <path d="M64 30 C58 38 53 44 53 50 C53 56 58 60 64 60 C70 60 75 56 75 50 C75 44 70 38 64 30 Z" fill="@dew" stroke="@outline" stroke-width="2.6" stroke-linejoin="round"/>
+  <path d="M60 41 C58 44 57 47 57.5 50" fill="none" stroke="@dew_glow" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M69 55 C71 54 72.5 52 72.6 50" fill="none" stroke="@dew.shade" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

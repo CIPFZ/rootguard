@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 郁金香杯形，leaf_light 杯身（ART-SPEC 4.2）；一阶阴影、露珠高光（1.2）；永远湿润（LORE） -->
+  <path d="M42 62 C40 76 44 90 54 95 C60 98 68 98 74 95 C84 90 88 76 86 62 C80 67 74 66 70 58 C67 64 61 64 58 58 C54 66 48 67 42 62 Z" fill="@leaf_light"/>
+  <path d="M42 62 C40 76 44 90 54 95 C58 97 62 97.5 64 97.6 C54 92 49 80 50 66 C47 66 44 64.5 42 62 Z" fill="@leaf_light.shade"/>
+  <path d="M70 58 C72 62 76 64 80 64" fill="none" stroke="@leaf_light.shade" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M58 58 C55 63 52 65 48 65" fill="none" stroke="@leaf_light.shade" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="80" cy="72" rx="2.6" ry="4.5" transform="rotate(-20 80 72)" fill="@dew_glow"/>
+  <circle cx="82.5" cy="80" r="1.4" fill="@dew_glow"/>
+  <path d="M42 62 C40 76 44 90 54 95 C60 98 68 98 74 95 C84 90 88 76 86 62 C80 67 74 66 70 58 C67 64 61 64 58 58 C54 66 48 67 42 62 Z" fill="none" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+</svg>
