@@ -24,5 +24,8 @@
 | `assets/fonts/RootguardCJK-Regular.otf` | 字体 | Noto Sans CJK SC Regular 子集，`scripts/subset_font.py` 生成（字符取自 `assets/data/i18n/*.ron`），已更名为 “Rootguard CJK Subset” | Adobe / Google（Noto CJK） | SIL OFL 1.1，全文见 `assets/fonts/LICENSE-OFL.txt` | 中文显示（E-1） |
 | `assets/skins/default/skin.png` | 图像 | 程序化生成：`scripts/gen_skins.py`（Pillow 绘制基本几何形状，4 倍超采样；造型原创，见 ADR-007） | Rootguard 项目 | 项目自有 | 皮肤图集：12 防御者、9 敌人（含受伤闪白帧）、2 弹丸、Dew |
 | `assets/skins/default/skin.atlas.ron` | 数据 | 程序化生成：`scripts/gen_skins.py` | Rootguard 项目 | 项目自有 | 引擎图集 RON |
+| `assets/skins/garden/*.png` | 图像 | 程序化生成：`tools/artgen` 以 resvg 渲染 `art/characters/*/parts/*.svg`（手写 SVG 部件，颜色只取 `art/palette.ron`；造型依据 `LORE.md` 与 `ART-SPEC.md` 设计卡，见 ADR-013） | Rootguard 项目 | 项目自有 | garden 皮肤图集（美术阶段，逐角色增加） |
+| `assets/skins/garden/*.atlas.ron`、`anim/*.anim.ron`、`skin.ron` | 数据 | 程序化生成：`tools/artgen` | Rootguard 项目 | 项目自有 | 引擎图集 / 动画片段 RON 与皮肤清单 |
+| `art/**/*.svg`、`art/**/*.ron` | 源文件 | 实现者手写（不描摹、不位图化概念图，ART-SPEC 9.3） | Rootguard 项目 | 项目自有 | garden 皮肤的唯一来源 |
 | `assets/skins/default/skin.ron` | 数据 | 程序化生成：`scripts/gen_skins.py` | Rootguard 项目 | 项目自有 | 皮肤清单（图集路径与片段名） |
 | `assets/skins/default/anim/*.anim.ron`（46 个） | 数据 | 程序化生成：`scripts/gen_skins.py` | Rootguard 项目 | 项目自有 | 引擎动画片段 RON（idle / attack / armed / walk / eat，eat 第 2 帧 `eat_hit` 事件） |

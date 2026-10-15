@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use trellia_core::{Entity, Timer, Vec2};
 
 use crate::components::Cell;
-use crate::events::{DamageSource, Lang, SkinMode};
+use crate::events::{DamageSource, Lang, SkinMode, SkinName};
 use crate::grid::Grid;
 use crate::ids::{DefenderId, EnemyId, LevelId};
 
@@ -213,6 +213,9 @@ pub struct Settings {
     pub lang: Lang,
     /// 渲染模式。
     pub skin: SkinMode,
+    /// 皮肤模式使用的皮肤；旧存档没有该字段时取默认值（ART-SPEC 0）。
+    #[serde(default)]
+    pub skin_name: SkinName,
 }
 
 impl Default for Settings {
@@ -222,6 +225,7 @@ impl Default for Settings {
             music: 1.0,
             lang: Lang::default(),
             skin: SkinMode::default(),
+            skin_name: SkinName::default(),
         }
     }
 }

@@ -73,9 +73,20 @@
 - [x] `art/palette.ron`（14 色 + 1.2 的 `husk_outline`，13 个角色专属色）；`tools/artgen` 解析 rig / clips → 合成 →
   resvg 渲染 → 去重打包 → 引擎 RON；9.2 校验（调色板、画布、1.4 尺寸、时长必需绑定、事件帧、图集 ≤ 4096）；
   14 个单元测试；格式说明 `art/README.md`
-- [ ] 样板角色 `pebble_pod`（4.1）、`husk`（5.1）：全部片段、闪白帧、`attack` / `eat` 进度驱动
-- [ ] 游戏侧多皮肤（`default` / `garden`）；`attack` / `produce` / `fuse` / `arm` 进度驱动
-- [ ] 测试 `art_assets_up_to_date`、`art_clips_match_rules`、`skin_garden_loads`；golden 不变
+- [x] 样板角色 `pebble_pod`（4.1）：idle 270（3 个呼吸周期，张望、眨眼各一次）、attack 85（绑定
+  `shooter.interval_ticks`，`fire` 在 0，ADR-014 第 5 条）、受损状态 hurt（叶片下垂）、闪白；`husk`（5.1）：
+  walk 40、eat 60（绑定 `bite_interval_ticks`，`eat_hit` 在末帧 50）、闪白。尺寸校验抓到两次超限（husk 133 > 130、
+  pebble_pod 107 > 104），已调整造型。资产：2 角色 / 21 个部件文件 / 6 个片段 / 176 帧（去重后 84 张图）；
+  `garden_defenders.png` 1024 × 1168、`garden_husks.png` 1024 × 648
+- [x] 游戏侧多皮肤（ADR-014）：`SkinName` + `Settings.skin_name`（旧存档兼容）+ `UiAction::SetSkinName`，设置界面
+  “占位 / 几何 / 花园”；`Skins` 全部加载，查找顺序“所选 → default → 占位”；清单统一为多图集格式（`gen_skins.py`
+  同步，default 图集不变）；`attack` / `produce` / `arm` / `fuse` 由计时器进度驱动（`timed_elapsed`）；
+  防御者受损片段与闪白帧。CJK 字体子集随新增文字（几、何、花、园）重新生成
+- [x] 测试 `art_assets_up_to_date`（tools/artgen，重建两次并比对）、`art_clips_match_rules`、`skin_garden_loads`
+  （先红：无 `Skins` 资源）、`attack_anim_phase_follows_shooter_timer`、`save_without_skin_name_loads`、
+  `render` 单元测试 2 个；golden 与 `skin_switching_keeps_golden_1_4` 通过。测试 76 个全绿（artgen 15、core 23、
+  content 6、app 32）。说明：`attack_anim_phase_follows_shooter_timer` 在旧映射下也会通过（garden 的 attack 长度
+  恰等于周期），新映射的差异部分由 `timed_elapsed` 单元测试覆盖
 - [ ] 实机截图：两个角色在 1-1 中显示与动画正常
 
 ## 收尾期（SPEC v1.2 第 20 章，2026-10-14 起）

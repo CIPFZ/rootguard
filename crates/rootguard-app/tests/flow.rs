@@ -377,3 +377,26 @@ fn chinese_hud_when_lang_zh() {
     let font = rootguard_app::cjk_font_path().expect("CJK 字体应随资产提供");
     assert!(font.is_file());
 }
+
+/// ART-SPEC 0 / ADR-014：设置新增 `skin_name` 前写下的存档（无该字段）照常读取，不走备份路径。
+#[test]
+fn save_without_skin_name_loads() {
+    let dir = temp_save(&format!("save-compat-{}", next_id()));
+    std::fs::create_dir_all(&dir).expect("目录");
+    std::fs::write(
+        dir.join(FILE_NAME),
+        r#"Progress(version: 1, cleared: ["1-1"], unlocked: ["pebble_pod", "dewcup"],
+            settings: (sfx: 0.5, music: 0.75, lang: En, skin: Skinned))"#,
+    )
+    .expect("写入");
+    let runner = title_runner(&dir);
+    let world = runner.app().world();
+    assert!(!dir.join(BACKUP_NAME).exists(), "旧存档不应被视为损坏");
+    let p = world.resources.expect::<Progress>();
+    assert!(p.cleared.contains(&lid("1-1")));
+    assert_eq!(p.settings.skin, rootguard_core::events::SkinMode::Skinned);
+    assert_eq!(
+        p.settings.skin_name,
+        rootguard_core::events::SkinName::Default
+    );
+}

@@ -147,6 +147,7 @@ pub fn ui_router_system(world: &mut World) {
             }
             UiAction::SetLanguage(lang) => update_settings(world, |s| s.lang = lang),
             UiAction::SetSkin(skin) => update_settings(world, |s| s.skin = skin),
+            UiAction::SetSkinName(name) => update_settings(world, |s| s.skin_name = name),
             // 对局动作由 buffer_ui_actions 移入收件箱，不会到达这里
             _ => {}
         }

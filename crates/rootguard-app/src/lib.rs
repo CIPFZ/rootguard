@@ -60,13 +60,9 @@ impl Plugin for GamePlugin {
             }
             Err(e) => app.record_startup_error(e),
         }
-        // 皮肤是可选增强（SPEC 12.1）：加载失败时警告并让 Skinned 模式回退占位渲染
-        match skin::SkinAssets::load(app.world_mut(), &server) {
-            Ok(assets) => {
-                app.insert_resource(assets);
-            }
-            Err(e) => log::warn!("皮肤加载失败，皮肤模式将回退占位渲染：{e}"),
-        }
+        // 皮肤是可选增强（SPEC 12.1）：单个皮肤加载失败时警告，Skinned 模式回退 default 皮肤或占位渲染
+        let skins = skin::Skins::load_all(app.world_mut(), &server);
+        app.insert_resource(skins);
         app.add_plugin(save::SavePlugin(self.save.clone()))
             .add_plugin(sfx::SfxPlugin)
             .add_plugin(flow::UiPlugin);

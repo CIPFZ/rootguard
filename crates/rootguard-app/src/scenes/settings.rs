@@ -1,6 +1,6 @@
 //! 设置场景（SPEC 3.4 / 11.3，push）：音效 / 音乐滑杆、语言、皮肤 / 占位；实时生效并写入存档。
 
-use rootguard_core::events::{Lang, SkinMode, UiAction, VolumeBus};
+use rootguard_core::events::{Lang, SkinMode, SkinName, UiAction, VolumeBus};
 use rootguard_core::resources::{Progress, Settings};
 use trellia::egui;
 use trellia::prelude::*;
@@ -110,15 +110,26 @@ impl Scene for SettingsScene {
                 send(world, UiAction::SetLanguage(lang));
             }
         }
-        for (j, (skin, key)) in [
-            (SkinMode::Placeholder, "settings.skin.placeholder"),
-            (SkinMode::Skinned, "settings.skin.skinned"),
+        // 占位 / 几何皮肤 default / 花园皮肤 garden（SPEC 12.1，ART-SPEC 0）
+        for (j, (skin, name, key)) in [
+            (SkinMode::Placeholder, None, "settings.skin.placeholder"),
+            (
+                SkinMode::Skinned,
+                Some(SkinName::Default),
+                "settings.skin.skinned",
+            ),
+            (
+                SkinMode::Skinned,
+                Some(SkinName::Garden),
+                "settings.skin.garden",
+            ),
         ]
         .into_iter()
         .enumerate()
         {
             let mut label = t(world, key);
-            if settings.skin == skin {
+            let current = settings.skin == skin && name.is_none_or(|n| n == settings.skin_name);
+            if current {
                 label = format!("[{label}]");
             }
             if button_at(
@@ -130,6 +141,9 @@ impl Scene for SettingsScene {
                 true,
             ) {
                 send(world, UiAction::SetSkin(skin));
+                if let Some(name) = name {
+                    send(world, UiAction::SetSkinName(name));
+                }
             }
         }
         let back = Rect::from_center_size(

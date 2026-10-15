@@ -213,8 +213,43 @@ pub enum SkinMode {
     /// 占位渲染（默认，必须完整可玩）。
     #[default]
     Placeholder,
-    /// 原创皮肤。
+    /// 原创皮肤（用哪套由 [`SkinName`] 决定）。
     Skinned,
+}
+
+/// `SkinMode::Skinned` 使用的皮肤（ART-SPEC 0）：`assets/skins/<dir>/`。
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Default,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    serde::Serialize,
+    serde::Deserialize,
+)]
+pub enum SkinName {
+    /// G5 的几何皮肤 `default`（SPEC 12.3）。
+    #[default]
+    Default,
+    /// 美术阶段的 `garden` 皮肤（ART-SPEC）。
+    Garden,
+}
+
+impl SkinName {
+    /// 全部皮肤。
+    pub const ALL: [Self; 2] = [Self::Default, Self::Garden];
+
+    /// 资产目录名（`assets/skins/<dir>/`）。
+    #[must_use]
+    pub fn dir(self) -> &'static str {
+        match self {
+            Self::Default => "default",
+            Self::Garden => "garden",
+        }
+    }
 }
 
 /// UI 与模拟之间的唯一接口（SPEC 11.1）。鼠标、按钮、快捷键与测试都只产生它。
@@ -270,6 +305,8 @@ pub enum UiAction {
     SetLanguage(Lang),
     /// 设置渲染模式。
     SetSkin(SkinMode),
+    /// 设置皮肤模式使用的皮肤（ART-SPEC 0）。
+    SetSkinName(SkinName),
 }
 
 impl UiAction {

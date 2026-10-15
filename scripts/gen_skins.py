@@ -9,7 +9,7 @@
 输出 assets/skins/default/：
     skin.png              图集（96 × 96 一格，4 倍超采样后缩小抗锯齿）
     skin.atlas.ron        引擎图集 RON（帧名 <id>_<动作>_<序号>；敌人每帧另有 <帧名>_flash 受伤闪白版）
-    skin.ron              皮肤清单：图集路径与全部动画片段名（rootguard-app 据此加载）
+    skin.ron              皮肤清单：图集及其全部动画片段名（rootguard-app 据此加载，格式同 tools/artgen）
     anim/<id>_<动作>.anim.ron  引擎动画片段 RON
 
 动作：防御者 idle 4 帧（射手 / 咬夹草另有 attack 3 帧，块茎雷另有 armed 2 帧）；敌人 walk 4 帧、
@@ -515,10 +515,11 @@ def main():
         body += ["    ],", ")"]
         with open(os.path.join(OUT, "anim", f"{name}.anim.ron"), "w", encoding="utf-8") as f:
             f.write("\n".join(body) + "\n")
-    manifest = ["// 由 scripts/gen_skins.py 生成，勿手改（SPEC 12.3）", "Skin(",
-                '    atlas: "skins/default/skin.atlas.ron",', "    clips: ["]
-    manifest += [f'        "{name}",' for name, _, _ in clips]
-    manifest += ["    ],", ")"]
+    # 清单格式与 tools/artgen 相同：图集及其片段的列表（ADR-014）
+    manifest = ["// 由 scripts/gen_skins.py 生成，勿手改（SPEC 12.3）", "Skin(", "    atlases: [", "        (",
+                '            atlas: "skins/default/skin.atlas.ron",', "            clips: ["]
+    manifest += [f'                "{name}",' for name, _, _ in clips]
+    manifest += ["            ],", "        ),", "    ],", ")"]
     with open(os.path.join(OUT, "skin.ron"), "w", encoding="utf-8") as f:
         f.write("\n".join(manifest) + "\n")
     print(f"{len(imgs)} 帧，{len(clips)} 个片段，图集 {sheet.size[0]}×{sheet.size[1]}")

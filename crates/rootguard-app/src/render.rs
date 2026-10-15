@@ -7,9 +7,9 @@ use std::collections::{BTreeMap, HashMap};
 
 use rootguard_core::Grid;
 use rootguard_core::components::{
-    Armor, Biter, Cell, ChompState, Chomper, DefenderRef, DewPickup, EnemyRef, Health, Mine,
-    OverlayOf, Placeholder, ProjectileBody, ProjectileRef, Shooter, StatusEffects, WalkState,
-    Walker,
+    Armor, Biter, Blast, Cell, ChompState, Chomper, DefenderRef, DewPickup, EnemyRef, Gust, Health,
+    Mine, OverlayOf, Placeholder, Producer, ProjectileBody, ProjectileRef, Shooter, StatusEffects,
+    WalkState, Walker,
 };
 use rootguard_core::data::{ArmorKind, Rules};
 use rootguard_core::events::EnemyDamaged;
@@ -73,6 +73,8 @@ const BANNER_RISE_PX: f32 = 24.0;
 pub struct RenderState {
     /// 实体 → 最近受伤的 `fixed_tick`（只做按键查找）。
     hurt_at: HashMap<Entity, u64>,
+    /// 防御者上一帧的生命值（只做按键查找），用于判定受伤闪白。
+    defender_hp: HashMap<Entity, i32>,
     /// 上一帧可见的 Dew：实体位 → (位置, 过期计时剩余)。
     dew_seen: BTreeMap<u64, (Vec2, u32)>,
     /// 飞向 HUD 的 Dew。
@@ -156,16 +158,34 @@ pub fn banner_offset(progress: f32) -> f32 {
     (1.0 - progress) * BANNER_RISE_PX
 }
 
-/// 记录本帧可见的受伤事件，供闪白使用。
+/// 记录本帧受伤的实体，供闪白使用（ART-SPEC 2.3）：敌人看 `EnemyDamaged` 事件；防御者没有受伤事件，
+/// 以生命值比上一帧减少判定（纯视觉）。
 fn track_hurt(world: &mut World) {
     let tick = world.resources.expect::<Time>().fixed_tick;
-    let hurt: Vec<Entity> = world
+    let mut hurt: Vec<Entity> = world
         .events
         .get::<EnemyDamaged>()
         .iter()
         .map(|d| d.entity)
         .collect();
+    let hp: Vec<(Entity, i32)> = world
+        .query::<(Entity, &Health, &DefenderRef)>()
+        .iter()
+        .map(|(e, h, _)| (e, h.hp))
+        .collect();
     if let Some(state) = world.resources.get_mut::<RenderState>() {
+        let mut next = HashMap::with_capacity(hp.len());
+        for (e, now) in hp {
+            if state
+                .defender_hp
+                .get(&e)
+                .is_some_and(|&before| now < before)
+            {
+                hurt.push(e);
+            }
+            next.insert(e, now);
+        }
+        state.defender_hp = next;
         // 事件在两帧内可见，重复写入只会让闪白多持续一帧（纯视觉）
         for e in hurt {
             state.hurt_at.insert(e, tick);
@@ -192,7 +212,7 @@ fn emit_anim_events(world: &mut World) {
         return;
     };
     let (Some(skin), Some(clips)) = (
-        world.resources.get::<skin::SkinAssets>(),
+        skin::SkinView::selected(world),
         world.resources.get::<Assets<AnimationClip>>(),
     ) else {
         return;
@@ -303,7 +323,7 @@ fn enemy_pose_with(
 /// 敌人 `e` 当前的皮肤片段名与已播放 tick（与绘制、动画事件同一规则）；不是存活敌人或皮肤未加载时为 `None`。
 #[must_use]
 pub fn enemy_pose(world: &World, e: Entity) -> Option<(String, u64)> {
-    let skin = world.resources.get::<skin::SkinAssets>()?;
+    let skin = skin::SkinView::selected(world)?;
     let clips = world.resources.get::<Assets<AnimationClip>>()?;
     let tick = world.resources.get::<Time>()?.fixed_tick;
     let factor = chill_bite_factor(world);
@@ -521,35 +541,134 @@ fn draw_background(world: &World, list: &mut DrawList) {
     );
 }
 
-/// 防御者当前应播放的片段与已播放 tick（SPEC 12.3：idle；射手发射后 attack 一次；咬夹草咀嚼时
-/// 循环 attack；块茎雷武装后 armed）。只读模拟组件。
-fn defender_pose(
+/// 计时器驱动片段的已播放 tick（ART-SPEC 3.1，ADR-014）：`since` 为计时器本周期已经过的 tick，
+/// `duration` 为周期。片段不短于周期时按进度映射（`since / duration × 片段长`，garden 皮肤的片段长 =
+/// 规则时长，即逐 tick 对应）；更短的片段（`default` 皮肤的 18 tick 一次性 attack）从周期起点播放一次。
+/// 已播放完时返回 `None`（调用方改用 idle）。
+#[must_use]
+pub fn timed_elapsed(since: u32, duration: u32, clip_ticks: u64) -> Option<u64> {
+    let since = u64::from(since.min(duration.saturating_sub(1)));
+    let elapsed = if clip_ticks >= u64::from(duration) {
+        since * clip_ticks / u64::from(duration.max(1))
+    } else {
+        since
+    };
+    (elapsed < clip_ticks).then_some(elapsed)
+}
+
+/// 计时器本周期已经过的 tick。
+fn timer_since(t: &Timer) -> u32 {
+    t.duration.saturating_sub(t.remaining)
+}
+
+/// 防御者的模拟状态（只读）。
+#[derive(Clone, Copy, Default)]
+struct DefenderTimers<'a> {
+    shooter: Option<&'a Shooter>,
+    producer: Option<&'a Producer>,
+    mine: Option<&'a Mine>,
+    blast: Option<&'a Blast>,
+    gust: Option<&'a Gust>,
+    chomper: Option<&'a Chomper>,
+}
+
+/// 防御者当前应播放的片段与已播放 tick（SPEC 12.3，ART-SPEC 2.4 / 3.1）。计时类片段由对应计时器的
+/// 进度驱动（与裁决（四）的啃食相同）：`attack` ← 射手冷却（就绪且无目标时回到 idle）、`produce` ←
+/// 生产周期、`arm` ← 武装计时、`fuse` ← 引信；块茎雷武装后 `armed`、咬夹草咀嚼时循环 `attack`、其余
+/// idle 按游戏时钟。`hurt` 为真且皮肤有 `<id>_hurt_<片段>` 时用受损版本。
+fn defender_pose_with(
     sk: &Painter<'_>,
     id: &str,
     e: Entity,
     tick: u64,
-    shooter: Option<&Shooter>,
-    chomper: Option<&Chomper>,
-    mine: Option<&Mine>,
+    hurt: bool,
+    timers: DefenderTimers<'_>,
 ) -> (String, u64) {
-    let attack = format!("{id}_attack");
-    if let Some(s) = shooter
-        && !s.timer.finished()
-        && let Some(len) = sk.ticks(&attack)
-    {
-        let since = u64::from(s.timer.duration.saturating_sub(s.timer.remaining));
-        if since < len {
-            return (attack, since);
+    let name = |act: &str| {
+        let damaged = format!("{id}_hurt_{act}");
+        if hurt && sk.has(&damaged) {
+            damaged
+        } else {
+            format!("{id}_{act}")
         }
+    };
+    let timed = |act: &str, t: &Timer| {
+        let clip = name(act);
+        let len = sk.ticks(&clip)?;
+        timed_elapsed(timer_since(t), t.duration, len).map(|el| (clip, el))
+    };
+    let pick = timers
+        .shooter
+        .filter(|s| !s.timer.finished())
+        .and_then(|s| timed("attack", &s.timer))
+        .or_else(|| timers.producer.and_then(|p| timed("produce", &p.timer)))
+        .or_else(|| {
+            timers
+                .mine
+                .filter(|m| !m.armed)
+                .and_then(|m| timed("arm", &m.arm))
+        })
+        .or_else(|| timers.blast.and_then(|b| timed("fuse", &b.fuse)))
+        .or_else(|| timers.gust.and_then(|g| timed("fuse", &g.fuse)));
+    if let Some(pose) = pick {
+        return pose;
     }
-    if chomper.is_some_and(|c| c.state == ChompState::Chewing) && sk.has(&attack) {
-        return (attack, phase(e, tick));
+    let looped = |act: &str| {
+        let clip = name(act);
+        sk.has(&clip).then(|| (clip, phase(e, tick)))
+    };
+    if timers
+        .chomper
+        .is_some_and(|c| c.state == ChompState::Chewing)
+        && let Some(pose) = looped("attack")
+    {
+        return pose;
     }
-    let armed = format!("{id}_armed");
-    if mine.is_some_and(|m| m.armed) && sk.has(&armed) {
-        return (armed, phase(e, tick));
+    if timers.mine.is_some_and(|m| m.armed)
+        && let Some(pose) = looped("armed")
+    {
+        return pose;
     }
-    (format!("{id}_idle"), phase(e, tick))
+    (name("idle"), phase(e, tick))
+}
+
+/// 防御者 `e` 当前的皮肤片段名与已播放 tick（与绘制同一规则）；不在皮肤模式、或不是存活的地面防御者时为 `None`。
+#[must_use]
+pub fn defender_pose(world: &World, e: Entity) -> Option<(String, u64)> {
+    let painter = Painter::active(world)?;
+    let tick = world.resources.get::<Time>()?.fixed_tick;
+    let mut query = world.entities.query_one::<(
+        &DefenderRef,
+        &Health,
+        Option<&Shooter>,
+        Option<&Producer>,
+        Option<&Mine>,
+        Option<&Blast>,
+        Option<&Gust>,
+        Option<&Chomper>,
+    )>(e);
+    let (d, h, shooter, producer, mine, blast, gust, chomper) = query.get().ok()?;
+    let timers = DefenderTimers {
+        shooter,
+        producer,
+        mine,
+        blast,
+        gust,
+        chomper,
+    };
+    Some(defender_pose_with(
+        &painter,
+        d.id.as_str(),
+        e,
+        tick,
+        defender_hurt(h),
+        timers,
+    ))
+}
+
+/// 防御者是否处于受损阶段（ART-SPEC 2.4 / 4.1：如石籽荚 hp ≤ 3 / 6）。
+fn defender_hurt(h: &Health) -> bool {
+    h.hp * 2 <= h.max
 }
 
 fn draw_defenders(
@@ -559,8 +678,9 @@ fn draw_defenders(
     tick: u64,
     painter: Option<&Painter<'_>>,
 ) {
+    let hurt_at = world.resources.get::<RenderState>();
     // 地面防御者
-    for (e, t, p, h, cell, d, shooter, chomper, mine) in world
+    for (e, t, p, h, cell, d, shooter, producer, mine, blast, gust, chomper) in world
         .query::<(
             Entity,
             &Transform2D,
@@ -569,8 +689,11 @@ fn draw_defenders(
             &Cell,
             &DefenderRef,
             Option<&Shooter>,
-            Option<&Chomper>,
+            Option<&Producer>,
             Option<&Mine>,
+            Option<&Blast>,
+            Option<&Gust>,
+            Option<&Chomper>,
         )>()
         .without::<&OverlayOf>()
         .iter()
@@ -581,16 +704,29 @@ fn draw_defenders(
         let y = row_y(cell.row);
         let pos = t.lerp(alpha);
         if let Some(sk) = painter {
-            let (clip, elapsed) = defender_pose(sk, d.id.as_str(), e, tick, shooter, chomper, mine);
-            let tint = if h.hp * 2 < h.max {
+            let timers = DefenderTimers {
+                shooter,
+                producer,
+                mine,
+                blast,
+                gust,
+                chomper,
+            };
+            let hurt = defender_hurt(h);
+            let (clip, elapsed) = defender_pose_with(sk, d.id.as_str(), e, tick, hurt, timers);
+            // 有受损变体时由造型表达受损（ART-SPEC 2.4），否则沿用低生命着色
+            let tint = if h.hp * 2 < h.max && !clip.contains("_hurt_") {
                 color(palette::LOW_HP_TINT)
             } else {
                 Color::WHITE
             };
+            let flash = hurt_at
+                .and_then(|s| s.hurt_at.get(&e))
+                .is_some_and(|&at| tick.saturating_sub(at) < HURT_FLASH_TICKS);
             let pose = Pose {
                 clip: &clip,
                 elapsed,
-                flash: false,
+                flash,
                 tint,
             };
             if sk.draw(list, WORLD, skin::foot(pos), y, pose) {
@@ -863,5 +999,30 @@ fn debug_shapes(world: &mut World) {
         );
         debug.rect(rect, color(0xE7_4C3C));
         debug.text(rect.min - Vec2::new(0.0, 16.0), format!("x {x:.0} hp {hp}"));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn timed_elapsed_maps_progress_or_plays_short_clips_once() {
+        // garden：片段长 = 周期，逐 tick 对应；片段更长时按进度缩放
+        assert_eq!(timed_elapsed(0, 85, 85), Some(0));
+        assert_eq!(timed_elapsed(84, 85, 85), Some(84));
+        assert_eq!(timed_elapsed(720, 1440, 2880), Some(1440));
+        // 计时器已到期（remaining = 0，since = duration）时停在末帧而不越界
+        assert_eq!(timed_elapsed(900, 900, 900), Some(899));
+        // default：18 tick 的一次性 attack 从周期起点播放一次，之后回到 idle
+        assert_eq!(timed_elapsed(17, 85, 18), Some(17));
+        assert_eq!(timed_elapsed(18, 85, 18), None);
+    }
+
+    #[test]
+    fn eat_elapsed_follows_effective_interval() {
+        assert_eq!(eat_elapsed(50, 60, 60), 50);
+        assert_eq!(eat_elapsed(100, 120, 60), 50, "Chill 下间隔翻倍，相位减半");
+        assert_eq!(eat_elapsed(200, 60, 60), 59, "超出间隔时钳在末 tick");
     }
 }
