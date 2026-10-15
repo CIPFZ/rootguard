@@ -3,6 +3,13 @@ AnimationClip(
     name: "barkwall_idle",
     looping: true,
     frames: [
-        (frame: "barkwall_idle_0", ticks: 120),
+        (frame: "barkwall_idle_0", ticks: 15),
+        (frame: "barkwall_idle_1", ticks: 15),
+        (frame: "barkwall_idle_2", ticks: 15),
+        (frame: "barkwall_idle_3", ticks: 15),
+        (frame: "barkwall_idle_4", ticks: 15),
+        (frame: "barkwall_idle_5", ticks: 15),
+        (frame: "barkwall_idle_6", ticks: 15),
+        (frame: "barkwall_idle_7", ticks: 15),
     ],
 )

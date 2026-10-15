@@ -1,0 +1,12 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "snapmaw_snap",
+    looping: false,
+    frames: [
+        (frame: "snapmaw_snap_0", ticks: 3),
+        (frame: "snapmaw_snap_1", ticks: 3),
+        (frame: "snapmaw_snap_2", ticks: 3),
+        (frame: "snapmaw_snap_3", ticks: 2),
+        (frame: "snapmaw_snap_4", ticks: 1, event: "gulp"),
+    ],
+)

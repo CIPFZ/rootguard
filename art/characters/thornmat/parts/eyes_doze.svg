@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 64">
+  <!-- 打盹（ART-SPEC 4.6） -->
+  <!-- 无敌人时打盹（ART-SPEC 4.6）：闭着眼，嘴角仍是坏笑 -->
+  <g fill="none" stroke="@outline" stroke-width="2.2" stroke-linecap="round">
+    <path d="M65 41 Q70 43.5 75.5 41"/><path d="M80 40.5 Q85 43 90.5 40.5"/>
+  </g>
+</svg>

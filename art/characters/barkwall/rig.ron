@@ -8,7 +8,7 @@ Rig(
         (name: "stump", pivot: (64, 118), z: 1),
         (name: "cracks", parent: Some("stump"), pivot: (86, 50), z: 2, variants: ["deep"], hidden: true),
         (name: "moss", parent: Some("stump"), pivot: (55, 40), z: 3),
-        (name: "eyes", parent: Some("stump"), pivot: (66, 70), z: 4, variants: ["wide"]),
+        (name: "eyes", parent: Some("stump"), pivot: (66, 70), z: 4, variants: ["wide", "glance"]),
         (name: "mouth", parent: Some("stump"), pivot: (66, 92), z: 5),
     ],
     // ART-SPEC 2.4：3 级（hp > 2/3 完好、> 1/3 裂纹、其余重裂）；第 3 级苔藓掉落、眼睛更大（4.3）

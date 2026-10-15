@@ -1,4 +1,5 @@
-// 咬夹草 Snapmaw（ART-SPEC 4.10）：粗茎顶着横向大嘴荚、圆钝叶齿、饥饿的眼长在荚顶、一滴露水口水、两片短叶当手。
+// 咬夹草 Snapmaw（ART-SPEC 4.10）：粗茎顶着横向大嘴荚（上下荚瓣绕后端铰接）、圆钝叶齿、嵌在荚面的饥饿眼、
+// 一滴露水口水、两片短叶当手。张嘴角度 ≤ 45°（裁决七第 1 节：不张成竖直大口）。
 Rig(
     kind: Guardian,
     rest: "idle",
@@ -6,8 +7,12 @@ Rig(
     parts: [
         (name: "shadow", pivot: (60, 120), z: 0),
         (name: "stem", pivot: (56, 120), z: 1),
-        (name: "head", pivot: (56, 70), z: 2),
-        (name: "eyes", parent: Some("head"), pivot: (72, 44), z: 3),
-        (name: "drool", parent: Some("head"), pivot: (98, 69), z: 4),
+        (name: "head", pivot: (56, 70), z: 2, hidden: true),
+        (name: "maw_lower", parent: Some("jaw_lower"), pivot: (28, 60), z: 2),
+        (name: "maw_upper", parent: Some("jaw_upper"), pivot: (26, 57), z: 2),
+        (name: "jaw_lower", parent: Some("head"), pivot: (28, 60), z: 3),
+        (name: "jaw_upper", parent: Some("head"), pivot: (26, 57), z: 4),
+        (name: "eyes", parent: Some("jaw_upper"), pivot: (72, 44), z: 5, variants: ["content"]),
+        (name: "drool", parent: Some("jaw_lower"), pivot: (98, 69), z: 6),
     ],
 )

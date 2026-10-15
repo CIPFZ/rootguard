@@ -1,0 +1,17 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "twinpod_attack",
+    looping: true,
+    frames: [
+        (frame: "twinpod_attack_0", ticks: 6, event: "fire"),
+        (frame: "twinpod_attack_1", ticks: 6, event: "fire"),
+        (frame: "twinpod_attack_2", ticks: 6),
+        (frame: "twinpod_attack_3", ticks: 6),
+        (frame: "twinpod_attack_4", ticks: 12),
+        (frame: "twinpod_attack_5", ticks: 12),
+        (frame: "twinpod_attack_6", ticks: 12),
+        (frame: "twinpod_attack_7", ticks: 8),
+        (frame: "twinpod_attack_8", ticks: 8),
+        (frame: "twinpod_attack_9", ticks: 9),
+    ],
+)

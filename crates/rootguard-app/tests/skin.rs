@@ -628,3 +628,77 @@ fn garden_background_drawn_with_lane_mask() {
         .count();
     assert_eq!(masks, 4, "1-1 的 4 条非激活车道应各有一条遮罩");
 }
+
+/// ART-SPEC 3.1 / 4.6 / 4.10：咬夹草吞食后先播 snap（咀嚼计时器前 12 tick）再循环 chew、就绪时 idle；
+/// 荆棘垫格内有敌人时播 trigger（相位 = 扎刺计时器），否则 idle。测试直接给足 Dew（只为放置）。
+#[test]
+fn chomper_and_spikes_clips_follow_state() {
+    use rootguard_core::components::{Chomper, DefenderRef, Spikes};
+    use rootguard_core::resources::BattleState;
+    let mut runner = common::battle_runner("1-9", &["snapmaw", "thornmat"]);
+    while state(&runner).is_some_and(|s| s.phase != Phase::Playing) {
+        runner.frame();
+    }
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    let mut seen = std::collections::BTreeSet::new();
+    for _ in 0..9000 {
+        let s = state(&runner).expect("对局");
+        {
+            let world = runner.app_mut().world_mut();
+            world.resources.expect_mut::<BattleState>().dew = 9990;
+            for card in &mut world
+                .resources
+                .expect_mut::<rootguard_core::resources::CardTray>()
+                .cards
+            {
+                card.cooldown.remaining = 0;
+            }
+        }
+        // 每个 tick 放一张：第 30 ～ 39 tick 依次在 5 条车道放咬夹草（第 6 列）与荆棘垫（第 7 列）
+        if (30..40).contains(&s.level_tick) {
+            let k = s.level_tick - 30;
+            let row = (k / 2) as u8;
+            let (slot, col) = if k.is_multiple_of(2) { (0, 6) } else { (1, 7) };
+            send(&mut runner, UiAction::SelectCard(slot));
+            send(&mut runner, UiAction::PlaceAt { row, col });
+        }
+        runner.frame();
+        let world = runner.app().world();
+        for (e, c, _) in world.query::<(Entity, &Chomper, &DefenderRef)>().iter() {
+            let (name, elapsed) = rootguard_app::render::defender_pose(world, e).expect("姿态");
+            let since = u64::from(c.chew.duration - c.chew.remaining);
+            let expect = match c.state {
+                rootguard_core::components::ChompState::Chewing if since < 12 => "snapmaw_snap",
+                rootguard_core::components::ChompState::Chewing => "snapmaw_chew",
+                _ => "snapmaw_idle",
+            };
+            assert_eq!(name, expect);
+            if expect == "snapmaw_snap" {
+                assert_eq!(elapsed, since, "snap 相位应为吞食后经过的 tick");
+            }
+            seen.insert(expect);
+        }
+        for (e, sp, _) in world.query::<(Entity, &Spikes, &DefenderRef)>().iter() {
+            let (name, elapsed) = rootguard_app::render::defender_pose(world, e).expect("姿态");
+            if name == "thornmat_trigger" {
+                assert_eq!(elapsed, u64::from(sp.timer.duration - sp.timer.remaining));
+            } else {
+                assert_eq!(name, "thornmat_idle");
+            }
+            seen.insert(if name == "thornmat_trigger" {
+                "thornmat_trigger"
+            } else {
+                "thornmat_idle"
+            });
+        }
+        if seen.len() == 5 {
+            break;
+        }
+    }
+    assert_eq!(
+        seen.len(),
+        5,
+        "应观察到 snap / chew / idle 与 trigger / idle（{seen:?}）"
+    );
+}

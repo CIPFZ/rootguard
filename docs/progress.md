@@ -91,6 +91,11 @@
   主色只报告。详见 ADR-015 第 3 条。
 - [x] 前置 2：弹丸 `pebble`（灰色小石子、微旋转）、`frost_pebble`（冰蓝冰石 + 3 帧白雾尾）与 Dew（金色水滴 + 呼吸
   光晕；下落时左右摆、过期前 180 tick 闪烁，ART-SPEC 6），图集 `garden_fx`。
+- [x] 第 1 类 守卫 attack / 战斗类（2026-10-16，ADR-016 第 1 节）：霜籽荚 idle（发抖）/ attack（O 嘴）；双籽荚 idle
+  （两荚反相呼吸、互瞪）/ attack（前荚 0、后荚 6 = `volley_gap_ticks` 发射，`artgen` 校验）；咬夹草拆成上下荚瓣，
+  idle / snap（张嘴 44° ≤ 45°，gulp 在 11）/ chew；荆棘垫 idle（打盹）/ trigger（绑定 `spikes.interval_ticks`，prick 在 0）；
+  树皮墙 idle（偶尔瞟眼）。游戏侧：snap / chew / trigger 的状态选择、被啃 2 px 抖动。帧条（逐帧合成在战场底图上，
+  `artgen strip`）：`docs/screenshots/a2-attack.png`。测试 `chomper_and_spikes_clips_follow_state`。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 

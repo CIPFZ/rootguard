@@ -7,8 +7,8 @@ Rig(
         (name: "shadow", pivot: (64, 120), z: 0),
         (name: "stem", pivot: (64, 120), z: 1),
         (name: "back_body", pivot: (42, 84), z: 2),
-        (name: "back_face", parent: Some("back_body"), pivot: (50, 75), z: 3),
+        (name: "back_face", parent: Some("back_body"), pivot: (50, 75), z: 3, variants: ["fire", "glare"]),
         (name: "front_body", pivot: (80, 114), z: 4),
-        (name: "front_face", parent: Some("front_body"), pivot: (86, 88), z: 5),
+        (name: "front_face", parent: Some("front_body"), pivot: (86, 88), z: 5, variants: ["fire", "glare"]),
     ],
 )

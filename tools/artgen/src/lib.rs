@@ -153,6 +153,23 @@ pub fn check_events(rules: &Rules, id: &str, clip: &ClipDef, ticks: &[u32]) -> R
     }
     if clip.name == "attack" {
         let volley = rules.volley(id).unwrap_or(1) as usize;
+        // 第 k 枚弹丸在计时器重置后 k × volley_gap_ticks 生成（SPEC 7.2 Shooter），fire 帧须同 tick（ADR-014）
+        let gap = rules
+            .value(&format!("defenders.{id}.shooter.volley_gap_ticks"))
+            .unwrap_or(0);
+        let mut fires: Vec<u32> = clip
+            .events
+            .iter()
+            .filter(|(_, e)| e == FIRE)
+            .map(|(t, _)| *t)
+            .collect();
+        fires.sort_unstable();
+        let expected: Vec<u32> = (0..volley as u32).map(|k| k * gap).collect();
+        if count(FIRE) == volley && fires != expected {
+            bail!(
+                "{id}.attack：fire 应在 tick {expected:?}（k × volley_gap_ticks），实际 {fires:?}"
+            );
+        }
         if count(FIRE) != volley {
             bail!(
                 "{id}.attack：{FIRE} 事件 {} 个，应等于连发数 {volley}（ART-SPEC 9.2）",

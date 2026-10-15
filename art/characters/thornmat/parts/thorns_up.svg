@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 64">
+  <!-- 有敌人在格内时刺“竖起”（ART-SPEC 4.6） -->
+  <g fill="@thorn" stroke="@outline" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M26 41 L23 29 L33 37 Z"/>
+    <path d="M37 36 L36 22 L45 33 Z"/>
+    <path d="M51 34 L52 19 L59 31 Z"/>
+    <path d="M65 33 L68 18 L73 31 Z"/>
+    <path d="M79 33 L83 19 L87 32 Z"/>
+    <path d="M92 35 L97 23 L100 35 Z"/>
+    <path d="M101 40 L107 31 L106 41 Z"/>
+  </g>
+</svg>

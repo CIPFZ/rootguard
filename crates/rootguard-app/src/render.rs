@@ -8,8 +8,8 @@ use std::collections::{BTreeMap, HashMap};
 use rootguard_core::Grid;
 use rootguard_core::components::{
     Armor, Biter, Blast, Cell, ChompState, Chomper, DefenderRef, DewPickup, EnemyRef, Gust, Health,
-    Mine, OverlayOf, Placeholder, Producer, ProjectileBody, ProjectileRef, Shooter, StatusEffects,
-    WalkState, Walker,
+    Mine, OverlayOf, Placeholder, Producer, ProjectileBody, ProjectileRef, Shooter, Spikes,
+    StatusEffects, WalkState, Walker,
 };
 use rootguard_core::data::{ArmorKind, Rules};
 use rootguard_core::events::EnemyDamaged;
@@ -661,6 +661,9 @@ struct DefenderTimers<'a> {
     blast: Option<&'a Blast>,
     gust: Option<&'a Gust>,
     chomper: Option<&'a Chomper>,
+    spikes: Option<&'a Spikes>,
+    /// 格内是否有存活敌人（荆棘垫的 `trigger`，与模拟的 Spikes 判定相同：`Grid::enemy_overlaps_cols`）。
+    occupied: bool,
 }
 
 /// 防御者当前应播放的片段与已播放 tick（SPEC 12.3，ART-SPEC 2.4 / 3.1）。计时类片段由对应计时器的
@@ -700,7 +703,25 @@ fn defender_pose_with(
                 .and_then(|m| timed("arm", &m.arm))
         })
         .or_else(|| timers.blast.and_then(|b| timed("fuse", &b.fuse)))
-        .or_else(|| timers.gust.and_then(|g| timed("fuse", &g.fuse)));
+        .or_else(|| timers.gust.and_then(|g| timed("fuse", &g.fuse)))
+        .or_else(|| {
+            timers
+                .spikes
+                .filter(|_| timers.occupied)
+                .and_then(|sp| timed("trigger", &sp.timer))
+        })
+        .or_else(|| {
+            // 咬夹草：吞食后咀嚼计时器的前 `snap` 长度内播放 snap（由吞食触发，ART-SPEC 3.1）
+            timers
+                .chomper
+                .filter(|c| c.state == ChompState::Chewing)
+                .and_then(|c| {
+                    let clip = name("snap");
+                    let len = sk.ticks(&clip)?;
+                    let since = u64::from(timer_since(&c.chew));
+                    (since < len).then_some((clip, since))
+                })
+        });
     if let Some(pose) = pick {
         return pose;
     }
@@ -711,7 +732,7 @@ fn defender_pose_with(
     if timers
         .chomper
         .is_some_and(|c| c.state == ChompState::Chewing)
-        && let Some(pose) = looped("attack")
+        && let Some(pose) = looped("chew").or_else(|| looped("attack"))
     {
         return pose;
     }
@@ -731,14 +752,16 @@ pub fn defender_pose(world: &World, e: Entity) -> Option<(String, u64)> {
     let mut query = world.entities.query_one::<(
         &DefenderRef,
         &Health,
+        &Cell,
         Option<&Shooter>,
         Option<&Producer>,
         Option<&Mine>,
         Option<&Blast>,
         Option<&Gust>,
         Option<&Chomper>,
+        Option<&Spikes>,
     )>(e);
-    let (d, h, shooter, producer, mine, blast, gust, chomper) = query.get().ok()?;
+    let (d, h, cell, shooter, producer, mine, blast, gust, chomper, spikes) = query.get().ok()?;
     let timers = DefenderTimers {
         shooter,
         producer,
@@ -746,6 +769,8 @@ pub fn defender_pose(world: &World, e: Entity) -> Option<(String, u64)> {
         blast,
         gust,
         chomper,
+        spikes,
+        occupied: cell_occupied(&enemy_positions(world), *cell),
     };
     Some(defender_pose_with(
         &painter,
@@ -755,6 +780,40 @@ pub fn defender_pose(world: &World, e: Entity) -> Option<(String, u64)> {
         defender_hurt(h),
         timers,
     ))
+}
+
+/// 受伤抖动的幅度（px，ART-SPEC 4.3）。
+const HURT_SHAKE_PX: f32 = 2.0;
+
+/// 受伤抖动：逐 tick 左右交替。
+fn hurt_shake(tick: u64) -> f32 {
+    if tick.is_multiple_of(2) {
+        HURT_SHAKE_PX
+    } else {
+        -HURT_SHAKE_PX
+    }
+}
+
+/// 存活敌人的 (车道, x)。
+fn enemy_positions(world: &World) -> Vec<(u8, f32)> {
+    world
+        .query::<(
+            &Transform2D,
+            &Health,
+            &rootguard_core::components::Lane,
+            &EnemyRef,
+        )>()
+        .iter()
+        .filter(|(_, h, _, _)| h.alive())
+        .map(|(t, _, l, _)| (l.row, t.pos.x))
+        .collect()
+}
+
+/// 格内是否有存活敌人（与模拟 Spikes 的判定相同，SPEC 7.2）。
+fn cell_occupied(enemies: &[(u8, f32)], cell: Cell) -> bool {
+    enemies
+        .iter()
+        .any(|&(row, x)| row == cell.row && Grid::enemy_overlaps_cols(x, cell.col, 0, 0))
 }
 
 /// 防御者是否处于受损阶段（ART-SPEC 2.4 / 4.1：如石籽荚 hp ≤ 3 / 6）。
@@ -770,8 +829,9 @@ fn draw_defenders(
     painter: Option<&Painter<'_>>,
 ) {
     let hurt_at = world.resources.get::<RenderState>();
+    let enemies = enemy_positions(world);
     // 地面防御者
-    for (e, t, p, h, cell, d, shooter, producer, mine, blast, gust, chomper) in world
+    for (e, t, p, h, cell, d, shooter, producer, mine, blast, gust, chomper, spikes) in world
         .query::<(
             Entity,
             &Transform2D,
@@ -785,6 +845,7 @@ fn draw_defenders(
             Option<&Blast>,
             Option<&Gust>,
             Option<&Chomper>,
+            Option<&Spikes>,
         )>()
         .without::<&OverlayOf>()
         .iter()
@@ -802,6 +863,8 @@ fn draw_defenders(
                 blast,
                 gust,
                 chomper,
+                spikes,
+                occupied: cell_occupied(&enemies, *cell),
             };
             let hurt = defender_hurt(h);
             let (clip, elapsed) = defender_pose_with(sk, d.id.as_str(), e, tick, hurt, timers);
@@ -820,7 +883,15 @@ fn draw_defenders(
                 flash,
                 tint,
             };
-            if sk.draw(list, WORLD, skin::foot(pos), y, pose) {
+            // 受伤时左右抖 2 px（ART-SPEC 4.3 / 4.9“被啃时轻微抖动”），与闪白同时长
+            let shake = if flash { hurt_shake(tick) } else { 0.0 };
+            if sk.draw(
+                list,
+                WORLD,
+                skin::foot(pos) + Vec2::new(shake, 0.0),
+                y,
+                pose,
+            ) {
                 continue;
             }
         }

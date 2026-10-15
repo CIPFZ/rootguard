@@ -1,4 +1,44 @@
-// A1：只有默认位姿（静态），动画在 A2。
+// 霜籽荚片段（ART-SPEC 3.1 / 4.4）。tick 为片段内时间。
 Clips([
-    (name: "idle", looping: true, duration: Ticks(120), frames: Every(120)),
+    // idle 90：发抖（1 px 高频左右抖）+ 呼吸；霜晶上下浮动
+    (
+        name: "idle",
+        looping: true,
+        duration: Ticks(90),
+        frames: Every(6),
+        keys: {
+            "body": [
+                (t: 0, dx: -1, ease: Step), (t: 6, dx: 1, ease: Step), (t: 12, dx: -1, ease: Step),
+                (t: 18, dx: 1, sx: 0.995, sy: 1.015, ease: Step), (t: 24, dx: -1, sx: 0.99, sy: 1.025, ease: Step),
+                (t: 30, dx: 1, sx: 0.99, sy: 1.03, ease: Step), (t: 36, dx: -1, sx: 0.99, sy: 1.03, ease: Step),
+                (t: 42, dx: 1, sx: 0.99, sy: 1.025, ease: Step), (t: 48, dx: -1, sx: 0.995, sy: 1.015, ease: Step),
+                (t: 54, dx: 1, ease: Step), (t: 60, dx: -1, ease: Step), (t: 66, dx: 1, ease: Step),
+                (t: 72, dx: -1, ease: Step), (t: 78, dx: 1, ease: Step), (t: 84, dx: -1, ease: Step),
+            ],
+            "crystals": [(t: 0), (t: 45, dy: -3), (t: 90)],
+        },
+    ),
+    // attack：时长 = Shooter.interval_ticks，相位由射手计时器驱动；节奏同石籽荚（fire 在 0，ADR-014）
+    (
+        name: "attack",
+        looping: true,
+        duration: Rule("defenders.frostpod.shooter.interval_ticks"),
+        frames: List([4, 4, 4, 12, 12, 12, 12, 8, 8, 9]),
+        events: [(0, "fire")],
+        keys: {
+            "body": [
+                (t: 0, dx: 3, rot: 7, ease: Linear),
+                (t: 4, dx: -1, rot: -3, ease: Linear),
+                (t: 8, rot: 1, ease: Linear),
+                (t: 12, dx: -1, ease: Step), (t: 24, dx: 1, ease: Step), (t: 36, dx: -1, ease: Step), (t: 48, dx: 1, ease: Step),
+                (t: 59, ease: Linear),
+                (t: 60, dx: -2, rot: -2, ease: Linear),
+                (t: 76, dx: -6, rot: -6),
+            ],
+            "crystals": [(t: 0, dy: -4, ease: Linear), (t: 12, dy: 0), (t: 60), (t: 76, dy: 2)],
+        },
+        swaps: {
+            "mouth": [(0, "o"), (4, "base")],
+        },
+    ),
 ])

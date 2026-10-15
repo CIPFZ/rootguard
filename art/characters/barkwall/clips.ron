@@ -1,4 +1,12 @@
-// A1：只有默认位姿（静态），动画在 A2。
+// 树皮墙片段（ART-SPEC 3.1 / 4.3）：idle 120，极轻微呼吸，偶尔眼珠左右瞟（受损状态的变体优先，split 时不瞟）。
+// 被啃时的抖动由渲染层对受伤做 2 px 偏移（ADR-016）。
 Clips([
-    (name: "idle", looping: true, duration: Ticks(120), frames: Every(120)),
+    (
+        name: "idle",
+        looping: true,
+        duration: Ticks(120),
+        frames: Every(15),
+        keys: { "stump": [(t: 0), (t: 60, sy: 1.012), (t: 120)] },
+        swaps: { "eyes": [(0, "base"), (75, "glance"), (105, "base")] },
+    ),
 ])

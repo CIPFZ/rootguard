@@ -27,6 +27,8 @@ pub enum Kind {
     Projectile,
     /// 露水。
     Dew,
+    /// 特效（ART-SPEC 7），画布宽 × 高按特效清单。
+    Fx(u32, u32),
 }
 
 impl Kind {
@@ -41,6 +43,7 @@ impl Kind {
             Self::HuskSmall => (96, 96),
             Self::Projectile => (32, 32),
             Self::Dew => (48, 48),
+            Self::Fx(w, h) => (w, h),
         }
     }
 
@@ -51,7 +54,7 @@ impl Kind {
             Self::Guardian | Self::Overlay => (0.5, 0.94),
             Self::GuardianGround => (0.5, 0.80),
             Self::Husk | Self::HuskLarge | Self::HuskSmall => (0.5, 0.95),
-            Self::Projectile | Self::Dew => (0.5, 0.5),
+            Self::Projectile | Self::Dew | Self::Fx(..) => (0.5, 0.5),
         }
     }
 
@@ -61,7 +64,7 @@ impl Kind {
         match self {
             Self::Guardian | Self::GuardianGround | Self::Overlay => Material::Guardian,
             Self::Husk | Self::HuskLarge | Self::HuskSmall => Material::Husk,
-            Self::Projectile | Self::Dew => Material::Prop,
+            Self::Projectile | Self::Dew | Self::Fx(..) => Material::Prop,
         }
     }
 
@@ -71,7 +74,7 @@ impl Kind {
         match self {
             Self::Guardian | Self::GuardianGround | Self::Overlay => "garden_defenders",
             Self::Husk | Self::HuskLarge | Self::HuskSmall => "garden_husks",
-            Self::Projectile | Self::Dew => "garden_fx",
+            Self::Projectile | Self::Dew | Self::Fx(..) => "garden_fx",
         }
     }
 
@@ -90,7 +93,7 @@ impl Kind {
             Self::Husk => (128, 130),
             Self::HuskLarge => (176, 150),
             Self::HuskSmall => (96, 60),
-            Self::Projectile | Self::Dew => self.canvas(),
+            Self::Projectile | Self::Dew | Self::Fx(..) => self.canvas(),
         }
     }
 }

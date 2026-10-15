@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- idle 偶尔眼珠左右瞟（ART-SPEC 4.3） -->
+  <g stroke="@outline" stroke-width="2.6">
+    <ellipse cx="54" cy="70" rx="8.5" ry="9.5" fill="@dew_glow"/>
+    <ellipse cx="77" cy="70" rx="8.5" ry="9.5" fill="@dew_glow"/>
+  </g>
+  <circle cx="50.5" cy="71" r="3" fill="@outline"/><circle cx="73.5" cy="71" r="3" fill="@outline"/>
+  <circle cx="51.5" cy="69.8" r="1" fill="@dew_glow"/><circle cx="74.5" cy="69.8" r="1" fill="@dew_glow"/>
+  <g fill="none" stroke="@outline" stroke-width="3.2" stroke-linecap="round">
+    <path d="M46 57 Q51 53 59 56"/><path d="M71 56 Q79 53 85 57"/>
+  </g>
+</svg>

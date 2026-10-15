@@ -75,6 +75,7 @@ impl Rules {
                 "attack" => "shooter.interval_ticks",
                 "produce" => "producer.interval_ticks",
                 "arm" => "mine.arm_ticks",
+                "trigger" => "spikes.interval_ticks",
                 "fuse"
                     if def
                         .behaviors

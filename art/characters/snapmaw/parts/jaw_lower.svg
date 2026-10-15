@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 下荚瓣（ART-SPEC 4.10） -->
+  <path d="M28 60 C40 61 58 61 74 62 C86 63 96 65 103 68 C98 76 86 82 68 82 C50 82 36 74 28 60 Z" fill="@leaf_dark"/>
+  <path d="M28 60 C40 61 58 61 74 62 C60 64 46 68 40 72 C34 68 30 64 28 60 Z" fill="@leaf_dark.shade"/>
+  <g fill="@leaf" stroke="@outline" stroke-width="1.7" stroke-linejoin="round">
+    <path d="M70 62.4 C71 59.4 74.6 59.6 75.6 62.8 Z"/><path d="M84 64 C85 61.1 88.6 61.4 89.6 64.6 Z"/>
+  </g>
+  <path d="M28 60 C40 61 58 61 74 62 C86 63 96 65 103 68 C98 76 86 82 68 82 C50 82 36 74 28 60 Z" fill="none" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M40 70 C52 77 68 78 84 76" fill="none" stroke="@leaf" stroke-width="2" stroke-linecap="round"/>
+</svg>

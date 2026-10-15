@@ -1,4 +1,40 @@
-// A1：只有默认位姿（静态），动画在 A2。
+// 双籽荚片段（ART-SPEC 3.1 / 4.5）。tick 为片段内时间。
 Clips([
-    (name: "idle", looping: true, duration: Ticks(120), frames: Every(120)),
+    // idle 180：两荚呼吸相位相反（各 90 一周期），第 2 个周期互相瞪一眼
+    (
+        name: "idle",
+        looping: true,
+        duration: Ticks(180),
+        frames: Every(10),
+        keys: {
+            "front_body": [(t: 0), (t: 45, sx: 0.99, sy: 1.035), (t: 90), (t: 135, sx: 0.99, sy: 1.035), (t: 180)],
+            "back_body": [(t: 0, sx: 0.99, sy: 1.035), (t: 45), (t: 90, sx: 0.99, sy: 1.035), (t: 135), (t: 180, sx: 0.99, sy: 1.035)],
+        },
+        swaps: {
+            "front_face": [(0, "base"), (110, "glare"), (140, "base")],
+            "back_face": [(0, "base"), (120, "glare"), (150, "base")],
+        },
+    ),
+    // attack：时长 = Shooter.interval_ticks；前荚在 0 发射、后荚在 volley_gap_ticks（6）发射，蓄力节奏错开、像在抢
+    (
+        name: "attack",
+        looping: true,
+        duration: Rule("defenders.twinpod.shooter.interval_ticks"),
+        frames: List([6, 6, 6, 6, 12, 12, 12, 8, 8, 9]),
+        events: [(0, "fire"), (6, "fire")],
+        keys: {
+            "front_body": [
+                (t: 0, dx: 3, rot: 7, ease: Linear), (t: 6, dx: -1, rot: -3, ease: Linear), (t: 12, rot: 1, ease: Linear),
+                (t: 18), (t: 59, ease: Linear), (t: 68, dx: -3, rot: -4, ease: Linear), (t: 76, dx: -5, rot: -6),
+            ],
+            "back_body": [
+                (t: 0, dx: -2, rot: -4, ease: Linear), (t: 6, dx: 3, rot: 7, ease: Linear), (t: 12, dx: -1, rot: -3, ease: Linear),
+                (t: 18, rot: 1, ease: Linear), (t: 24), (t: 59, ease: Linear), (t: 60, dx: -3, rot: -5, ease: Linear), (t: 76, dx: -6, rot: -7),
+            ],
+        },
+        swaps: {
+            "front_face": [(0, "fire"), (6, "base")],
+            "back_face": [(0, "base"), (6, "fire"), (12, "base")],
+        },
+    ),
 ])

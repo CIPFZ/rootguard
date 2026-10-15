@@ -1,4 +1,41 @@
-// A1：只有默认位姿（静态），动画在 A2。
+// 咬夹草片段（ART-SPEC 3.1 / 4.10）。张嘴角度（上下荚瓣转角之和）≤ 45°（裁决七）。
 Clips([
-    (name: "idle", looping: true, duration: Ticks(120), frames: Every(120)),
+    // idle 90：嘴微张微合
+    (
+        name: "idle",
+        looping: true,
+        duration: Ticks(90),
+        frames: Every(10),
+        keys: {
+            "jaw_upper": [(t: 0), (t: 45, rot: -7), (t: 90)],
+            "jaw_lower": [(t: 0), (t: 45, rot: 4), (t: 90)],
+            "head": [(t: 0), (t: 45, dy: -1), (t: 90)],
+        },
+    ),
+    // snap 12：嘴猛地张到最大（上 -26° + 下 +18° = 44°）再合上；gulp 在 11（3.1）。由吞食事件触发（ADR-016）
+    (
+        name: "snap",
+        looping: false,
+        duration: Ticks(12),
+        frames: List([3, 3, 3, 2, 1]),
+        events: [(11, "gulp")],
+        keys: {
+            "jaw_upper": [(t: 0, rot: -26, ease: Linear), (t: 3, rot: -18, ease: Linear), (t: 6, rot: 3, ease: Linear), (t: 9, rot: 2)],
+            "jaw_lower": [(t: 0, rot: 18, ease: Linear), (t: 3, rot: 12, ease: Linear), (t: 6, rot: -2, ease: Linear), (t: 9, rot: -1)],
+            "head": [(t: 0, dx: 4, ease: Linear), (t: 6, dx: -2, ease: Linear), (t: 9)],
+        },
+        swaps: { "drool": [(0, "hidden")] },
+    ),
+    // chew 60 循环（持续 2520）：嘴闭合、腮帮鼓动、满足地眯眼
+    (
+        name: "chew",
+        looping: true,
+        duration: Ticks(60),
+        frames: Every(10),
+        keys: {
+            "jaw_upper": [(t: 0, rot: 2), (t: 15, rot: 0), (t: 30, rot: 2), (t: 45, rot: 0), (t: 60, rot: 2)],
+            "jaw_lower": [(t: 0, rot: -1, sy: 1.0), (t: 15, rot: 1, sy: 1.08), (t: 30, rot: -1), (t: 45, rot: 1, sy: 1.08), (t: 60, rot: -1)],
+        },
+        swaps: { "eyes": [(0, "content")], "drool": [(0, "hidden")] },
+    ),
 ])

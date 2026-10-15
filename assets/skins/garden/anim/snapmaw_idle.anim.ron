@@ -3,6 +3,14 @@ AnimationClip(
     name: "snapmaw_idle",
     looping: true,
     frames: [
-        (frame: "snapmaw_idle_0", ticks: 120),
+        (frame: "snapmaw_idle_0", ticks: 10),
+        (frame: "snapmaw_idle_1", ticks: 10),
+        (frame: "snapmaw_idle_2", ticks: 10),
+        (frame: "snapmaw_idle_3", ticks: 10),
+        (frame: "snapmaw_idle_4", ticks: 10),
+        (frame: "snapmaw_idle_5", ticks: 10),
+        (frame: "snapmaw_idle_6", ticks: 10),
+        (frame: "snapmaw_idle_7", ticks: 10),
+        (frame: "snapmaw_idle_8", ticks: 10),
     ],
 )

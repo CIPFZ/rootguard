@@ -1,4 +1,28 @@
-// A1：只有默认位姿（静态），动画在 A2。
+// 荆棘垫片段（ART-SPEC 3.1 / 4.6）。
 Clips([
-    (name: "idle", looping: true, duration: Ticks(120), frames: Every(120)),
+    // idle 120：打盹，刺放平微动
+    (
+        name: "idle",
+        looping: true,
+        duration: Ticks(120),
+        frames: Every(15),
+        keys: {
+            "thorns": [(t: 0), (t: 60, dy: -1, sy: 1.04), (t: 120)],
+            "mat": [(t: 0), (t: 60, sy: 1.02), (t: 120)],
+        },
+        swaps: { "eyes": [(0, "doze")] },
+    ),
+    // trigger：格内有敌人时循环；时长 = Spikes.interval_ticks，相位由扎刺计时器驱动，prick 在 0（伤害的 tick）
+    (
+        name: "trigger",
+        looping: true,
+        duration: Rule("defenders.thornmat.spikes.interval_ticks"),
+        frames: List([4, 4, 22, 30]),
+        events: [(0, "prick")],
+        keys: {
+            "mat": [(t: 0, dy: 1, sx: 1.03, sy: 0.92, ease: Linear), (t: 4, dy: -1, sy: 1.04, ease: Linear), (t: 8)],
+            "thorns": [(t: 0, dy: -3, ease: Linear), (t: 4, dy: -1, ease: Linear), (t: 8)],
+        },
+        swaps: { "thorns": [(0, "up")] },
+    ),
 ])

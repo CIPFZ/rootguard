@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 下荚瓣内面：淡黄内里（ART-SPEC 4.10）；闭嘴时被上荚瓣挡住 -->
+  <path d="M28 60 C42 61 60 61 74 62 C86 63 96 65 103 68 C94 60 80 55 62 54 C46 54 34 56 28 60 Z" fill="@maw" stroke="@outline" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M46 58 C60 57 76 58 90 62" fill="none" stroke="@maw.shade" stroke-width="2" stroke-linecap="round"/>
+</svg>

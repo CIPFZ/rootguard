@@ -5,9 +5,9 @@ Rig(
     flash: false,
     parts: [
         (name: "shadow", pivot: (64, 52), z: 0),
-        (name: "thorns", parent: Some("mat"), pivot: (64, 36), z: 1),
+        (name: "thorns", parent: Some("mat"), pivot: (64, 36), z: 1, variants: ["up"]),
         (name: "mat", pivot: (64, 52), z: 2),
-        (name: "eyes", parent: Some("mat"), pivot: (78, 41), z: 3),
+        (name: "eyes", parent: Some("mat"), pivot: (78, 41), z: 3, variants: ["doze"]),
         (name: "mouth", parent: Some("mat"), pivot: (80, 47), z: 4),
     ],
 )

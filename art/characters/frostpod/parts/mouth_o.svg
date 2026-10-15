@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- fire 帧：嘴张成 O 吐出冰石（ART-SPEC 4.4“同石籽荚”），白气由特效承担 -->
+  <ellipse cx="89.5" cy="89" rx="4.6" ry="5" fill="@bark_dark" stroke="@outline" stroke-width="2.5"/>
+</svg>
