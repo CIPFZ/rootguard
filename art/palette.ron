@@ -30,8 +30,8 @@ Palette(
         "frostpod": { "frost_shard": "#E8F7FF" },
         // 4.6 米白短刺
         "thornmat": { "thorn": "#EDE6D2" },
-        // 4.7 偏红的土棕
-        "tuberblast": { "tuber": "#A86A3C" },
+        // 4.7 偏红的土棕；“腮帮憋到发紫”
+        "tuberblast": { "tuber": "#A86A3C", "flush": "#9C6B9E" },
         // 4.9 偏棕的葫芦壳
         "gourdshell": { "gourd": "#C9A15A" },
         // 4.10 淡黄内里

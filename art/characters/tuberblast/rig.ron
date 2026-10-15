@@ -1,0 +1,15 @@
+// 块茎雷 Tuberblast（ART-SPEC 4.7）：半埋圆块茎、鼓眼、腮帮憋紫、卷芽引信。默认位姿为武装后（整体露出一半）。
+Rig(
+    kind: GuardianGround,
+    rest: "idle",
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (64, 52), z: 0),
+        (name: "sprout", parent: Some("tuber"), pivot: (63, 24), z: 1),
+        (name: "tuber", pivot: (64, 48), z: 2),
+        (name: "cheeks", parent: Some("tuber"), pivot: (68, 40), z: 3),
+        (name: "eyes", parent: Some("tuber"), pivot: (66, 30), z: 4),
+        (name: "mouth", parent: Some("tuber"), pivot: (68, 43), z: 5),
+        (name: "mound", pivot: (64, 50), z: 6),
+    ],
+)

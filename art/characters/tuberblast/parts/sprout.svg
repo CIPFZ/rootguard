@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 64">
+  <!-- 顶部一根卷曲嫩芽像引信，芽尖一点 dew（ART-SPEC 4.7） -->
+  <path d="M63 24 C62 18 64 13 69 12 C73 11.5 75 15 72 17" fill="none" stroke="@outline" stroke-width="5" stroke-linecap="round"/>
+  <path d="M63 24 C62 18 64 13 69 12 C73 11.5 75 15 72 17" fill="none" stroke="@leaf" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M64 19 C60 16 57 16 55 18 C58 20 61 20 64 19 Z" fill="@leaf" stroke="@outline" stroke-width="1.8" stroke-linejoin="round"/>
+  <circle cx="72" cy="17" r="2.6" fill="@dew" stroke="@outline" stroke-width="1.6"/>
+</svg>

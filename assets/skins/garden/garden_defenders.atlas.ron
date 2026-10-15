@@ -161,6 +161,8 @@ Atlas(
         (name: "pebble_pod_hurt_attack_9_flash", x: 1820, y: 260, w: 128, h: 128, anchor: (0.5, 0.94)),
         (name: "pebble_pod_hurt_attack_9", x: 1690, y: 260, w: 128, h: 128, anchor: (0.5, 0.94)),
         (name: "thornmat_idle_0", x: 1690, y: 520, w: 128, h: 64, anchor: (0.5, 0.8)),
+        (name: "tuberblast_idle_0_flash", x: 0, y: 650, w: 128, h: 64, anchor: (0.5, 0.8)),
+        (name: "tuberblast_idle_0", x: 1820, y: 520, w: 128, h: 64, anchor: (0.5, 0.8)),
         (name: "twinpod_idle_0_flash", x: 1560, y: 520, w: 128, h: 128, anchor: (0.5, 0.94)),
         (name: "twinpod_idle_0", x: 1430, y: 520, w: 128, h: 128, anchor: (0.5, 0.94)),
     ],
