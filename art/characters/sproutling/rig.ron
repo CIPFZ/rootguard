@@ -1,0 +1,13 @@
+// 小芽怪 Sproutling（ART-SPEC 5.9）：96 × 96，裂开的种壳里钻出双叶嫩芽、气鼓鼓的小脸、小根须脚。
+Rig(
+    kind: HuskSmall,
+    rest: "walk",
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (48, 91), z: 0),
+        (name: "feet", pivot: (48, 85), z: 1),
+        (name: "sprout", parent: Some("seed"), pivot: (48, 64), z: 2),
+        (name: "seed", pivot: (48, 86), z: 3),
+        (name: "face", parent: Some("seed"), pivot: (48, 75), z: 4),
+    ],
+)
