@@ -12,6 +12,7 @@
 #[cfg(feature = "devtools")]
 pub mod devtools;
 pub mod flow;
+pub mod fx;
 pub mod hud;
 pub mod i18n;
 pub mod render;
@@ -63,6 +64,8 @@ impl Plugin for GamePlugin {
         // 皮肤是可选增强（SPEC 12.1）：单个皮肤加载失败时警告，Skinned 模式回退 default 皮肤或占位渲染
         let skins = skin::Skins::load_all(app.world_mut(), &server);
         app.insert_resource(skins);
+        // 特效捕获须先于 sfx_system（它会取走事件，ADR-016 第 5 节）
+        app.add_system(Stage::Update, fx::capture);
         app.add_plugin(save::SavePlugin(self.save.clone()))
             .add_plugin(sfx::SfxPlugin)
             .add_plugin(flow::UiPlugin);

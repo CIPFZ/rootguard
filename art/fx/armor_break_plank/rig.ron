@@ -1,0 +1,11 @@
+// 特效 armor_break_plank（ART-SPEC 7）：木板碎成 3 块（5.6），16 tick
+Rig(
+    kind: Fx(96, 96),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "piece0", pivot: (48, 48), z: 0),
+        (name: "piece1", pivot: (48, 48), z: 1),
+        (name: "piece2", pivot: (48, 48), z: 2),
+    ],
+)

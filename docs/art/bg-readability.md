@@ -7,6 +7,10 @@
 |---|---|---|---|---|
 | outline | `#2F3A2A` | 23.0 | 39.2 | 是 |
 | husk_outline | `#4A3A24` | 25.6 | 36.6 | 是 |
+| armor_break_gourd | `#A58540` | 57.2 | 5.0 | 否 |
+| armor_break_plank | `#A98B63` | 59.7 | 2.5 | 否 |
+| armor_break_pot | `#C8673B` | 54.3 | 7.8 | 否 |
+| armor_break_twig | `#5C3A1A` | 27.8 | 34.4 | 是 |
 | barkwall | `#8B5A2B` | 42.7 | 19.5 | 否 |
 | carrier_husk | `#E3C27A` | 79.8 | 2.5 | 否 |
 | clay_husk | `#E3C27A` | 79.8 | 2.5 | 否 |

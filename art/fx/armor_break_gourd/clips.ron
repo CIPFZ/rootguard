@@ -1,0 +1,17 @@
+// armor_break_gourd：葫芦身炸开、碎壳飞散（5.8），16 tick
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(16),
+        frames: Every(2),
+        keys: {
+            "shell0": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: -5.64, dy: -2.65, rot: 32, ease: Linear), (t: 4, dx: -11.28, dy: -4.1, rot: 64, ease: Linear), (t: 6, dx: -16.91, dy: -4.36, rot: 96, ease: Linear), (t: 8, dx: -22.55, dy: -3.41, rot: 128, ease: Linear), (t: 10, dx: -28.19, dy: -1.26, rot: 160, ease: Linear, op: 0.86), (t: 12, dx: -33.83, dy: 2.09, rot: 192, ease: Linear, op: 0.57), (t: 14, dx: -39.47, dy: 6.64, rot: 224, ease: Linear, op: 0.29), (t: 16, dx: -45.11, dy: 12.38, rot: 256, ease: Linear, op: 0)],
+            "shell1": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: -4.01, dy: -5.06, rot: -40, ease: Linear), (t: 4, dx: -8.03, dy: -8.92, rot: -80, ease: Linear), (t: 6, dx: -12.04, dy: -11.58, rot: -120, ease: Linear), (t: 8, dx: -16.06, dy: -13.04, rot: -160, ease: Linear), (t: 10, dx: -20.07, dy: -13.29, rot: -200, ease: Linear, op: 0.86), (t: 12, dx: -24.09, dy: -12.35, rot: -240, ease: Linear, op: 0.57), (t: 14, dx: -28.1, dy: -10.21, rot: -280, ease: Linear, op: 0.29), (t: 16, dx: -32.12, dy: -6.87, rot: -320, ease: Linear, op: 0)],
+            "shell2": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: -1.45, dy: -6.42, rot: 48, ease: Linear), (t: 4, dx: -2.9, dy: -11.64, rot: 96, ease: Linear), (t: 6, dx: -4.35, dy: -15.67, rot: 144, ease: Linear), (t: 8, dx: -5.81, dy: -18.49, rot: 192, ease: Linear), (t: 10, dx: -7.26, dy: -20.11, rot: 240, ease: Linear, op: 0.86), (t: 12, dx: -8.71, dy: -20.53, rot: 288, ease: Linear, op: 0.57), (t: 14, dx: -10.16, dy: -19.75, rot: 336, ease: Linear, op: 0.29), (t: 16, dx: -11.61, dy: -17.77, rot: 384, ease: Linear, op: 0)],
+            "shell3": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: 1.45, dy: -6.42, rot: -32, ease: Linear), (t: 4, dx: 2.9, dy: -11.64, rot: -64, ease: Linear), (t: 6, dx: 4.35, dy: -15.67, rot: -96, ease: Linear), (t: 8, dx: 5.81, dy: -18.49, rot: -128, ease: Linear), (t: 10, dx: 7.26, dy: -20.11, rot: -160, ease: Linear, op: 0.86), (t: 12, dx: 8.71, dy: -20.53, rot: -192, ease: Linear, op: 0.57), (t: 14, dx: 10.16, dy: -19.75, rot: -224, ease: Linear, op: 0.29), (t: 16, dx: 11.61, dy: -17.77, rot: -256, ease: Linear, op: 0)],
+            "shell4": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: 4.01, dy: -5.06, rot: 40, ease: Linear), (t: 4, dx: 8.03, dy: -8.92, rot: 80, ease: Linear), (t: 6, dx: 12.04, dy: -11.58, rot: 120, ease: Linear), (t: 8, dx: 16.06, dy: -13.04, rot: 160, ease: Linear), (t: 10, dx: 20.07, dy: -13.29, rot: 200, ease: Linear, op: 0.86), (t: 12, dx: 24.09, dy: -12.35, rot: 240, ease: Linear, op: 0.57), (t: 14, dx: 28.1, dy: -10.21, rot: 280, ease: Linear, op: 0.29), (t: 16, dx: 32.12, dy: -6.87, rot: 320, ease: Linear, op: 0)],
+            "shell5": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: 5.64, dy: -2.65, rot: -48, ease: Linear), (t: 4, dx: 11.28, dy: -4.1, rot: -96, ease: Linear), (t: 6, dx: 16.91, dy: -4.36, rot: -144, ease: Linear), (t: 8, dx: 22.55, dy: -3.41, rot: -192, ease: Linear), (t: 10, dx: 28.19, dy: -1.26, rot: -240, ease: Linear, op: 0.86), (t: 12, dx: 33.83, dy: 2.09, rot: -288, ease: Linear, op: 0.57), (t: 14, dx: 39.47, dy: 6.64, rot: -336, ease: Linear, op: 0.29), (t: 16, dx: 45.11, dy: 12.38, rot: -384, ease: Linear, op: 0)],
+        },
+    ),
+])

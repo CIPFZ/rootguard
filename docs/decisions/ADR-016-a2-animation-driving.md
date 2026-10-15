@@ -66,6 +66,23 @@
 7. 测试：`husk_clips_follow_movement_and_state`（回放 1-10，walk / eat / cracked / bare / sprint / vault / vaulted /
    spawn 全部出现且与模拟一致，行走相位逐帧等于位置公式）。
 
+### 5. 护甲破碎与受损阶段（2026-10-16）
+
+1. **特效实体**（`rootguard-app/src/fx.rs`，ART-SPEC 7“特效实体由呈现层在 Update 中根据事件生成，寿命以 tick 计，
+   不进入模拟层”）：`fx::capture` 注册在 `GamePlugin` 中、先于 `SfxPlugin`，因此在 `sfx_system` 取走事件之前读到；
+   特效记在 `RenderState.fx`（随对局场景创建 / 销毁），按 `fixed_tick − 开始 tick` 取帧（暂停时静止），片段播完即删。
+   引擎事件双缓冲（本帧 + 下一帧可读）：未被 `sfx_system` 取走的事件会被读两次，`capture` 记住上一帧生成过的
+   事件键并跳过。特效画在 `Layer::FX`；占位模式不画。
+2. `artgen` 新增：`art/fx/<id>/`（ART-SPEC 9.1）与 `Fx(w, h)` 类别（图集 `garden_fx`）；关键帧新增不透明度 `op`
+   （不随父部件传递），用于淡出。特效引用对应角色的专属色时在调色板为该特效登记同值专属色。
+3. **护甲破碎**：`EnemyArmorBroken` → 枝冠 `armor_break_twig`、陶盆 `armor_break_pot`（按敌人 id 区分两种 Helm）、
+   门板 `armor_break_plank`、葫芦 `armor_break_gourd`，位置在头顶 / 胸前 / 腹部；破碎后的外形由状态前缀（第 4 节）
+   切换。敌人与护甲在同一 tick 结算死亡时实体已移除，不播破碎特效（干屑 `crumble` 在特效类）。
+4. **防御者受损阶段**（ART-SPEC 2.4）：皮肤有 `<id>_cracked_idle` 时三级（> 2/3 完好、> 1/3 `cracked`、其余
+   `split`：树皮墙、葫芦壳），否则两级（≤ 1/2 `hurt`：石籽荚）。葫芦壳也闪白并抖动（4.9）。
+5. 测试：`armor_break_spawns_effects`（1-10 回放；全部 10 关脚本解里门板从未破碎——都死于无视 Shield 的伤害，
+   因此对一只门板枯壳注入一次破碎事件）、`defender_damage_states`。
+
 ## 后果
 
 - 新片段都由模拟状态唯一决定，暂停、回放、切换渲染模式都不会让动画与模拟错位。

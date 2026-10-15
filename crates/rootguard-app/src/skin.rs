@@ -301,6 +301,25 @@ impl<'w> Painter<'w> {
         true
     }
 
+    /// 按指定尺寸绘制（锚点相同），用于需要拉伸的特效（ART-SPEC 7）；片段缺失时返回 false。
+    pub fn draw_sized(
+        &self,
+        list: &mut DrawList,
+        layer: Layer,
+        pos: Vec2,
+        sort_y: f32,
+        pose: Pose<'_>,
+        size: Vec2,
+    ) -> bool {
+        let Some((image, frame)) = self.frame(&pose) else {
+            return false;
+        };
+        let dst = Rect::from_min_size(pos - frame.anchor * size, size);
+        list.sprite(layer, sort_y, image, frame.src_px, dst)
+            .tint(pose.tint);
+        true
+    }
+
     /// 在 `rect` 中央绘制片段第 0 帧的缩小图标（卡槽，SPEC 11.2）；缺失时返回 false。
     pub fn icon(&self, list: &mut DrawList, layer: Layer, rect: Rect, clip: &str) -> bool {
         let pose = Pose {

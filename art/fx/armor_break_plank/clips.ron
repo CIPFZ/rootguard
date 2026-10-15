@@ -1,0 +1,14 @@
+// armor_break_plank：木板碎成 3 块（5.6），16 tick
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(16),
+        frames: Every(2),
+        keys: {
+            "piece0": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: -3.2, dy: -4.08, rot: -28, ease: Linear), (t: 4, dx: -6.4, dy: -6.72, rot: -56, ease: Linear), (t: 6, dx: -9.6, dy: -7.92, rot: -84, ease: Linear), (t: 8, dx: -12.8, dy: -7.68, rot: -112, ease: Linear), (t: 10, dx: -16, dy: -6, rot: -140, ease: Linear, op: 1), (t: 12, dx: -19.2, dy: -2.88, rot: -168, ease: Linear, op: 0.67), (t: 14, dx: -22.4, dy: 1.68, rot: -196, ease: Linear, op: 0.33), (t: 16, dx: -25.6, dy: 7.68, rot: -224, ease: Linear, op: 0)],
+            "piece1": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: -0.8, dy: -1.68, rot: 20, ease: Linear), (t: 4, dx: -1.6, dy: -1.92, rot: 40, ease: Linear), (t: 6, dx: -2.4, dy: -0.72, rot: 60, ease: Linear), (t: 8, dx: -3.2, dy: 1.92, rot: 80, ease: Linear), (t: 10, dx: -4, dy: 6, rot: 100, ease: Linear, op: 1), (t: 12, dx: -4.8, dy: 11.52, rot: 120, ease: Linear, op: 0.67), (t: 14, dx: -5.6, dy: 18.48, rot: 140, ease: Linear, op: 0.33), (t: 16, dx: -6.4, dy: 26.88, rot: 160, ease: Linear, op: 0)],
+            "piece2": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: 2.4, dy: -3.28, rot: 36, ease: Linear), (t: 4, dx: 4.8, dy: -5.12, rot: 72, ease: Linear), (t: 6, dx: 7.2, dy: -5.52, rot: 108, ease: Linear), (t: 8, dx: 9.6, dy: -4.48, rot: 144, ease: Linear), (t: 10, dx: 12, dy: -2, rot: 180, ease: Linear, op: 1), (t: 12, dx: 14.4, dy: 1.92, rot: 216, ease: Linear, op: 0.67), (t: 14, dx: 16.8, dy: 7.28, rot: 252, ease: Linear, op: 0.33), (t: 16, dx: 19.2, dy: 14.08, rot: 288, ease: Linear, op: 0)],
+        },
+    ),
+])

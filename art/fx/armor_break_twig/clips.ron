@@ -1,0 +1,16 @@
+// armor_break_twig：枝冠炸成 5 根小枝飞散（5.2），16 tick
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(16),
+        frames: Every(2),
+        keys: {
+            "twig0": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: -3.2, dy: -4.56, rot: -48, ease: Linear), (t: 4, dx: -6.4, dy: -7.84, rot: -96, ease: Linear), (t: 6, dx: -9.6, dy: -9.84, rot: -144, ease: Linear), (t: 8, dx: -12.8, dy: -10.56, rot: -192, ease: Linear, op: 1), (t: 10, dx: -16, dy: -10, rot: -240, ease: Linear, op: 0.75), (t: 12, dx: -19.2, dy: -8.16, rot: -288, ease: Linear, op: 0.5), (t: 14, dx: -22.4, dy: -5.04, rot: -336, ease: Linear, op: 0.25), (t: 16, dx: -25.6, dy: -0.64, rot: -384, ease: Linear, op: 0)],
+            "twig1": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: -1.2, dy: -5.76, rot: 60, ease: Linear), (t: 4, dx: -2.4, dy: -10.24, rot: 120, ease: Linear), (t: 6, dx: -3.6, dy: -13.44, rot: 180, ease: Linear), (t: 8, dx: -4.8, dy: -15.36, rot: 240, ease: Linear, op: 1), (t: 10, dx: -6, dy: -16, rot: 300, ease: Linear, op: 0.75), (t: 12, dx: -7.2, dy: -15.36, rot: 360, ease: Linear, op: 0.5), (t: 14, dx: -8.4, dy: -13.44, rot: 420, ease: Linear, op: 0.25), (t: 16, dx: -9.6, dy: -10.24, rot: 480, ease: Linear, op: 0)],
+            "twig2": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: 1, dy: -5.36, rot: -36, ease: Linear), (t: 4, dx: 2, dy: -9.44, rot: -72, ease: Linear), (t: 6, dx: 3, dy: -12.24, rot: -108, ease: Linear), (t: 8, dx: 4, dy: -13.76, rot: -144, ease: Linear, op: 1), (t: 10, dx: 5, dy: -14, rot: -180, ease: Linear, op: 0.75), (t: 12, dx: 6, dy: -12.96, rot: -216, ease: Linear, op: 0.5), (t: 14, dx: 7, dy: -10.64, rot: -252, ease: Linear, op: 0.25), (t: 16, dx: 8, dy: -7.04, rot: -288, ease: Linear, op: 0)],
+            "twig3": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: 2.8, dy: -4.16, rot: 52, ease: Linear), (t: 4, dx: 5.6, dy: -7.04, rot: 104, ease: Linear), (t: 6, dx: 8.4, dy: -8.64, rot: 156, ease: Linear), (t: 8, dx: 11.2, dy: -8.96, rot: 208, ease: Linear, op: 1), (t: 10, dx: 14, dy: -8, rot: 260, ease: Linear, op: 0.75), (t: 12, dx: 16.8, dy: -5.76, rot: 312, ease: Linear, op: 0.5), (t: 14, dx: 19.6, dy: -2.24, rot: 364, ease: Linear, op: 0.25), (t: 16, dx: 22.4, dy: 2.56, rot: 416, ease: Linear, op: 0)],
+            "twig4": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: 4, dy: -2.16, rot: -60, ease: Linear), (t: 4, dx: 8, dy: -3.04, rot: -120, ease: Linear), (t: 6, dx: 12, dy: -2.64, rot: -180, ease: Linear), (t: 8, dx: 16, dy: -0.96, rot: -240, ease: Linear, op: 1), (t: 10, dx: 20, dy: 2, rot: -300, ease: Linear, op: 0.75), (t: 12, dx: 24, dy: 6.24, rot: -360, ease: Linear, op: 0.5), (t: 14, dx: 28, dy: 11.76, rot: -420, ease: Linear, op: 0.25), (t: 16, dx: 32, dy: 18.56, rot: -480, ease: Linear, op: 0)],
+        },
+    ),
+])

@@ -203,6 +203,9 @@ pub struct Key {
     /// 绕枢轴缩放 y。
     #[serde(default = "one")]
     pub sy: f32,
+    /// 不透明度 0..1（特效淡出用，不随父部件传递，ADR-016 第 5 节）。
+    #[serde(default = "one")]
+    pub op: f32,
     /// 到下一关键帧的缓动。
     #[serde(default)]
     pub ease: Ease,
@@ -248,6 +251,8 @@ pub struct Local {
     pub sx: f32,
     /// 缩放。
     pub sy: f32,
+    /// 不透明度。
+    pub op: f32,
 }
 
 impl Local {
@@ -258,6 +263,7 @@ impl Local {
         rot: 0.0,
         sx: 1.0,
         sy: 1.0,
+        op: 1.0,
     };
 
     fn of(k: &Key) -> Self {
@@ -267,6 +273,7 @@ impl Local {
             rot: k.rot,
             sx: k.sx,
             sy: k.sy,
+            op: k.op,
         }
     }
 
@@ -278,6 +285,7 @@ impl Local {
             rot: m(a.rot, b.rot),
             sx: m(a.sx, b.sx),
             sy: m(a.sy, b.sy),
+            op: m(a.op, b.op),
         }
     }
 }
@@ -384,8 +392,8 @@ pub fn frame_ticks(frames: &Frames, duration: u32) -> Result<Vec<u32>> {
     Ok(ticks)
 }
 
-/// 一帧中各部件的绘制指令：(部件, 变体, 世界变换)，按 z 排序，已去掉隐藏部件。
-pub type Pose<'r> = Vec<(&'r PartDef, Option<&'r str>, Affine)>;
+/// 一帧中各部件的绘制指令：(部件, 变体, 世界变换, 不透明度)，按 z 排序，已去掉隐藏部件。
+pub type Pose<'r> = Vec<(&'r PartDef, Option<&'r str>, Affine, f32)>;
 
 impl Rig {
     /// 校验部件层级（父部件存在、无环、名称唯一）与状态引用的部件 / 变体。
@@ -463,6 +471,7 @@ impl Rig {
     #[must_use]
     pub fn pose<'r>(&'r self, clip: &'r ClipDef, state: &'r StateDef, t: u32) -> Pose<'r> {
         let mut world: BTreeMap<&str, Affine> = BTreeMap::new();
+        let mut opacity: BTreeMap<&str, f32> = BTreeMap::new();
         // 父部件先求：按层级深度处理
         let depth = |p: &PartDef| {
             let mut d = 0;
@@ -486,6 +495,7 @@ impl Rig {
                 .and_then(|n| world.get(n).copied())
                 .unwrap_or(Affine::IDENTITY);
             world.insert(&p.name, parent.then(Affine::local(local, p.pivot)));
+            opacity.insert(&p.name, local.op.clamp(0.0, 1.0));
         }
         let mut out: Pose<'r> = Vec::new();
         for p in &self.parts {
@@ -511,9 +521,11 @@ impl Rig {
                     .get(p.name.as_str())
                     .copied()
                     .unwrap_or(Affine::IDENTITY),
+                opacity.get(p.name.as_str()).copied().unwrap_or(1.0),
             ));
         }
-        out.sort_by_key(|(p, _, _)| p.z);
+        out.retain(|(_, _, _, op)| *op > 0.0);
+        out.sort_by_key(|(p, _, _, _)| p.z);
         out
     }
 }
@@ -530,6 +542,7 @@ mod tests {
             rot: 0.0,
             sx: 1.0,
             sy: 1.0,
+            op: 1.0,
             ease,
         }
     }

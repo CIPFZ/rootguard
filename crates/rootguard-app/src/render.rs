@@ -93,9 +93,19 @@ pub struct RenderState {
     banner: Option<(String, TweenF32)>,
     /// 上一帧处于啃食的敌人：实体位 → (啃食目标, `Biter.elapsed`)，用于判断 eat 片段进入事件帧。
     eat_seen: BTreeMap<u64, (Entity, u32)>,
+    /// 正在播放的特效（ART-SPEC 7，[`crate::fx`]）。
+    pub(crate) fx: Vec<crate::fx::Fx>,
+    /// 上一帧生成特效的事件键（去重双缓冲事件，[`crate::fx::capture`]）。
+    pub(crate) fx_keys: std::collections::BTreeSet<String>,
 }
 
 impl RenderState {
+    /// 正在播放的特效。
+    #[must_use]
+    pub fn effects(&self) -> &[crate::fx::Fx] {
+        &self.fx
+    }
+
     /// 正在飞向 HUD 的 Dew 数。
     #[must_use]
     pub fn flying_dew(&self) -> usize {
@@ -113,6 +123,7 @@ impl RenderState {
 pub fn track_visuals(world: &mut World) {
     track_hurt(world);
     track_enemies(world);
+    crate::fx::prune(world);
     emit_anim_events(world);
     let dt = world.resources.expect::<Time>().real_dt;
     let dew: BTreeMap<u64, (Vec2, u32)> = world
@@ -543,6 +554,7 @@ pub fn draw_battle(world: &mut World) {
     draw_background(world, &mut list, painter);
     draw_defenders(world, &mut list, alpha, tick, painter);
     draw_enemies(world, &mut list, alpha, tick, painter);
+    crate::fx::draw(world, &mut list, painter, tick);
     for (e, t, _, p, lane, pr) in world
         .query::<(
             Entity,
@@ -826,12 +838,12 @@ fn defender_pose_with(
     id: &str,
     e: Entity,
     tick: u64,
-    hurt: bool,
+    state: &str,
     timers: DefenderTimers<'_>,
 ) -> (String, u64) {
     let name = |act: &str| {
-        let damaged = format!("{id}_hurt_{act}");
-        if hurt && sk.has(&damaged) {
+        let damaged = format!("{id}_{state}_{act}");
+        if !state.is_empty() && sk.has(&damaged) {
             damaged
         } else {
             format!("{id}_{act}")
@@ -925,7 +937,7 @@ pub fn defender_pose(world: &World, e: Entity) -> Option<(String, u64)> {
         d.id.as_str(),
         e,
         tick,
-        defender_hurt(h),
+        defender_state(|c| painter.has(c), d.id.as_str(), h),
         timers,
     ))
 }
@@ -992,6 +1004,31 @@ fn defender_hurt(h: &Health) -> bool {
     h.hp * 2 <= h.max
 }
 
+/// 防御者的受损状态前缀（ART-SPEC 2.4）：皮肤有三级片段（`<id>_cracked_idle`，树皮墙 / 葫芦壳）时
+/// hp > 2/3 完好、> 1/3 `cracked`、其余 `split`；否则两级，hp ≤ 1/2 为 `hurt`（石籽荚 4.1）。
+fn defender_state(has: impl Fn(&str) -> bool, id: &str, h: &Health) -> &'static str {
+    if has(&format!("{id}_cracked_idle")) {
+        if h.hp * 3 > h.max * 2 {
+            ""
+        } else if h.hp * 3 > h.max {
+            "cracked"
+        } else {
+            "split"
+        }
+    } else if defender_hurt(h) {
+        "hurt"
+    } else {
+        ""
+    }
+}
+
+/// 片段名是否带受损 / 护甲状态前缀。
+fn has_state_prefix(clip: &str) -> bool {
+    ["_hurt_", "_cracked_", "_split_"]
+        .iter()
+        .any(|p| clip.contains(p))
+}
+
 fn draw_defenders(
     world: &World,
     list: &mut DrawList,
@@ -1036,10 +1073,10 @@ fn draw_defenders(
                 spikes,
                 occupied: cell_occupied(&enemies, *cell),
             };
-            let hurt = defender_hurt(h);
-            let (clip, elapsed) = defender_pose_with(sk, d.id.as_str(), e, tick, hurt, timers);
+            let state = defender_state(|c| sk.has(c), d.id.as_str(), h);
+            let (clip, elapsed) = defender_pose_with(sk, d.id.as_str(), e, tick, state, timers);
             // 有受损变体时由造型表达受损（ART-SPEC 2.4），否则沿用低生命着色
-            let tint = if h.hp * 2 < h.max && !clip.contains("_hurt_") {
+            let tint = if h.hp * 2 < h.max && !has_state_prefix(&clip) {
                 color(palette::LOW_HP_TINT)
             } else {
                 Color::WHITE
@@ -1104,19 +1141,37 @@ fn draw_defenders(
         }
         let pos = t.lerp(alpha);
         if let Some(sk) = painter {
-            let clip = format!("{}_idle", d.id.as_str());
-            let tint = if h.hp * 2 < h.max {
+            // 葫芦壳 3 级受损（ART-SPEC 2.4 / 4.9）；被啃时闪白并随抖动（4.9“壳随 eat_hit 震动”）
+            let id = d.id.as_str();
+            let state = defender_state(|c| sk.has(c), id, h);
+            let damaged = format!("{id}_{state}_idle");
+            let clip = if !state.is_empty() && sk.has(&damaged) {
+                damaged
+            } else {
+                format!("{id}_idle")
+            };
+            let tint = if h.hp * 2 < h.max && !has_state_prefix(&clip) {
                 color(palette::LOW_HP_TINT)
             } else {
                 Color::WHITE
             };
+            let flash = hurt_at
+                .and_then(|s| s.hurt_at.get(&e))
+                .is_some_and(|&at| tick.saturating_sub(at) < HURT_FLASH_TICKS);
+            let shake = if flash { hurt_shake(tick) } else { 0.0 };
             let pose = Pose {
                 clip: &clip,
                 elapsed: phase(e, tick),
-                flash: false,
+                flash,
                 tint,
             };
-            if sk.draw(list, WORLD, skin::foot(pos), row_y(cell.row), pose) {
+            if sk.draw(
+                list,
+                WORLD,
+                skin::foot(pos) + Vec2::new(shake, 0.0),
+                row_y(cell.row),
+                pose,
+            ) {
                 continue;
             }
         }

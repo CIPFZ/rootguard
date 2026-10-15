@@ -114,7 +114,7 @@ fn print_summary(s: &artgen::Summary) {
 fn preview(root: &Path, id: &str) -> Result<()> {
     let palette = Palette::load(&root.join("art/palette.ron"))?;
     let rules = Rules::load(&root.join("assets"))?;
-    let ch = artgen::load_character(&root.join("art/characters").join(id), &palette)?;
+    let ch = artgen::load_character(&char_dir(root, id), &palette)?;
     let out = root.join("tmp/artgen");
     std::fs::create_dir_all(&out)?;
     let rest = artgen::render_rest(&ch, &palette)?;
@@ -187,7 +187,7 @@ fn strip(root: &Path, out: &Path, specs: &[&str]) -> Result<()> {
             [id, clip, state] => (*id, *clip, *state),
             _ => bail!("帧条参数应为 id:片段[:状态]，实际 {spec}"),
         };
-        let ch = artgen::load_character(&root.join("art/characters").join(id), &palette)?;
+        let ch = artgen::load_character(&char_dir(root, id), &palette)?;
         // `底层+叠层`：叠层每帧画在底层同一 tick 的帧上（如生产者的 idle + produce 两层，ADR-016 第 2 节）
         let (base_name, clip_name) = match clip_name.split_once('+') {
             Some((b, o)) => (Some(b), o),
@@ -326,4 +326,14 @@ fn strip(root: &Path, out: &Path, specs: &[&str]) -> Result<()> {
     save(&scaled(&[img], 2)?, out)?;
     println!("artgen: 写出 {}", out.display());
     Ok(())
+}
+
+/// `art/characters/<id>` 或 `art/fx/<id>`。
+fn char_dir(root: &Path, id: &str) -> PathBuf {
+    let fx = root.join("art/fx").join(id);
+    if fx.is_dir() {
+        fx
+    } else {
+        root.join("art/characters").join(id)
+    }
 }

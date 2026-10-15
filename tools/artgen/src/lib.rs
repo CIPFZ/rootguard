@@ -207,15 +207,19 @@ pub struct Built {
     pub summary: Summary,
 }
 
-/// 角色 id 列表（`art/characters/` 下的目录，字典序）。
+/// 角色与特效目录（`art/characters/`、`art/fx/` 下的目录，按 id 字典序）。
 ///
 /// # Errors
 ///
 /// 目录不可读时返回错误。
 pub fn character_dirs(root: &Path) -> Result<Vec<PathBuf>> {
-    let dir = root.join("art/characters");
     let mut dirs = Vec::new();
-    if dir.is_dir() {
+    // 角色与特效（ART-SPEC 9.1：art/characters/<id>/、art/fx/<id>/，结构相同）
+    for sub in ["art/characters", "art/fx"] {
+        let dir = root.join(sub);
+        if !dir.is_dir() {
+            continue;
+        }
         for entry in std::fs::read_dir(&dir).with_context(|| format!("读取 {}", dir.display()))? {
             let path = entry?.path();
             if path.is_dir() {
@@ -223,7 +227,7 @@ pub fn character_dirs(root: &Path) -> Result<Vec<PathBuf>> {
             }
         }
     }
-    dirs.sort();
+    dirs.sort_by(|a, b| a.file_name().cmp(&b.file_name()));
     Ok(dirs)
 }
 

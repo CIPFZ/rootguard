@@ -1,0 +1,13 @@
+// 特效 armor_break_twig（ART-SPEC 7）：枝冠炸成 5 根小枝飞散（5.2），16 tick
+Rig(
+    kind: Fx(96, 96),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "twig0", pivot: (48, 48), z: 0),
+        (name: "twig1", pivot: (48, 48), z: 1),
+        (name: "twig2", pivot: (48, 48), z: 2),
+        (name: "twig3", pivot: (48, 48), z: 3),
+        (name: "twig4", pivot: (48, 48), z: 4),
+    ],
+)

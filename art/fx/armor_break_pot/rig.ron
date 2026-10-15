@@ -1,0 +1,13 @@
+// 特效 armor_break_pot（ART-SPEC 7）：陶片四散（5.3），16 tick
+Rig(
+    kind: Fx(96, 96),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "shard0", pivot: (48, 48), z: 0),
+        (name: "shard1", pivot: (48, 48), z: 1),
+        (name: "shard2", pivot: (48, 48), z: 2),
+        (name: "shard3", pivot: (48, 48), z: 3),
+        (name: "shard4", pivot: (48, 48), z: 4),
+    ],
+)

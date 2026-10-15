@@ -1,0 +1,16 @@
+// armor_break_pot：陶片四散（5.3），16 tick
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(16),
+        frames: Every(2),
+        keys: {
+            "shard0": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: -4.4, dy: -3.72, rot: 40, ease: Linear), (t: 4, dx: -8.8, dy: -6.08, rot: 80, ease: Linear), (t: 6, dx: -13.2, dy: -7.08, rot: 120, ease: Linear), (t: 8, dx: -17.6, dy: -6.72, rot: 160, ease: Linear), (t: 10, dx: -22, dy: -5, rot: 200, ease: Linear, op: 0.86), (t: 12, dx: -26.4, dy: -1.92, rot: 240, ease: Linear, op: 0.57), (t: 14, dx: -30.8, dy: 2.52, rot: 280, ease: Linear, op: 0.29), (t: 16, dx: -35.2, dy: 8.32, rot: 320, ease: Linear, op: 0)],
+            "shard1": [(t: 0, dx: -0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: -1.6, dy: -5.32, rot: -52, ease: Linear), (t: 4, dx: -3.2, dy: -9.28, rot: -104, ease: Linear), (t: 6, dx: -4.8, dy: -11.88, rot: -156, ease: Linear), (t: 8, dx: -6.4, dy: -13.12, rot: -208, ease: Linear), (t: 10, dx: -8, dy: -13, rot: -260, ease: Linear, op: 0.86), (t: 12, dx: -9.6, dy: -11.52, rot: -312, ease: Linear, op: 0.57), (t: 14, dx: -11.2, dy: -8.68, rot: -364, ease: Linear, op: 0.29), (t: 16, dx: -12.8, dy: -4.48, rot: -416, ease: Linear, op: 0)],
+            "shard2": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: 1.2, dy: -5.72, rot: 64, ease: Linear), (t: 4, dx: 2.4, dy: -10.08, rot: 128, ease: Linear), (t: 6, dx: 3.6, dy: -13.08, rot: 192, ease: Linear), (t: 8, dx: 4.8, dy: -14.72, rot: 256, ease: Linear), (t: 10, dx: 6, dy: -15, rot: 320, ease: Linear, op: 0.86), (t: 12, dx: 7.2, dy: -13.92, rot: 384, ease: Linear, op: 0.57), (t: 14, dx: 8.4, dy: -11.48, rot: 448, ease: Linear, op: 0.29), (t: 16, dx: 9.6, dy: -7.68, rot: 512, ease: Linear, op: 0)],
+            "shard3": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: 4, dy: -4.12, rot: -36, ease: Linear), (t: 4, dx: 8, dy: -6.88, rot: -72, ease: Linear), (t: 6, dx: 12, dy: -8.28, rot: -108, ease: Linear), (t: 8, dx: 16, dy: -8.32, rot: -144, ease: Linear), (t: 10, dx: 20, dy: -7, rot: -180, ease: Linear, op: 0.86), (t: 12, dx: 24, dy: -4.32, rot: -216, ease: Linear, op: 0.57), (t: 14, dx: 28, dy: -0.28, rot: -252, ease: Linear, op: 0.29), (t: 16, dx: 32, dy: 5.12, rot: -288, ease: Linear, op: 0)],
+            "shard4": [(t: 0, dx: 0, dy: 0, rot: 0, ease: Linear), (t: 2, dx: 2, dy: -1.72, rot: 48, ease: Linear), (t: 4, dx: 4, dy: -2.08, rot: 96, ease: Linear), (t: 6, dx: 6, dy: -1.08, rot: 144, ease: Linear), (t: 8, dx: 8, dy: 1.28, rot: 192, ease: Linear), (t: 10, dx: 10, dy: 5, rot: 240, ease: Linear, op: 0.86), (t: 12, dx: 12, dy: 10.08, rot: 288, ease: Linear, op: 0.57), (t: 14, dx: 14, dy: 16.52, rot: 336, ease: Linear, op: 0.29), (t: 16, dx: 16, dy: 24.32, rot: 384, ease: Linear, op: 0)],
+        },
+    ),
+])

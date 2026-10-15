@@ -111,6 +111,10 @@
   背篓一颠、鼓腹每步一沉（thud 事件）、小芽怪跳起来咬。游戏侧：walk / sprint 由走过的距离驱动（脚不打滑、Chill 自然
   减半），sprint / vault / spawn 的状态选择，`vaulted_` / `cracked_` / `bare_` 前缀。帧条
   `docs/screenshots/a2-husk-walk-eat.png`。测试 `husk_clips_follow_movement_and_state`。
+- [x] 第 5 类 护甲破碎与受损阶段（2026-10-16，ADR-016 第 5 节）：特效实体管线（`fx.rs`，先于 sfx 捕获事件、双缓冲去重、
+  按 tick 播放）；`armor_break_twig / pot / plank / gourd`（`art/fx/`，`artgen` 新增 Fx 类别与不透明度关键帧）；树皮墙 /
+  葫芦壳三级受损接入游戏、葫芦壳闪白抖动。帧条 `docs/screenshots/a2-armor.png`。测试 `armor_break_spawns_effects`、
+  `defender_damage_states`。**发现**：10 关脚本解中门板（Shield）从未被打碎，门板碎片特效在实际对局里少见。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 

@@ -50,6 +50,9 @@ Palette(
         "carrier_husk": { "seed": "#F1E7C6" },
         // 5.8 偏深的葫芦身
         "drum_husk": { "drum": "#C9A24E" },
+        // 特效沿用对应角色的专属色（ART-SPEC 7 护甲破碎：碎片即该角色的护甲）
+        "armor_break_plank": { "plank": "#A98B63" },
+        "armor_break_gourd": { "drum": "#C9A24E" },
     },
     // ART-SPEC 8.1 战场设计卡的背景专属色（不受每角色 ≤ 2 的限制，只用于 art/bg/ 与 artgen 生成的 L0 / L2）
     background: {

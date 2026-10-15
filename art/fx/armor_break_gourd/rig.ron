@@ -1,0 +1,14 @@
+// 特效 armor_break_gourd（ART-SPEC 7）：葫芦身炸开、碎壳飞散（5.8），16 tick
+Rig(
+    kind: Fx(96, 96),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "shell0", pivot: (48, 48), z: 0),
+        (name: "shell1", pivot: (48, 48), z: 1),
+        (name: "shell2", pivot: (48, 48), z: 2),
+        (name: "shell3", pivot: (48, 48), z: 3),
+        (name: "shell4", pivot: (48, 48), z: 4),
+        (name: "shell5", pivot: (48, 48), z: 5),
+    ],
+)

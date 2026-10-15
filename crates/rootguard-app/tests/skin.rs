@@ -918,3 +918,129 @@ fn husk_clips_follow_movement_and_state() {
         assert!(seen.contains(k), "1-10 回放中应见到 {k}（{seen:?}）");
     }
 }
+
+/// ART-SPEC 7 / ADR-016 第 5 节：回放 1-10，敌人护甲破碎时生成对应的 `armor_break_*` 特效（同一事件只生成一次），
+/// 特效按片段长度到期删除。
+#[test]
+fn armor_break_spawns_effects() {
+    use rootguard_core::components::EnemyRef;
+    use rootguard_core::data::ArmorKind;
+    use rootguard_core::events::EnemyArmorBroken;
+    let mut seen = std::collections::BTreeSet::new();
+    let script = script("1-10");
+    let scene = BattleScene::new(script.level, script.cards.clone(), None);
+    let mut runner = runner_with(scene, &format!("armor-fx-{}", next_id()));
+    let mut replay = Replay::new(script);
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    runner.frame();
+    let mut injected = false;
+    for _ in 0..40_000 {
+        let s = state(&runner).expect("对局");
+        if matches!(s.phase, Phase::Won | Phase::Lost) {
+            break;
+        }
+        if s.phase == Phase::Playing {
+            for a in replay.due(s.level_tick) {
+                send(&mut runner, a);
+            }
+        }
+        // 全部脚本解里门板都死于无视 Shield 的伤害、从未破碎：对第一只门板枯壳注入一次破碎事件（只有呈现层读取）
+        if !injected {
+            let shield = runner
+                .app()
+                .world()
+                .query::<(Entity, &EnemyRef)>()
+                .iter()
+                .find(|(_, r)| r.id.as_str() == "shield_husk")
+                .map(|(e, _)| e);
+            if let Some(entity) = shield {
+                runner.app_mut().world_mut().events.send(EnemyArmorBroken {
+                    entity,
+                    kind: ArmorKind::Shield,
+                });
+                injected = true;
+            }
+        }
+        runner.frame();
+        let world = runner.app().world();
+        let tick = world.resources.expect::<Time>().fixed_tick;
+        let rs = world
+            .resources
+            .expect::<rootguard_app::render::RenderState>();
+        let mut starts = std::collections::BTreeSet::new();
+        for f in rs.effects() {
+            if f.clip.starts_with("armor_break_") {
+                assert!(tick - f.start < 16, "{} 应在 16 tick 内删除", f.clip);
+                // 同一位置同一 tick 不应出现两份（双缓冲事件去重）
+                let k = (
+                    f.clip.clone(),
+                    f.start,
+                    f.pos.x.to_bits(),
+                    f.pos.y.to_bits(),
+                );
+                assert!(starts.insert(k), "{} 重复生成", f.clip);
+                seen.insert(f.clip.clone());
+            }
+        }
+    }
+    for fx in ["twig", "pot", "plank", "gourd"] {
+        let clip = format!("armor_break_{fx}_play");
+        assert!(seen.contains(&clip), "应见到 {clip}（{seen:?}）");
+    }
+}
+
+/// ART-SPEC 2.4：树皮墙与葫芦壳 3 级受损（> 2/3 完好、> 1/3 cracked、其余 split）；石籽荚 2 级（≤ 1/2 hurt）。
+/// 测试直接改写生命值只为构造状态。
+#[test]
+fn defender_damage_states() {
+    use rootguard_core::components::{DefenderRef, Health};
+    use rootguard_core::resources::BattleState;
+    let mut runner = common::battle_runner("1-10", &["barkwall", "pebble_pod", "gourdshell"]);
+    while state(&runner).is_some_and(|s| s.phase != Phase::Playing) {
+        runner.frame();
+    }
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    runner
+        .app_mut()
+        .world_mut()
+        .resources
+        .expect_mut::<BattleState>()
+        .dew = 9990;
+    runner.frame();
+    for (slot, col) in [(0usize, 0u8), (1, 1), (2, 1)] {
+        send(&mut runner, UiAction::SelectCard(slot));
+        send(&mut runner, UiAction::PlaceAt { row: 0, col });
+        runner.frame();
+    }
+    let ids: Vec<(Entity, String)> = runner
+        .app()
+        .world()
+        .query::<(Entity, &DefenderRef)>()
+        .iter()
+        .map(|(e, d)| (e, d.id.as_str().to_owned()))
+        .collect();
+    assert_eq!(ids.len(), 3);
+    for (frac, wall, pod) in [
+        (1.0, "", ""),
+        (0.6, "_cracked", ""),
+        (0.5, "_cracked", "_hurt"),
+        (0.3, "_split", "_hurt"),
+    ] {
+        for (e, _) in &ids {
+            let world = runner.app_mut().world_mut();
+            let mut h = world.get_mut::<Health>(*e).expect("生命");
+            h.hp = ((h.max as f32) * frac).round() as i32;
+        }
+        let world = runner.app().world();
+        for (e, id) in &ids {
+            let (name, _) = rootguard_app::render::defender_pose(world, *e).expect("姿态");
+            let expect = match id.as_str() {
+                "pebble_pod" => format!("pebble_pod{pod}_idle"),
+                other => format!("{other}{wall}_idle"),
+            };
+            assert_eq!(name, expect, "hp 比例 {frac}");
+        }
+    }
+}

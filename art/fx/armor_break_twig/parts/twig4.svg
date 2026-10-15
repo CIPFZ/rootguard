@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <g transform="rotate(-35 48 48)" fill="none" stroke-linecap="round">
+    <path d="M41 48 L55 48 M50 48 L53 45" stroke="@husk_outline" stroke-width="4.4"/>
+    <path d="M41 48 L55 48 M50 48 L53 45" stroke="@bark_dark" stroke-width="2"/>
+  </g>
+</svg>

@@ -42,6 +42,10 @@ Skin(
         (
             atlas: "skins/garden/garden_fx.atlas.ron",
             clips: [
+                "armor_break_gourd_play",
+                "armor_break_plank_play",
+                "armor_break_pot_play",
+                "armor_break_twig_play",
                 "dew_idle",
                 "frost_pebble_fly",
                 "pebble_fly",

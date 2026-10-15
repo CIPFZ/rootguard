@@ -287,16 +287,21 @@ impl Parts {
         let mut svg = format!(
             "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{w}\" height=\"{h}\" viewBox=\"0 0 {w} {h}\">\n"
         );
-        for (part, variant, m) in pose {
+        for (part, variant, m, op) in pose {
             let key = (part.name.clone(), variant.map(str::to_owned));
             let src = self
                 .sources
                 .get(&key)
                 .with_context(|| format!("部件 {} 没有变体 {variant:?}", part.name))?;
             let [a, b, c, d, e, f] = m.0;
+            let opacity = if *op < 1.0 {
+                format!(" opacity=\"{op:.3}\"")
+            } else {
+                String::new()
+            };
             let _ = writeln!(
                 svg,
-                "<g transform=\"matrix({a:.5} {b:.5} {c:.5} {d:.5} {e:.4} {f:.4})\">"
+                "<g transform=\"matrix({a:.5} {b:.5} {c:.5} {d:.5} {e:.4} {f:.4})\"{opacity}>"
             );
             svg.push_str(&substitute(
                 &src.body,
