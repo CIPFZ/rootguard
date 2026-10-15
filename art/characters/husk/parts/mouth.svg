@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- 歪斜张开的嘴，2 ～ 4 粒干种子当牙：呆滞傻笑（ART-SPEC 1.2 / 5.1） -->
+  <g transform="translate(0 4) rotate(-9 62 54)">
+    <path d="M44 62 Q53 73 68 62 Q60 65 53 64 Q48 63.5 44 62 Z" fill="@bark_dark" stroke="@husk_outline" stroke-width="2.4" stroke-linejoin="round"/>
+    <g fill="@dew_glow" stroke="@husk_outline" stroke-width="1.4">
+      <ellipse cx="50" cy="65" rx="2" ry="2.6"/>
+      <ellipse cx="58" cy="65.6" rx="2" ry="2.6"/>
+    </g>
+  </g>
+</svg>

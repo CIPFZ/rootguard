@@ -10,5 +10,12 @@ Skin(
                 "pebble_pod_hurt_attack",
             ],
         ),
+        (
+            atlas: "skins/garden/garden_husks.atlas.ron",
+            clips: [
+                "husk_walk",
+                "husk_eat",
+            ],
+        ),
     ],
 )

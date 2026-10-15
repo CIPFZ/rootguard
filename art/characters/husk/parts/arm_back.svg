@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- 两臂前伸（ART-SPEC 5.1）：干鞘条，末端是钝圆的纤维束而不是爪（1.5） -->
+  <g transform="translate(14 -3)">
+    <path d="M60 73 C49 75 39 79 30 82 C29 84 29 86 30 87 C40 85 50 83 61 81 Z" fill="@straw.shade" stroke="@husk_outline" stroke-width="2.6" stroke-linejoin="round"/>
+    <g fill="none" stroke-linecap="round">
+      <g stroke="@husk_outline" stroke-width="4.6">
+        <path d="M31 82 L23 79"/><path d="M30 84.5 L22 85"/><path d="M31 87 L25 91"/>
+      </g>
+      <g stroke="@straw.shade" stroke-width="2">
+        <path d="M31 82 L23 79"/><path d="M30 84.5 L22 85"/><path d="M31 87 L25 91"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,19 @@
+// 枯壳怪 Husk（ART-SPEC 5.1）：部件层级与枢轴。面向左（2.2），画布 128 × 160、锚点 (0.5, 0.95)。
+Rig(
+    kind: Husk,
+    rest: "walk",
+    // 受击闪白 6 tick（2.3 / 5 共同）
+    flash: true,
+    parts: [
+        (name: "shadow", pivot: (64, 152), z: 0),
+        (name: "arm_back", parent: Some("body"), pivot: (74, 72), z: 1),
+        (name: "leg_back", pivot: (73, 113), z: 2),
+        (name: "leg_front", pivot: (60, 113), z: 3),
+        // 身体以髋部为枢轴：行走左右摇摆 ± 4°、啃食俯身
+        (name: "body", pivot: (65, 116), z: 4),
+        (name: "head", parent: Some("body"), pivot: (63, 70), z: 5),
+        (name: "mouth", parent: Some("head"), pivot: (56, 64), z: 6, variants: ["chomp"]),
+        (name: "arm_front", parent: Some("body"), pivot: (60, 76), z: 7),
+        (name: "crumbs", pivot: (40, 78), z: 8, hidden: true),
+    ],
+)

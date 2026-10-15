@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- eat 咬合帧：嘴合上，种子牙咬在一起（ART-SPEC 5.1） -->
+  <g transform="translate(0 4) rotate(-9 62 54)">
+    <path d="M45 64 Q55 68 67 63" fill="none" stroke="@husk_outline" stroke-width="2.8" stroke-linecap="round"/>
+    <g fill="@dew_glow" stroke="@husk_outline" stroke-width="1.4">
+      <ellipse cx="51" cy="65.5" rx="2" ry="2.4"/>
+      <ellipse cx="58" cy="66.2" rx="2" ry="2.4"/>
+    </g>
+  </g>
+</svg>

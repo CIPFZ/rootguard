@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- 头微歪（ART-SPEC 5.1）；顶部干枯毛边（1.2 毛边、掉屑）；半闭空洞的眼、无高光（1.2） -->
+  <g transform="translate(0 4) rotate(-9 62 54)">
+    <g fill="none" stroke-linecap="round">
+      <g stroke="@husk_outline" stroke-width="4.4">
+        <path d="M58 34 Q55 28 51 26"/><path d="M63 33 Q63 27 66 24"/><path d="M68 34 Q72 29 77 28"/>
+      </g>
+      <g stroke="@straw_dark" stroke-width="2">
+        <path d="M58 34 Q55 28 51 26"/><path d="M63 33 Q63 27 66 24"/><path d="M68 34 Q72 29 77 28"/>
+      </g>
+    </g>
+    <path d="M62 32 C76 32 83 44 82 56 C81 68 72 76 61 76 C50 76 42 68 42 55 C42 42 50 32 62 32 Z" fill="@straw"/>
+    <path d="M73 36 C80 42 83 52 81 62 C79 70 72 75 64 76 C73 70 77 60 76 50 C76 44 75 40 73 36 Z" fill="@straw.shade"/>
+    <path d="M62 32 C76 32 83 44 82 56 C81 68 72 76 61 76 C50 76 42 68 42 55 C42 42 50 32 62 32 Z" fill="none" stroke="@husk_outline" stroke-width="3"/>
+    <g fill="none" stroke="@husk_crack" stroke-width="1.5" stroke-linecap="round">
+      <path d="M57 37 L59 42"/><path d="M76 49 L73 53"/>
+    </g>
+    <!-- 半闭的眼：下垂的眼皮盖住上半，下面是没有高光的空洞 -->
+    <g stroke="@husk_outline" stroke-width="2.2" stroke-linejoin="round">
+      <ellipse cx="51" cy="52" rx="5.5" ry="5" fill="@husk_crack"/>
+      <ellipse cx="67.5" cy="51" rx="4.6" ry="4.4" fill="@husk_crack"/>
+      <path d="M44.6 52.8 C45 46 57 45 57.2 51.4 C53 50.2 48.5 51 44.6 52.8 Z" fill="@straw.shade"/>
+      <path d="M62.2 51.6 C62.5 45.6 72.6 45 72.6 50.4 C69.3 49.4 65.5 50 62.2 51.6 Z" fill="@straw.shade"/>
+    </g>
+  </g>
+</svg>

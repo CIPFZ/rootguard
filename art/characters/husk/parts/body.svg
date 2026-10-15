@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- 层叠干鞘身体（ART-SPEC 5.1）：straw 主色、straw_dark 暗部、husk_crack 裂纹，一阶阴影（1.2） -->
+  <g fill="@straw" stroke="@husk_outline" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M52 72 L49 62 L57 68 L60 58 L65 67 L71 57 L73 68 L81 61 L79 73 Z"/>
+  </g>
+  <path d="M66 64 C82 66 90 84 89 101 C88 115 80 123 66 123 C52 123 44 115 43 101 C42 84 50 66 66 64 Z" fill="@straw"/>
+  <path d="M66 123 C81 119 89 105 87 89 C85 81 81 75 77 72 C81 87 79 106 66 123 Z" fill="@straw.shade"/>
+  <path d="M66 123 C51 121 43 106 46 90 C49 80 54 74 58 71 C55 84 55 102 66 123 Z" fill="@straw_dark"/>
+  <g fill="none" stroke-linecap="round">
+    <path d="M66 123 C51 121 43 106 46 90 C49 80 54 74 58 71 C55 84 55 102 66 123" stroke="@husk_outline" stroke-width="2"/>
+    <path d="M66 123 C81 119 89 105 87 89 C85 81 81 75 77 72 C81 87 79 106 66 123" stroke="@husk_outline" stroke-width="2"/>
+    <g stroke="@husk_crack" stroke-width="1.6">
+      <path d="M64 80 L66 88 L63 95"/>
+      <path d="M70 101 L73 108"/>
+      <path d="M50 96 L52 103"/>
+    </g>
+  </g>
+  <path d="M66 64 C82 66 90 84 89 101 C88 115 80 123 66 123 C52 123 44 115 43 101 C42 84 50 66 66 64 Z" fill="none" stroke="@husk_outline" stroke-width="3" stroke-linejoin="round"/>
+</svg>

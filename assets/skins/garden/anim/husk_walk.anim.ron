@@ -1,0 +1,15 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "husk_walk",
+    looping: true,
+    frames: [
+        (frame: "husk_walk_0", ticks: 5),
+        (frame: "husk_walk_1", ticks: 5),
+        (frame: "husk_walk_2", ticks: 5),
+        (frame: "husk_walk_3", ticks: 5),
+        (frame: "husk_walk_4", ticks: 5),
+        (frame: "husk_walk_5", ticks: 5),
+        (frame: "husk_walk_6", ticks: 5),
+        (frame: "husk_walk_7", ticks: 5),
+    ],
+)
