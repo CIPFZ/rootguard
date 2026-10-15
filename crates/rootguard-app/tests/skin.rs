@@ -433,10 +433,10 @@ fn skin_garden_loads() {
         // 回退：garden 没有的片段从 default 取
         let view = skins.view(SkinName::Garden);
         let default = skins.get(SkinName::Default).expect("default");
-        assert!(!garden.has_clip("tuberblast_armed") && default.has_clip("tuberblast_armed"));
+        assert!(!garden.has_clip("dew") && default.has_clip("dew"));
         assert_eq!(
-            view.entry("tuberblast_armed").map(|(a, _)| a),
-            default.atlas_of("tuberblast_armed"),
+            view.entry("dew").map(|(a, _)| a),
+            default.atlas_of("dew"),
             "garden 缺片段时应回退 default"
         );
         let atlases = world.resources.expect::<Assets<Atlas>>();
