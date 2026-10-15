@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- 头是一枚干种荚 / 玉米苞叶尖（v1.1 1.2，5.1）：顶部 4 片翘起的干鞘尖当乱发，向后乱翘、聚在荚尖（不排成一圈）；禁止颅骨形（1.5）。
+       眼见下方注释；无下颌线 -->
+  <g transform="translate(4 10) rotate(-24 50 80)">
+    <g stroke="@husk_outline" stroke-width="2" stroke-linejoin="round">
+      <path d="M49 33 C52 26 57 22 63 21 C59 25 56 29 53 35 Z" fill="@straw"/>
+      <path d="M50 34 C56 30 63 30 69 33 C63 33 58 35 54 38 Z" fill="@straw.shade"/>
+      <path d="M51 36 C57 36 62 39 66 44 C61 41 57 40 53 40 Z" fill="@straw_dark"/>
+      <path d="M47 34 C46 29 47 25 50 22 C49 26 50 30 50 34 Z" fill="@straw_dark"/>
+    </g>
+    <path d="M48 84 C36 84 30 74 30 62 C30 49 39 39 48 32 C57 39 66 49 66 62 C66 74 60 84 48 84 Z" fill="@straw"/>
+    <path d="M57 41 C63 48 66 55 66 63 C66 74 60 83 50 84 C58 76 61 66 60 56 C60 50 59 45 57 41 Z" fill="@straw.shade"/>
+    <path d="M57 41 C63 48 66 55 66 63 C66 74 60 83 50 84 C58 76 61 66 60 56 C60 50 59 45 57 41" fill="none" stroke="@husk_outline" stroke-width="1.8"/>
+    <path d="M48 84 C36 84 30 74 30 62 C30 49 39 39 48 32 C57 39 66 49 66 62 C66 74 60 84 48 84 Z" fill="none" stroke="@husk_outline" stroke-width="3" stroke-linejoin="round"/>
+    <g fill="none" stroke="@husk_crack" stroke-width="1.5" stroke-linecap="round">
+      <path d="M46 40 L47 46"/><path d="M58 64 L55 69"/>
+    </g>
+    <!-- 眼睛圆睁：Husk 里唯一睁大眼的（ART-SPEC 5.4）；仍是小瞳孔、无高光（v1.1 1.2） -->
+    <g stroke="@husk_outline" stroke-width="2.2">
+      <ellipse cx="38" cy="59" rx="6.4" ry="6.8" fill="@dew_glow"/>
+      <ellipse cx="52.5" cy="58" rx="5.4" ry="5.8" fill="@dew_glow"/>
+    </g>
+    <g fill="@husk_outline">
+      <circle cx="35.6" cy="59.6" r="1.6"/>
+      <circle cx="50.4" cy="58.6" r="1.4"/>
+    </g>
+  </g>
+</svg>

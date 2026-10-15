@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- 瘦高：身体由几条干藤拧成（ART-SPEC 5.4）；藤蔓，轻、快、瘦长（LORE） -->
+  <path d="M62 124 C54 122 50 112 51 100 C52 90 54 82 58 76 C62 72 68 72 72 76 C77 82 80 94 79 106 C78 116 72 124 62 124 Z" fill="@straw"/>
+  <path d="M62 124 C72 120 77 110 77 98 C77 88 75 80 72 76 C74 88 73 108 62 124 Z" fill="@straw.shade"/>
+  <g fill="none" stroke-linecap="round">
+    <path d="M57 80 C64 90 52 102 60 112 C64 117 63 121 62 124" stroke="@husk_outline" stroke-width="2"/>
+    <path d="M66 74 C60 86 72 98 66 110 C64 115 66 120 68 122" stroke="@husk_outline" stroke-width="2"/>
+    <path d="M55 92 C58 96 56 100 58 104" stroke="@husk_crack" stroke-width="1.5"/>
+    <path d="M72 86 C74 92 72 96 74 100" stroke="@husk_crack" stroke-width="1.5"/>
+  </g>
+  <path d="M62 124 C54 122 50 112 51 100 C52 90 54 82 58 76 C62 72 68 72 72 76 C77 82 80 94 79 106 C78 116 72 124 62 124 Z" fill="none" stroke="@husk_outline" stroke-width="3" stroke-linejoin="round"/>
+</svg>

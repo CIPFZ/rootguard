@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- 长根腿（ART-SPEC 5.4）：在模板腿上拉长 -->
+  <g transform="translate(0 152) scale(1 1.18) translate(0 -152)">
+  <!-- 缠结的枯根当腿（ART-SPEC 5 共同，LORE 3.4）：几股干根拧在一起，落地处散成须根 -->
+  <g transform="translate(13 0)">
+    <path d="M53 111 L66 111 C65 122 63 132 62 142 C61 145 58 147 55 147 C52 147 50 145 50 142 C51 132 52 122 53 111 Z" fill="@straw_dark.shade" stroke="@husk_outline" stroke-width="3" stroke-linejoin="round"/>
+    <g fill="none" stroke="@husk_crack" stroke-width="1.6" stroke-linecap="round">
+      <path d="M57 113 C59 122 54 130 56 144"/>
+      <path d="M62 114 C60 124 61 132 59 142"/>
+    </g>
+    <g fill="none" stroke-linecap="round">
+      <g stroke="@husk_outline" stroke-width="3.8">
+        <path d="M51 145 C47 145 45 148 41 148 C39 148 38 146 36 147"/>
+        <path d="M53 146 C51 148 49 150 46 151"/>
+        <path d="M56 147 C57 149 56 151 57 152"/>
+        <path d="M59 146 C61 149 64 148 66 151"/>
+        <path d="M61 144 C64 145 67 143 70 145"/>
+      </g>
+      <g stroke="@straw_dark.shade" stroke-width="1.7">
+        <path d="M51 145 C47 145 45 148 41 148 C39 148 38 146 36 147"/>
+        <path d="M53 146 C51 148 49 150 46 151"/>
+        <path d="M56 147 C57 149 56 151 57 152"/>
+        <path d="M59 146 C61 149 64 148 66 151"/>
+        <path d="M61 144 C64 145 67 143 70 145"/>
+      </g>
+    </g>
+  </g>
+  </g>
+</svg>
