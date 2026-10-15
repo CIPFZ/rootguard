@@ -28,6 +28,9 @@ Skin(
         (
             atlas: "skins/garden/garden_husks.atlas.ron",
             clips: [
+                "clay_husk_walk",
+                "clay_husk_cracked_walk",
+                "clay_husk_bare_walk",
                 "husk_walk",
                 "husk_eat",
                 "twig_husk_walk",
