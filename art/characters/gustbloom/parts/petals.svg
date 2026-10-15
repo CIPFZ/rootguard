@@ -14,6 +14,4 @@
       <g transform="rotate(288 90 56)"><path d="M94 48 C99 42 105 37 111 35"/></g>
     </g>
   </g>
-  <ellipse cx="89" cy="56" rx="7" ry="25" fill="@bloom.shade" stroke="@outline" stroke-width="2.6"/>
-  <ellipse cx="90.5" cy="56" rx="3.4" ry="16" fill="@leaf_dark"/>
 </svg>

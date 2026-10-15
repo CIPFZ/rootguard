@@ -1,4 +1,28 @@
-// A1：只有默认位姿（静态），动画在 A2。
+// 炽球片段（ART-SPEC 3.1 / 4.8）。
 Clips([
+    // idle：卡牌与审核表用的默认位姿（放下后立即进入引信）
     (name: "idle", looping: true, duration: Ticks(120), frames: Every(120)),
+    // fuse：时长 = Blast.fuse_ticks，相位由引信计时器驱动；越来越亮、越来越鼓（缩放 1.0 → 1.15）、抖动递增，
+    // 眼睛从怒到闭眼憋气；burst 在末帧（引爆的同一 tick 炽球被移除，爆炸特效由移除事件触发，ADR-016 第 3 节）
+    (
+        name: "fuse",
+        looping: false,
+        duration: Rule("defenders.emberbulb.blast.fuse_ticks"),
+        frames: Every(6),
+        events: [(54, "burst")],
+        keys: {
+            "bulb": [
+                (t: 0, ease: Step), (t: 6, dx: 0.6, sx: 1.015, sy: 1.015, ease: Step),
+                (t: 12, dx: -0.8, sx: 1.03, sy: 1.03, ease: Step), (t: 18, dx: 1.2, sx: 1.045, sy: 1.045, ease: Step),
+                (t: 24, dx: -1.6, sx: 1.06, sy: 1.06, ease: Step), (t: 30, dx: 2, sx: 1.075, sy: 1.075, ease: Step),
+                (t: 36, dx: -2.4, sx: 1.09, sy: 1.09, ease: Step), (t: 42, dx: 2.8, sx: 1.105, sy: 1.105, ease: Step),
+                (t: 48, dx: -3.2, sx: 1.12, sy: 1.12, ease: Step), (t: 54, dx: 3.6, sx: 1.15, sy: 1.15, ease: Step),
+            ],
+            "steam": [(t: 0, ease: Linear), (t: 54, dy: -4, sx: 1.2, sy: 1.2)],
+        },
+        swaps: {
+            "glow": [(0, "base"), (24, "mid"), (42, "hi")],
+            "face": [(0, "base"), (36, "hold")],
+        },
+    ),
 ])

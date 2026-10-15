@@ -7,7 +7,8 @@ Rig(
         (name: "shadow", pivot: (64, 120), z: 0),
         (name: "leaves", parent: Some("bulb"), pivot: (64, 48), z: 1),
         (name: "bulb", pivot: (64, 114), z: 2),
-        (name: "face", parent: Some("bulb"), pivot: (65, 86), z: 3),
-        (name: "steam", parent: Some("bulb"), pivot: (64, 66), z: 4),
+        (name: "glow", parent: Some("bulb"), pivot: (64, 84), z: 3, variants: ["mid", "hi"], hidden: true),
+        (name: "face", parent: Some("bulb"), pivot: (65, 86), z: 4, variants: ["hold"]),
+        (name: "steam", parent: Some("bulb"), pivot: (64, 66), z: 5),
     ],
 )

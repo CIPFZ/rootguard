@@ -1,14 +1,14 @@
-// 块茎雷 Tuberblast（ART-SPEC 4.7）：半埋圆块茎、鼓眼、腮帮憋紫、卷芽引信。默认位姿为武装后（整体露出一半）。
+// 块茎雷 Tuberblast（ART-SPEC 4.7）：半埋圆块茎、鼓眼、腮帮憋紫、卷芽引信。默认位姿为武装后（整体露出一半）；块茎整体下沉 4 px 给加高的引信芽留出 1.4 的 48 px（裁决七）。
 Rig(
     kind: GuardianGround,
-    rest: "idle",
+    rest: "armed",
     flash: true,
     parts: [
         (name: "shadow", pivot: (64, 52), z: 0),
-        (name: "sprout", parent: Some("tuber"), pivot: (63, 24), z: 1),
-        (name: "tuber", pivot: (64, 48), z: 2),
+        (name: "sprout", parent: Some("tuber"), pivot: (63, 30), z: 1, variants: ["glow"]),
+        (name: "tuber", pivot: (64, 52), z: 2),
         (name: "cheeks", parent: Some("tuber"), pivot: (68, 40), z: 3),
-        (name: "eyes", parent: Some("tuber"), pivot: (66, 30), z: 4),
+        (name: "eyes", parent: Some("tuber"), pivot: (66, 34), z: 4),
         (name: "mouth", parent: Some("tuber"), pivot: (68, 43), z: 5),
         (name: "mound", pivot: (64, 50), z: 6),
     ],

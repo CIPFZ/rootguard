@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 引信末段：从怒到闭眼憋气（ART-SPEC 4.8） -->
+  <g fill="none" stroke="@outline" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M50 81 L56 84 L50 86"/><path d="M80 80 L73 83 L80 85"/>
+  </g>
+  <g fill="none" stroke="@outline" stroke-width="4" stroke-linecap="round">
+    <path d="M47 72 L62 77.5"/><path d="M67 77 L83 71"/>
+  </g>
+  <rect x="55" y="94" width="20" height="8" rx="2.5" fill="@dew_glow" stroke="@outline" stroke-width="2.4"/>
+  <g fill="none" stroke="@outline" stroke-width="1.6">
+    <path d="M55 98 L75 98"/><path d="M60 94 L60 102"/><path d="M65 94 L65 102"/><path d="M70 94 L70 102"/>
+  </g>
+</svg>

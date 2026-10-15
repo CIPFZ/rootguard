@@ -1,4 +1,23 @@
-// A1：只有默认位姿（静态），动画在 A2。
+// 风铃花片段（ART-SPEC 3.1 / 4.11）。
 Clips([
+    // idle：卡牌与审核表用的默认位姿（放下后立即进入引信）
     (name: "idle", looping: true, duration: Ticks(120), frames: Every(120)),
+    // fuse：时长 = Gust.fuse_ticks，相位由引信计时器驱动；花瓣旋转逐帧加速（每帧转角递增）、腮越鼓越大；
+    // burst 在末帧（风环特效由移除事件触发，ADR-016 第 3 节）
+    (
+        name: "fuse",
+        looping: false,
+        duration: Rule("defenders.gustbloom.gust.fuse_ticks"),
+        frames: Every(6),
+        events: [(54, "burst")],
+        keys: {
+            "petals": [
+                (t: 0, ease: Step), (t: 6, rot: 6, ease: Step), (t: 12, rot: 15, ease: Step), (t: 18, rot: 27, ease: Step),
+                (t: 24, rot: 42, ease: Step), (t: 30, rot: 60, ease: Step), (t: 36, rot: 81, ease: Step),
+                (t: 42, rot: 105, ease: Step), (t: 48, rot: 132, ease: Step), (t: 54, rot: 162, ease: Step),
+            ],
+            "cheeks": [(t: 0, ease: Linear), (t: 54, sx: 1.25, sy: 1.25)],
+            "bell": [(t: 0, ease: Linear), (t: 54, rot: 4, sx: 1.04, sy: 1.04)],
+        },
+    ),
 ])

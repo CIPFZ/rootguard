@@ -1,0 +1,22 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "tuberblast_arm",
+    looping: false,
+    frames: [
+        (frame: "tuberblast_arm_0", ticks: 60),
+        (frame: "tuberblast_arm_1", ticks: 60),
+        (frame: "tuberblast_arm_2", ticks: 60),
+        (frame: "tuberblast_arm_3", ticks: 60),
+        (frame: "tuberblast_arm_4", ticks: 60),
+        (frame: "tuberblast_arm_5", ticks: 60),
+        (frame: "tuberblast_arm_6", ticks: 60),
+        (frame: "tuberblast_arm_7", ticks: 60),
+        (frame: "tuberblast_arm_8", ticks: 60),
+        (frame: "tuberblast_arm_9", ticks: 60),
+        (frame: "tuberblast_arm_10", ticks: 60),
+        (frame: "tuberblast_arm_11", ticks: 60),
+        (frame: "tuberblast_arm_12", ticks: 60),
+        (frame: "tuberblast_arm_13", ticks: 60),
+        (frame: "tuberblast_arm_14", ticks: 60),
+    ],
+)

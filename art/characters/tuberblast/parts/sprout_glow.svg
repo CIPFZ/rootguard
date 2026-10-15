@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 64">
+  <g transform="translate(0 4)">
+  <!-- 武装后芽尖亮点每 30 tick 闪一次（ART-SPEC 4.7） -->
+  <circle cx="69" cy="16" r="6" fill="@dew_glow" opacity="0.8"/>
+  <path d="M63 26 C61 20 62 13 67 10 C72 7 77 10 76 15 C75 19 70 19 69 16" fill="none" stroke="@outline" stroke-width="5" stroke-linecap="round"/>
+  <path d="M63 26 C61 20 62 13 67 10 C72 7 77 10 76 15 C75 19 70 19 69 16" fill="none" stroke="@leaf" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M63 21 C59 18 56 18 54 20 C57 22 60 22 63 21 Z" fill="@leaf" stroke="@outline" stroke-width="1.8" stroke-linejoin="round"/>
+  <circle cx="69" cy="16" r="3" fill="@dew_glow" stroke="@outline" stroke-width="1.6"/>
+  </g>
+</svg>

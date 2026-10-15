@@ -8,7 +8,8 @@ Rig(
         (name: "stem", pivot: (60, 120), z: 1),
         (name: "bell", pivot: (40, 58), z: 2),
         (name: "petals", parent: Some("bell"), pivot: (90, 56), z: 3),
-        (name: "cheeks", parent: Some("bell"), pivot: (66, 71), z: 4),
+        (name: "rim", parent: Some("bell"), pivot: (90, 56), z: 3),
+        (name: "cheeks", parent: Some("bell"), pivot: (66, 72), z: 4),
         (name: "face", parent: Some("bell"), pivot: (66, 55), z: 5),
     ],
 )

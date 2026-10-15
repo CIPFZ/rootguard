@@ -752,3 +752,59 @@ fn producer_overlay_follows_timer() {
         "应检查两种生产者并见到金色一轮（{checked}）"
     );
 }
+
+/// ART-SPEC 3.1 / ADR-014：炽球与风铃花的 fuse 相位 = 引信计时器已过 tick；块茎雷武装前 arm 相位 = 武装计时器
+/// 已过 tick，武装后循环 armed。
+#[test]
+fn fuse_and_arm_clips_follow_timers() {
+    use rootguard_core::components::{Blast, DefenderRef, Gust, Mine};
+    use rootguard_core::resources::BattleState;
+    let mut runner = common::battle_runner("1-10", &["emberbulb", "gustbloom", "tuberblast"]);
+    while state(&runner).is_some_and(|s| s.phase != Phase::Playing) {
+        runner.frame();
+    }
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    runner
+        .app_mut()
+        .world_mut()
+        .resources
+        .expect_mut::<BattleState>()
+        .dew = 9990;
+    // 卡牌就绪由上一 tick 的 Dew 计算，先推进一帧
+    runner.frame();
+    for (slot, col) in [(0u8, 1u8), (1, 2), (2, 3)] {
+        send(&mut runner, UiAction::SelectCard(usize::from(slot)));
+        send(&mut runner, UiAction::PlaceAt { row: 0, col });
+        runner.frame();
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    for _ in 0..1000 {
+        runner.frame();
+        let world = runner.app().world();
+        for (e, b, _) in world.query::<(Entity, &Blast, &DefenderRef)>().iter() {
+            let (name, el) = rootguard_app::render::defender_pose(world, e).expect("姿态");
+            assert_eq!(name, "emberbulb_fuse");
+            assert_eq!(el, u64::from(b.fuse.duration - b.fuse.remaining).min(59));
+            seen.insert("emberbulb_fuse");
+        }
+        for (e, g, _) in world.query::<(Entity, &Gust, &DefenderRef)>().iter() {
+            let (name, el) = rootguard_app::render::defender_pose(world, e).expect("姿态");
+            assert_eq!(name, "gustbloom_fuse");
+            assert_eq!(el, u64::from(g.fuse.duration - g.fuse.remaining).min(59));
+            seen.insert("gustbloom_fuse");
+        }
+        for (e, m, _) in world.query::<(Entity, &Mine, &DefenderRef)>().iter() {
+            let (name, el) = rootguard_app::render::defender_pose(world, e).expect("姿态");
+            if m.armed {
+                assert_eq!(name, "tuberblast_armed");
+                seen.insert("tuberblast_armed");
+            } else {
+                assert_eq!(name, "tuberblast_arm");
+                assert_eq!(el, u64::from(m.arm.duration - m.arm.remaining));
+                seen.insert("tuberblast_arm");
+            }
+        }
+    }
+    assert_eq!(seen.len(), 4, "应见到两种 fuse 与 arm / armed（{seen:?}）");
+}

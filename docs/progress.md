@@ -100,6 +100,10 @@
   计时器）。露杯：露珠 12 → 28 px 并越来越亮、末 60 tick 光晕脉冲、pop 后打哈欠；日灯笼：三盏随进度依次点亮、末 60
   tick 同时爆亮、各自轻摆，第 4 次生产（`bonus_every`）换金色 `produce_gold`。帧条 `docs/screenshots/a2-produce.png`
   （`底层+叠层` 合成）。测试 `producer_overlay_follows_timer`。
+- [x] 第 3 类 fuse（2026-10-16，ADR-016 第 3 节）：炽球 fuse（越来越亮 / 鼓到 1.15 / 抖动递增 / 怒 → 闭眼憋气）、
+  风铃花 fuse（花瓣逐帧加速旋转、腮越鼓越大，钟口单独不转）、块茎雷 arm（随进度从土里露出、芽长出）/ armed（芽尖
+  每 30 tick 一闪）；引信芽加高 30% 多卷半圈（裁决七）。帧条 `docs/screenshots/a2-fuse.png`。测试
+  `fuse_and_arm_clips_follow_timers`。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 

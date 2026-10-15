@@ -3,6 +3,6 @@ AnimationClip(
     name: "tuberblast_idle",
     looping: true,
     frames: [
-        (frame: "tuberblast_idle_0", ticks: 120),
+        (frame: "tuberblast_idle_0", ticks: 60),
     ],
 )

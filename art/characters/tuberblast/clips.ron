@@ -1,4 +1,26 @@
-// A1：只有默认位姿（静态），动画在 A2。
+// 块茎雷片段（ART-SPEC 3.1 / 4.7）。
 Clips([
-    (name: "idle", looping: true, duration: Ticks(120), frames: Every(120)),
+    // idle：卡牌图标与无 arm 片段时的回退（同武装后的默认位姿）
+    (name: "idle", looping: true, duration: Ticks(60), frames: Every(60)),
+    // arm：时长 = Mine.arm_ticks，相位由武装计时器驱动；块茎只露一点、芽随进度慢慢长出
+    (
+        name: "arm",
+        looping: false,
+        duration: Rule("defenders.tuberblast.mine.arm_ticks"),
+        frames: Every(60),
+        keys: {
+            "tuber": [(t: 0, dy: 14, ease: Linear), (t: 840, dy: 2), (t: 900)],
+            "sprout": [(t: 0, sx: 0.5, sy: 0.25, ease: Linear), (t: 840, sx: 1.0, sy: 1.0)],
+            "eyes": [(t: 0, sx: 0.85, sy: 0.85, ease: Linear), (t: 840)],
+        },
+    ),
+    // armed：武装后循环 30；整体露出一半、芽尖亮点每 30 tick 闪一次、眼睛越鼓越大（脉动）
+    (
+        name: "armed",
+        looping: true,
+        duration: Ticks(30),
+        frames: List([8, 22]),
+        keys: { "eyes": [(t: 0, sx: 1.08, sy: 1.08, ease: Step), (t: 8)] },
+        swaps: { "sprout": [(0, "glow"), (8, "base")] },
+    ),
 ])

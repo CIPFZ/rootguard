@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 朝右的宽钟口（ART-SPEC 4.11）：不随花瓣转动 -->
+  <ellipse cx="89" cy="56" rx="7" ry="25" fill="@bloom.shade" stroke="@outline" stroke-width="2.6"/>
+  <ellipse cx="90.5" cy="56" rx="3.4" ry="16" fill="@leaf_dark"/>
+</svg>
