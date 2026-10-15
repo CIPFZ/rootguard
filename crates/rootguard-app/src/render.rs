@@ -45,7 +45,15 @@ mod palette {
     pub const PREVIEW_BAD: u32 = 0xFF_5555;
     /// 皮肤模式：生命 < 50% 的防御者着色（对应占位模式的红色描边）。
     pub const LOW_HP_TINT: u32 = 0xFF_B0B0;
+    /// 战场底图上的非激活车道遮罩（ART-SPEC 8.1 L3：40% `#1E2A1A`）。
+    pub const LANE_MASK: u32 = 0x1E_2A1A;
 }
+
+/// 非激活车道遮罩的不透明度（ART-SPEC 8.1 L3）。
+const LANE_MASK_ALPHA: f32 = 0.4;
+
+/// 皮肤中的战场底图片段（ART-SPEC 8.1 L0 ～ L2，`tools/artgen` 生成）。
+pub const BG_CLIP: &str = "bg_base";
 
 /// 皮肤模式下 Chill 着色的混合比例（与占位模式一致）。
 const CHILL_MIX: f32 = 0.5;
@@ -381,7 +389,7 @@ pub fn draw_battle(world: &mut World) {
     let tick = world.resources.expect::<Time>().fixed_tick;
     let painter = Painter::active(world);
     let painter = painter.as_ref();
-    draw_background(world, &mut list);
+    draw_background(world, &mut list, painter);
     draw_defenders(world, &mut list, alpha, tick, painter);
     draw_enemies(world, &mut list, alpha, tick, painter);
     for (e, t, _, p, lane, pr) in world
@@ -397,8 +405,9 @@ pub fn draw_battle(world: &mut World) {
     {
         let y = row_y(lane.row);
         let pos = t.lerp(alpha);
+        let clip = painter.map_or_else(String::new, |sk| projectile_clip(sk, pr.id.as_str()));
         let pose = Pose {
-            clip: pr.id.as_str(),
+            clip: &clip,
             elapsed: phase(e, tick),
             flash: false,
             tint: Color::WHITE,
@@ -408,10 +417,21 @@ pub fn draw_battle(world: &mut World) {
         }
     }
     // Dew 画在 HUD 之上：下落时会经过顶部 HUD 区域，仍需可见可点
-    for (e, t, _) in world.query::<(Entity, &Transform2D, &DewPickup)>().iter() {
-        let pos = t.lerp(alpha);
+    let dew_clip = painter.map_or(DEW_CLIP, dew_clip);
+    for (e, t, dew) in world.query::<(Entity, &Transform2D, &DewPickup)>().iter() {
+        let mut pos = t.lerp(alpha);
+        if painter.is_some() {
+            // ART-SPEC 6：下落时轻微左右摆；过期前 180 tick 开始闪烁（纯视觉）
+            if !dew.landed {
+                pos.x += dew_sway(phase(e, tick));
+            } else if dew.expire.remaining < DEW_BLINK_TICKS
+                && dew_blink_hidden(dew.expire.remaining)
+            {
+                continue;
+            }
+        }
         let pose = Pose {
-            clip: DEW_CLIP,
+            clip: dew_clip,
             elapsed: phase(e, tick),
             flash: false,
             tint: Color::WHITE,
@@ -430,7 +450,7 @@ pub fn draw_battle(world: &mut World) {
             };
             let pos = t.value();
             let pose = Pose {
-                clip: DEW_CLIP,
+                clip: dew_clip,
                 elapsed: 0,
                 flash: false,
                 tint: Color::WHITE,
@@ -451,8 +471,43 @@ pub fn draw_battle(world: &mut World) {
 /// Dew 所在图层：HUD 之上（ADR-003 第 3 条）。
 pub const DEW_LAYER: Layer = Layer(Layer::OVERLAY.0 + 1);
 
-/// Dew 的皮肤片段名。
+/// Dew 的皮肤片段名（`default` 皮肤）；garden 皮肤为 [`DEW_IDLE_CLIP`]。
 pub const DEW_CLIP: &str = "dew";
+/// garden 皮肤的 Dew 静置片段（ART-SPEC 6，`tools/artgen` 的 `<id>_<片段>` 命名）。
+pub const DEW_IDLE_CLIP: &str = "dew_idle";
+/// Dew 过期前开始闪烁的 tick 数（ART-SPEC 6）。
+const DEW_BLINK_TICKS: u32 = 180;
+/// 闪烁的半周期（tick）。
+const DEW_BLINK_HALF_TICKS: u32 = 10;
+/// 下落时左右摆的幅度（px）与周期（tick）。
+const DEW_SWAY_PX: f32 = 2.5;
+const DEW_SWAY_TICKS: u64 = 48;
+
+/// 皮肤中 Dew 用的片段：优先 garden 的 `dew_idle`。
+fn dew_clip(sk: &Painter<'_>) -> &'static str {
+    if sk.has(DEW_IDLE_CLIP) {
+        DEW_IDLE_CLIP
+    } else {
+        DEW_CLIP
+    }
+}
+
+/// 弹丸片段：优先 garden 的 `<id>_fly`，否则 `default` 皮肤的 `<id>`。
+fn projectile_clip(sk: &Painter<'_>, id: &str) -> String {
+    let fly = format!("{id}_fly");
+    if sk.has(&fly) { fly } else { id.to_owned() }
+}
+
+/// 下落中的 Dew 的水平摆动（三角波，纯视觉）。
+fn dew_sway(phase: u64) -> f32 {
+    let t = (phase % DEW_SWAY_TICKS) as f32 / DEW_SWAY_TICKS as f32;
+    DEW_SWAY_PX * (4.0 * (t - 0.5).abs() - 1.0)
+}
+
+/// 闪烁中本帧是否隐藏。
+fn dew_blink_hidden(remaining: u32) -> bool {
+    (remaining / DEW_BLINK_HALF_TICKS) % 2 == 1
+}
 
 /// 占位 Dew：黄色圆 + 微光描边（SPEC 12.2）；`scale` 用于收集飞行动画。
 pub fn draw_dew_placeholder(list: &mut DrawList, pos: Vec2, scale: f32) {
@@ -465,7 +520,9 @@ pub fn draw_dew_placeholder(list: &mut DrawList, pos: Vec2, scale: f32) {
     list.circle(DEW_LAYER, pos, 16.0 * scale, color(palette::DEW));
 }
 
-fn draw_background(world: &World, list: &mut DrawList) {
+/// 背景：皮肤有战场底图时画底图并按关卡叠加非激活车道遮罩（ART-SPEC 8.1 L0 ～ L3），否则画占位色带
+/// （SPEC 12.2）。温室外墙、入口与 Hose 标记目前两种模式共用占位图形（L4 ～ L6 在 A3）。
+fn draw_background(world: &World, list: &mut DrawList, painter: Option<&Painter<'_>>) {
     let lanes = world
         .resources
         .get::<LaneState>()
@@ -476,6 +533,27 @@ fn draw_background(world: &World, list: &mut DrawList) {
         Rect::from_min_size(Vec2::ZERO, LOGICAL_SIZE),
         color(palette::BACKDROP),
     );
+    let bg = Pose {
+        clip: BG_CLIP,
+        elapsed: 0,
+        flash: false,
+        tint: Color::WHITE,
+    };
+    if painter.is_some_and(|sk| sk.draw(list, Layer::BACKGROUND, Vec2::ZERO, 0.0, bg)) {
+        for row in (0..Grid::ROWS).filter(|&r| !lanes.is_active(r)) {
+            let top = Grid::ORIGIN.y + Grid::CELL_SIZE.y * f32::from(row);
+            list.rect(
+                Layer::BACKGROUND,
+                Rect::from_min_size(
+                    Vec2::new(Grid::ORIGIN.x, top),
+                    Vec2::new(Grid::CELL_SIZE.x * f32::from(Grid::COLS), Grid::CELL_SIZE.y),
+                ),
+                color(palette::LANE_MASK).with_alpha(LANE_MASK_ALPHA),
+            );
+        }
+        draw_wall_and_entrance(list, &lanes);
+        return;
+    }
     for row in 0..Grid::ROWS {
         let shades = if lanes.is_active(row) {
             palette::LANE_ACTIVE
@@ -486,14 +564,6 @@ fn draw_background(world: &World, list: &mut DrawList) {
             let rect = Rect::from_center_size(Grid::cell_center(row, col), Grid::CELL_SIZE);
             let shade = shades[usize::from((row + col) % 2)];
             list.rect(Layer::BACKGROUND, rect, color(shade));
-        }
-        if lanes.is_active(row) && lanes.hose_available[usize::from(row)] {
-            let y = Grid::row_center_y(row);
-            list.rect(
-                Layer::BACKGROUND,
-                Rect::from_center_size(Vec2::new(Grid::HOSE_X, y), Vec2::new(30.0, 24.0)),
-                color(palette::HOSE),
-            );
         }
     }
     let grid_rect = Rect::from_min_size(
@@ -514,7 +584,18 @@ fn draw_background(world: &World, list: &mut DrawList) {
             color(palette::GRID_LINE),
         );
     }
-    // 左侧温室、右侧入口
+    draw_wall_and_entrance(list, &lanes);
+}
+
+/// 左侧温室（含 Hose 可用标记）与右侧入口的占位图形（SPEC 12.2；皮肤版在 A3，ART-SPEC 8.1 L4 / L5）。
+fn draw_wall_and_entrance(list: &mut DrawList, lanes: &LaneState) {
+    let grid_rect = Rect::from_min_size(
+        Grid::ORIGIN,
+        Vec2::new(
+            Grid::CELL_SIZE.x * f32::from(Grid::COLS),
+            Grid::CELL_SIZE.y * f32::from(Grid::ROWS),
+        ),
+    );
     let greenhouse = Rect::from_min_size(
         Vec2::new(0.0, grid_rect.min.y),
         Vec2::new(Grid::HOSE_X - 20.0, grid_rect.size().y),
@@ -539,6 +620,16 @@ fn draw_background(world: &World, list: &mut DrawList) {
         ),
         color(palette::ENTRANCE),
     );
+    for row in 0..Grid::ROWS {
+        if lanes.is_active(row) && lanes.hose_available[usize::from(row)] {
+            let y = Grid::row_center_y(row);
+            list.rect(
+                Layer::BACKGROUND,
+                Rect::from_center_size(Vec2::new(Grid::HOSE_X, y), Vec2::new(30.0, 24.0)),
+                color(palette::HOSE),
+            );
+        }
+    }
 }
 
 /// 计时器驱动片段的已播放 tick（ART-SPEC 3.1，ADR-014）：`since` 为计时器本周期已经过的 tick，

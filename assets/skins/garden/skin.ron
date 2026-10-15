@@ -26,6 +26,14 @@ Skin(
             ],
         ),
         (
+            atlas: "skins/garden/garden_fx.atlas.ron",
+            clips: [
+                "dew_idle",
+                "frost_pebble_fly",
+                "pebble_fly",
+            ],
+        ),
+        (
             atlas: "skins/garden/garden_husks.atlas.ron",
             clips: [
                 "carrier_husk_walk",
@@ -76,6 +84,12 @@ Skin(
                 "tuberblast_portrait_off",
                 "twinpod_portrait",
                 "twinpod_portrait_off",
+            ],
+        ),
+        (
+            atlas: "skins/garden/garden_bg.atlas.ron",
+            clips: [
+                "bg_base",
             ],
         ),
     ],

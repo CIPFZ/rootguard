@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- 48 × 48 金色水滴（dew），表面一点高光（ART-SPEC 6）；温室玻璃顶滴下的露水（LORE 2.4） -->
+  <path d="M24 8 C19 15 13 21 13 28 C13 35 18 40 24 40 C30 40 35 35 35 28 C35 21 29 15 24 8 Z" fill="@dew"/>
+  <path d="M14 30 C15 36 19 40 24 40 C20 38 17 35 16 30 Z" fill="@dew.shade"/>
+  <path d="M20 19 C18 22 17 25 17.5 28" fill="none" stroke="@dew_glow" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="27" cy="33" r="1.4" fill="@dew_glow"/>
+  <path d="M24 8 C19 15 13 21 13 28 C13 35 18 40 24 40 C30 40 35 35 35 28 C35 21 29 15 24 8 Z" fill="none" stroke="@outline" stroke-width="2.4" stroke-linejoin="round"/>
+</svg>

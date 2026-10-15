@@ -1,0 +1,10 @@
+// 弹丸 frost_pebble（ART-SPEC 6）：冰蓝冰石，拖 3 帧白雾尾，飞行时微旋转。
+Rig(
+    kind: Projectile,
+    rest: "fly",
+    flash: false,
+    parts: [
+        (name: "mist", pivot: (6, 16), z: 0, variants: ["b", "c"]),
+        (name: "stone", pivot: (17, 16), z: 1),
+    ],
+)

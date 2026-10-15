@@ -86,6 +86,24 @@ impl Image {
         }
     }
 
+    /// 不透明像素中出现最多的颜色（排除 `exclude`，如描边色）：角色主色（ART-SPEC 8.1 可读性校验）。
+    #[must_use]
+    pub fn dominant_color(&self, exclude: &[Rgb]) -> Option<Rgb> {
+        let mut counts: BTreeMap<Rgb, u32> = BTreeMap::new();
+        for px in self.data.as_chunks::<4>().0 {
+            if px[3] == 255 {
+                let c = Rgb(px[0], px[1], px[2]);
+                if !exclude.contains(&c) {
+                    *counts.entry(c).or_default() += 1;
+                }
+            }
+        }
+        counts
+            .into_iter()
+            .max_by_key(|(c, n)| (*n, *c))
+            .map(|(c, _)| c)
+    }
+
     /// alpha ≥ `threshold` 的像素外接框 `(x0, y0, x1, y1)`（含端点）；全透明时为 `None`。
     #[must_use]
     pub fn opaque_bounds(&self, threshold: u8) -> Option<(u32, u32, u32, u32)> {
@@ -132,8 +150,8 @@ impl Image {
 
 /// 一个部件文件：`viewBox` 内的子元素源码（颜色引用尚未替换）与引用到的颜色名。
 #[derive(Clone, Debug)]
-struct PartSource {
-    body: String,
+pub(crate) struct PartSource {
+    pub(crate) body: String,
 }
 
 /// 一个角色的全部部件源码：(部件名, 变体) → 源码。
@@ -145,7 +163,7 @@ pub struct Parts {
 }
 
 /// 读取并校验单个部件 SVG，返回替换颜色前的内部源码。
-fn load_part(
+pub(crate) fn load_part(
     path: &Path,
     canvas: (u32, u32),
     palette: &Palette,
@@ -338,7 +356,12 @@ impl Parts {
 }
 
 /// 把 `fill="@名"` / `stroke="@名"` 替换为十六进制颜色（校验已在加载时完成）。
-fn substitute(body: &str, palette: &Palette, character: &str, material: Material) -> String {
+pub(crate) fn substitute(
+    body: &str,
+    palette: &Palette,
+    character: &str,
+    material: Material,
+) -> String {
     let mut out = String::with_capacity(body.len());
     let mut rest = body;
     while let Some(i) = rest.find("\"@") {
@@ -366,7 +389,7 @@ fn paint_color(paint: &usvg::Paint) -> Result<Rgb> {
     }
 }
 
-fn check_colors(group: &usvg::Group, allowed: &BTreeSet<Rgb>) -> Result<()> {
+pub(crate) fn check_colors(group: &usvg::Group, allowed: &BTreeSet<Rgb>) -> Result<()> {
     for node in group.children() {
         match node {
             usvg::Node::Group(g) => check_colors(g, allowed)?,

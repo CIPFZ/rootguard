@@ -96,6 +96,13 @@ fn print_summary(s: &artgen::Summary) {
     for (name, w, h) in &s.atlases {
         println!("  {name}.png {w} × {h}");
     }
+    if s.readability_failing > 0 {
+        println!(
+            "  注意：{} 个角色主色与格子底色的明度差低于 ART-SPEC 8.1 的下限，见 {}（ADR-015）",
+            s.readability_failing,
+            artgen::READABILITY_REPORT
+        );
+    }
 }
 
 /// 自查用：默认位姿（放大）与每个片段每个状态的帧条，写到 `tmp/artgen/`。

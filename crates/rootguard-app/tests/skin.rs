@@ -6,7 +6,7 @@ use std::path::Path;
 
 use common::{next_id, runner_with, send, state};
 use rootguard_app::script::{Replay, Script};
-use rootguard_app::skin::{SkinAssets, Skins};
+use rootguard_app::skin::Skins;
 use rootguard_app::{BattleScene, build_app_with};
 use rootguard_core::components::{
     BattleTag, Biter, Cell, DewPickup, EnemyRef, ProjectileBody, StatusEffects, WalkState, Walker,
@@ -408,14 +408,14 @@ fn art_clips_match_rules() {
     }
 }
 
-/// ART-SPEC 11 A0：garden 皮肤加载，切换到花园皮肤后石籽荚与枯壳怪用 garden 图集绘制；garden 中没有的
-/// 角色回退 default 皮肤（ADR-014）。
+/// ART-SPEC 11 A0 / A2：garden 皮肤加载，切换到花园皮肤后石籽荚、枯壳怪、弹丸与 Dew 用 garden 图集绘制；
+/// garden 中没有的片段回退 default 皮肤（ADR-014）。
 #[test]
 fn skin_garden_loads() {
     let mut runner = common::battle_runner("1-1", &[]);
     send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
     send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
-    let (garden_images, default_image) = {
+    let garden_images = {
         let world = runner.app().world();
         let skins = world.resources.expect::<Skins>();
         let garden = skins.get(SkinName::Garden).expect("garden 皮肤应加载");
@@ -425,24 +425,35 @@ fn skin_garden_loads() {
             "pebble_pod_hurt_idle",
             "husk_walk",
             "husk_eat",
+            "pebble_fly",
+            "dew_idle",
         ] {
             assert!(garden.has_clip(clip), "garden 缺少 {clip}");
         }
+        // 回退：garden 没有的片段从 default 取
+        let view = skins.view(SkinName::Garden);
+        let default = skins.get(SkinName::Default).expect("default");
+        assert!(!garden.has_clip("tuberblast_armed") && default.has_clip("tuberblast_armed"));
+        assert_eq!(
+            view.entry("tuberblast_armed").map(|(a, _)| a),
+            default.atlas_of("tuberblast_armed"),
+            "garden 缺片段时应回退 default"
+        );
         let atlases = world.resources.expect::<Assets<Atlas>>();
-        let image = |skin: &SkinAssets, clip: &str| {
+        let image = |clip: &str| {
             atlases
-                .get(skin.atlas_of(clip).expect("图集"))
+                .get(garden.atlas_of(clip).expect("图集"))
                 .expect("图集")
                 .image
         };
-        let default = skins.get(SkinName::Default).expect("default");
-        (
-            [image(garden, "pebble_pod_idle"), image(garden, "husk_walk")],
-            image(default, "dew"),
-        )
+        [
+            image("pebble_pod_idle"),
+            image("husk_walk"),
+            image("pebble_fly"),
+            image("dew_idle"),
+        ]
     };
-    let mut seen_garden = [false, false];
-    let mut seen_fallback = false;
+    let mut seen = [false; 4];
     for _ in 0..3000 {
         let s = state(&runner).expect("对局");
         if s.level_tick == 60 {
@@ -453,21 +464,18 @@ fn skin_garden_loads() {
         for cmd in runner.last_draw_list().iter() {
             if let DrawKind::Sprite { image, .. } = &cmd.kind {
                 for (i, g) in garden_images.iter().enumerate() {
-                    seen_garden[i] |= image == g;
+                    seen[i] |= image == g;
                 }
-                seen_fallback |= *image == default_image;
             }
         }
-        if seen_garden == [true, true] && seen_fallback {
+        if seen.iter().all(|s| *s) {
             break;
         }
     }
     assert_eq!(
-        seen_garden,
-        [true, true],
-        "石籽荚与枯壳怪应以 garden 图集绘制"
+        seen, [true; 4],
+        "石籽荚、枯壳怪、弹丸、Dew 应以 garden 图集绘制"
     );
-    assert!(seen_fallback, "garden 中没有的 Dew 应回退 default 皮肤绘制");
 }
 
 /// ART-SPEC 3.1 / ADR-014：石籽荚的 attack 片段相位由射手冷却计时器驱动——计时器刚重置（弹丸生成）的
@@ -573,4 +581,50 @@ fn overlapping_enemies_draw_leftmost_on_top() {
         checked += 1;
     }
     assert!(checked > 100, "应在多只敌人同屏时检查（{checked}）");
+}
+
+/// ART-SPEC v1.2 8.1 / 裁决（七）第 4 节：花园皮肤画战场底图 `bg_base`（全屏），并按关卡给非激活车道叠加
+/// 40% 遮罩（L3）；1-1 只有第 2 行激活，应有 4 条遮罩。
+#[test]
+fn garden_background_drawn_with_lane_mask() {
+    let mut runner = common::battle_runner("1-1", &[]);
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    runner.frames(2);
+    let world = runner.app().world();
+    let garden = world
+        .resources
+        .expect::<Skins>()
+        .get(SkinName::Garden)
+        .expect("garden");
+    let bg_image = world
+        .resources
+        .expect::<Assets<Atlas>>()
+        .get(
+            garden
+                .atlas_of(rootguard_app::render::BG_CLIP)
+                .expect("bg_base"),
+        )
+        .expect("图集")
+        .image;
+    let list = runner.last_draw_list();
+    let bg = list
+        .iter()
+        .filter_map(|c| match &c.kind {
+            DrawKind::Sprite { image, dst, .. } if *image == bg_image => Some(*dst),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(bg.len(), 1, "应画一张底图");
+    assert_eq!(bg[0].size(), Vec2::new(1280.0, 720.0));
+    let masks = list
+        .iter()
+        .filter(|c| match &c.kind {
+            DrawKind::Rect { rect, color, .. } => {
+                (rect.size().x - 900.0).abs() < 0.5 && (color.a - 0.4).abs() < 0.01
+            }
+            _ => false,
+        })
+        .count();
+    assert_eq!(masks, 4, "1-1 的 4 条非激活车道应各有一条遮罩");
 }

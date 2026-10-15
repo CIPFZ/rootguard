@@ -51,4 +51,11 @@ Palette(
         // 5.8 偏深的葫芦身
         "drum_husk": { "drum": "#C9A24E" },
     },
+    // ART-SPEC 8.1 战场设计卡的背景专属色（不受每角色 ≤ 2 的限制，只用于 art/bg/ 与 artgen 生成的 L0 / L2）
+    background: {
+        "sky_top": "#9DC4E8",       // L0 天空渐变顶
+        "sky_bottom": "#DDEBF4",    // L0 天空渐变底
+        "grass_dry": "#B9B36A",     // L2 列 6 ～ 8 偏绿的干草
+        "brass": "#C89B3C",         // L4 铜色水管与阀门（A3）
+    },
 )

@@ -1,0 +1,13 @@
+// idle：静置时缓慢呼吸发光（ART-SPEC 6），60 tick 一个周期。下落时的左右摆与过期前闪烁由渲染层处理。
+Clips([
+    (
+        name: "idle",
+        looping: true,
+        duration: Ticks(60),
+        frames: Every(10),
+        keys: {
+            "glow": [(t: 0, sx: 0.88, sy: 0.88), (t: 30, sx: 1.08, sy: 1.08), (t: 60, sx: 0.88, sy: 0.88)],
+            "drop": [(t: 0), (t: 30, sx: 1.02, sy: 0.98), (t: 60)],
+        },
+    ),
+])

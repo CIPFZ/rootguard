@@ -1,0 +1,10 @@
+// 飞行（ART-SPEC 6：速度 5.0、微旋转）：24 tick 转一圈，4 帧。
+Clips([
+    (
+        name: "fly",
+        looping: true,
+        duration: Ticks(24),
+        frames: Every(6),
+        keys: { "stone": [(t: 0, ease: Linear), (t: 24, rot: 360)] },
+    ),
+])

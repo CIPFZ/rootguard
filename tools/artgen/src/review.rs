@@ -222,11 +222,11 @@ pub fn review(root: &Path, partial: bool) -> Result<Vec<String>> {
     let mut chars = Vec::new();
     for dir in character_dirs(root)? {
         let ch = load_character(&dir, &palette)?;
-        let index = ORDER
-            .iter()
-            .position(|id| *id == ch.id)
-            .map_or(ORDER.len() + 1 + chars.len(), |i| i + 1);
-        chars.push((index, ch));
+        // 审核表只含 21 个角色；弹丸与 Dew 不在 A1 审核范围
+        let Some(i) = ORDER.iter().position(|id| *id == ch.id) else {
+            continue;
+        };
+        chars.push((i + 1, ch));
     }
     chars.sort_by_key(|(i, _)| *i);
     // 覆盖层的示意宿主：守卫模板石籽荚（裁决五）

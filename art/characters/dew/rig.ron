@@ -1,0 +1,10 @@
+// 拾取物 Dew（ART-SPEC 6）：金色水滴 + 呼吸的光晕。
+Rig(
+    kind: Dew,
+    rest: "idle",
+    flash: false,
+    parts: [
+        (name: "glow", pivot: (24, 25), z: 0),
+        (name: "drop", pivot: (24, 40), z: 1),
+    ],
+)

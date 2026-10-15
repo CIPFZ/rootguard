@@ -10,6 +10,7 @@
 #![forbid(unsafe_code)]
 
 pub mod atlas;
+pub mod bg;
 pub mod compose;
 pub mod palette;
 pub mod review;
@@ -32,6 +33,14 @@ pub const OUT_DIR: &str = "assets/skins/garden";
 
 /// 输出路径在引擎资产根（`assets/`）下的前缀。
 const ASSET_PREFIX: &str = "skins/garden";
+
+/// 战场底图（ART-SPEC 8.1）：图像文件、图集名与片段名。
+pub const BG_IMAGE: &str = "bg_base.png";
+const BG_ATLAS: &str = "garden_bg";
+/// 底图片段名（游戏侧按此名查找，ADR-015）。
+pub const BG_CLIP: &str = "bg_base";
+/// 可读性报告（随构建生成）。
+pub const READABILITY_REPORT: &str = "docs/art/bg-readability.md";
 
 /// 卡牌头像尺寸（ART-SPEC 2.1）。
 pub const PORTRAIT: (u32, u32) = (80, 100);
@@ -169,6 +178,8 @@ pub struct Summary {
     pub unique: usize,
     /// 图集：(名, 宽, 高)。
     pub atlases: Vec<(String, u32, u32)>,
+    /// 主色未达 ART-SPEC 8.1 明度差的角色数（只报告，ADR-015）。
+    pub readability_failing: usize,
 }
 
 /// 构建结果：相对仓库根的路径 → 文件内容。
@@ -313,6 +324,7 @@ pub fn build(root: &Path) -> Result<Built> {
     let mut summary = Summary::default();
     // 图集名 → 帧；图集名 → 片段
     let mut atlas_frames: BTreeMap<&'static str, Vec<FrameIn>> = BTreeMap::new();
+    let mut mains: Vec<(String, palette::Rgb)> = Vec::new();
     let mut atlas_clips: BTreeMap<&'static str, Vec<ClipOut>> = BTreeMap::new();
     for dir in character_dirs(root)? {
         let ch = load_character(&dir, &palette)?;
@@ -325,6 +337,13 @@ pub fn build(root: &Path) -> Result<Built> {
             .sum::<usize>();
         let kind = ch.rig.kind;
         let rest = render_rest(&ch, &palette)?;
+        let outlines = ["outline", "husk_outline"]
+            .iter()
+            .filter_map(|n| palette.resolve(&ch.id, kind.material(), n))
+            .collect::<Vec<_>>();
+        if let Some(c) = rest.dominant_color(&outlines) {
+            mains.push((ch.id.clone(), c));
+        }
         let (lw, lh) = kind.size_limit();
         if let Some((x0, y0, x1, y1)) = rest.opaque_bounds(SIZE_ALPHA) {
             let (w, h) = (x1 - x0 + 1, y1 - y0 + 1);
@@ -428,6 +447,63 @@ pub fn build(root: &Path) -> Result<Built> {
             format!("{ASSET_PREFIX}/{atlas}.atlas.ron"),
             clips.into_iter().map(|c| c.name).collect(),
         ));
+    }
+    if let Some(image) = bg::render(root, &palette)? {
+        files.insert(format!("{OUT_DIR}/{BG_IMAGE}"), image.encode_png()?);
+        let packed = atlas::Packed {
+            frames: vec![(format!("{BG_CLIP}_0"), 0, 0, image.w, image.h, (0.0, 0.0))],
+            unique: 1,
+            image,
+        };
+        files.insert(
+            format!("{OUT_DIR}/{BG_ATLAS}.atlas.ron"),
+            atlas::atlas_ron(&format!("{ASSET_PREFIX}/{BG_IMAGE}"), &packed).into_bytes(),
+        );
+        let clip = ClipOut {
+            name: BG_CLIP.to_owned(),
+            looping: false,
+            frames: vec![(format!("{BG_CLIP}_0"), 60, None)],
+        };
+        files.insert(
+            format!("{OUT_DIR}/anim/{BG_CLIP}.anim.ron"),
+            atlas::clip_ron(&clip).into_bytes(),
+        );
+        manifest.push((
+            format!("{ASSET_PREFIX}/{BG_ATLAS}.atlas.ron"),
+            vec![BG_CLIP.to_owned()],
+        ));
+        summary.clips += 1;
+        summary
+            .atlases
+            .push((BG_ATLAS.to_owned(), packed.image.w, packed.image.h));
+        // ART-SPEC 8.1 可读性（ADR-015）：描边与格子底色的明度差为强制项，主色只报告
+        let cells = bg::all_cell_colors(&palette)?;
+        let outlines: Vec<(String, palette::Rgb, f64)> = ["outline", "husk_outline"]
+            .iter()
+            .filter_map(|n| {
+                palette
+                    .resolve(palette::BACKGROUND, palette::Material::Prop, n)
+                    .map(|c| ((*n).to_owned(), c, bg::min_diff(c, &cells)))
+            })
+            .collect();
+        if let Some((n, _, d)) = outlines.iter().find(|o| o.2 < bg::MIN_LIGHTNESS_DIFF) {
+            bail!(
+                "描边 {n} 与格子底色的明度差只有 {d:.1}，低于 {}（ART-SPEC 8.1）",
+                bg::MIN_LIGHTNESS_DIFF
+            );
+        }
+        let readability = bg::Readability {
+            mains: mains
+                .iter()
+                .map(|(id, c)| (id.clone(), *c, bg::min_diff(*c, &cells)))
+                .collect(),
+            outlines,
+        };
+        summary.readability_failing = readability.failing_mains().len();
+        files.insert(
+            READABILITY_REPORT.to_owned(),
+            readability.report().into_bytes(),
+        );
     }
     files.insert(
         format!("{OUT_DIR}/skin.ron"),

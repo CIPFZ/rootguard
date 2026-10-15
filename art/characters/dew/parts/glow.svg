@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- dew_glow 光晕（ART-SPEC 6）：静置时缓慢呼吸发光 -->
+  <circle cx="24" cy="25" r="19" fill="@dew_glow" opacity="0.55"/>
+</svg>

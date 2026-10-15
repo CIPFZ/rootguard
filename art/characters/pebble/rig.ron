@@ -1,0 +1,9 @@
+// 弹丸 pebble（ART-SPEC 6）：灰色小石子，飞行时微旋转。
+Rig(
+    kind: Projectile,
+    rest: "fly",
+    flash: false,
+    parts: [
+        (name: "stone", pivot: (17, 16), z: 0),
+    ],
+)

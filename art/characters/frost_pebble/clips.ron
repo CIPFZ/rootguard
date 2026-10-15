@@ -1,0 +1,11 @@
+// 飞行：石头 24 tick 转一圈，雾尾 3 帧轮换（ART-SPEC 6）。
+Clips([
+    (
+        name: "fly",
+        looping: true,
+        duration: Ticks(24),
+        frames: List([8, 8, 8]),
+        keys: { "stone": [(t: 0, ease: Linear), (t: 24, rot: 360)] },
+        swaps: { "mist": [(0, "base"), (8, "b"), (16, "c")] },
+    ),
+])

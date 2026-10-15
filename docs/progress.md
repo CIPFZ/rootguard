@@ -77,6 +77,21 @@
 | A2 全员动画与特效 | 进行中 |
 | A3 战场与叙事 | 未开始 |
 
+### A2 全员动画与特效（裁决七放行，2026-10-16）
+
+每完成一类（守卫 attack / produce / fuse、Husk walk + eat、护甲破碎、特效、音效）输出一张实机帧条到
+`docs/screenshots/`（战场底图上），提交后继续；A2 全部完成后停下，负责人在底图上看一局 1-9。
+
+- [x] 前置 1：战场底图 `bg_base.png`（ART-SPEC v1.2 8.1 L0 ～ L2，ADR-015）：天空渐变与草地格由 `artgen` 按设计卡
+  公式从调色板生成（几何取自游戏 `Grid`），远景 `art/bg/far.svg`（沉睡的根母、枯玉米地、云）；调色板新增 `background`
+  段（`sky_top` / `sky_bottom` / `grass_dry` / `brass`）。游戏侧花园皮肤画底图 + 非激活车道 40% 遮罩
+  （`garden_background_drawn_with_lane_mask`）；温室 / 入口 / Hose 标记仍是占位（A3）。
+  **待负责人确认**：8.1 的“格底色与角色主色明度差 ≥ 25”按设计卡配色不可满足（格 L* 62 ～ 77，21 个主色中 20 个
+  不达标，见生成的 `docs/art/bg-readability.md`）；现以“描边色与格底色 ≥ 25”为强制项（39.2 / 36.6，满足），
+  主色只报告。详见 ADR-015 第 3 条。
+- [x] 前置 2：弹丸 `pebble`（灰色小石子、微旋转）、`frost_pebble`（冰蓝冰石 + 3 帧白雾尾）与 Dew（金色水滴 + 呼吸
+  光晕；下落时左右摆、过期前 180 tick 闪烁，ART-SPEC 6），图集 `garden_fx`。
+
 ### A1 全员静态（裁决六放行，2026-10-16）
 
 顺序：11 个守卫（模板石籽荚）→ 8 个 Husk（模板枯壳怪）；每 4 个输出 `docs/art/review-A1-partial.png` 并提交，

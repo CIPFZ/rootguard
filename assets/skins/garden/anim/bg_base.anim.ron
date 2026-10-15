@@ -1,0 +1,8 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "bg_base",
+    looping: false,
+    frames: [
+        (frame: "bg_base_0", ticks: 60),
+    ],
+)

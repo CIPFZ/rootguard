@@ -70,7 +70,13 @@ struct PaletteDef {
     global: BTreeMap<String, String>,
     shade: ShadeDef,
     characters: BTreeMap<String, BTreeMap<String, String>>,
+    /// 战场背景的专属色（ART-SPEC 8.1：天空两色、干草格、铜管），不受每角色 ≤ 2 的限制。
+    #[serde(default)]
+    background: BTreeMap<String, String>,
 }
+
+/// 背景在调色板中使用的“角色”名（[`Palette::resolve`] 等的 `character` 参数）。
+pub const BACKGROUND: &str = "bg";
 
 /// 已解析的调色板。
 #[derive(Clone, Debug)]
@@ -135,6 +141,14 @@ impl Palette {
             }
             characters.insert(id.clone(), colors);
         }
+        let background = parse_map(&def.background).context("background")?;
+        if let Some(dup) = background.keys().find(|k| global.contains_key(*k)) {
+            bail!("背景色 {dup} 与全局色重名");
+        }
+        if characters.contains_key(BACKGROUND) {
+            bail!("角色名 {BACKGROUND} 保留给背景");
+        }
+        characters.insert(BACKGROUND.to_owned(), background);
         for (name, amount) in [("guardian", def.shade.guardian), ("husk", def.shade.husk)] {
             if !(0.0..1.0).contains(&amount) {
                 bail!("shade.{name} = {amount} 应在 [0, 1) 内");
