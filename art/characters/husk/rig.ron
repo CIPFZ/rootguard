@@ -6,14 +6,15 @@ Rig(
     flash: true,
     parts: [
         (name: "shadow", pivot: (64, 152), z: 0),
-        (name: "arm_back", parent: Some("body"), pivot: (74, 72), z: 1),
+        (name: "arm_back", parent: Some("body"), pivot: (83, 80), z: 1),
         (name: "leg_back", pivot: (73, 113), z: 2),
         (name: "leg_front", pivot: (60, 113), z: 3),
         // 身体以髋部为枢轴：行走左右摇摆 ± 4°、啃食俯身
         (name: "body", pivot: (65, 116), z: 4),
-        (name: "head", parent: Some("body"), pivot: (63, 70), z: 5),
-        (name: "mouth", parent: Some("head"), pivot: (56, 64), z: 6, variants: ["chomp"]),
-        (name: "arm_front", parent: Some("body"), pivot: (60, 76), z: 7),
-        (name: "crumbs", pivot: (40, 78), z: 8, hidden: true),
+        (name: "head", parent: Some("body"), pivot: (56, 88), z: 6),
+        (name: "mouth", parent: Some("head"), pivot: (46, 82), z: 7, variants: ["chomp"]),
+        // 前臂在头后：驼背时头压在前肩上
+        (name: "arm_front", parent: Some("body"), pivot: (52, 93), z: 5),
+        (name: "crumbs", pivot: (34, 86), z: 8, hidden: true),
     ],
 )

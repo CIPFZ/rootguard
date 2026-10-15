@@ -1,6 +1,7 @@
-// 枯壳怪片段（ART-SPEC 3.1 / 5.1）。tick 为片段内时间。
+// 枯壳怪片段（ART-SPEC v1.1 3.1 / 5.1）。tick 为片段内时间。
 Clips([
-    // walk：40 tick 循环（基础速度 0.30 时一周期 12 px），左右摇摆 ± 4°，根须腿交替
+    // walk：40 tick 循环（基础速度 0.30 时一周期 12 px），左右摇摆 ± 4°，根须腿交替，
+    // 下垂的双臂与同侧腿反相摆动（v1.1 5.1）
     (
         name: "walk",
         looping: true,
@@ -11,12 +12,12 @@ Clips([
             "head": [(t: 0, rot: 3), (t: 20, rot: -3), (t: 40, rot: 3)],
             "leg_front": [(t: 0, rot: 14), (t: 20, rot: -12), (t: 40, rot: 14)],
             "leg_back": [(t: 0, rot: -12), (t: 20, rot: 14), (t: 40, rot: -12)],
-            "arm_front": [(t: 0, rot: -5), (t: 20, rot: 5), (t: 40, rot: -5)],
-            "arm_back": [(t: 0, rot: 5), (t: 20, rot: -5), (t: 40, rot: 5)],
+            "arm_front": [(t: 0, rot: -14), (t: 20, rot: 12), (t: 40, rot: -14)],
+            "arm_back": [(t: 0, rot: 12), (t: 20, rot: -14), (t: 40, rot: 12)],
         },
     ),
     // eat：时长 = bite_interval_ticks，相位由 Biter 计时器驱动（3.1，裁决（四））。
-    // 0 ～ 29 抬头，30 ～ 49 俯身，50 ～ 59 咬合；eat_hit 在 50（末帧）：头部猛点、掉两粒碎屑。
+    // 0 ～ 29 抬头、前臂扶上守卫，30 ～ 49 俯身，50 ～ 59 咬合；eat_hit 在 50（末帧）：头部猛点、掉两粒碎屑。
     (
         name: "eat",
         looping: true,
@@ -24,10 +25,10 @@ Clips([
         frames: List([10, 10, 10, 10, 10, 10]),
         events: [(50, "eat_hit")],
         keys: {
-            "body": [(t: 0), (t: 20, rot: 3), (t: 30, rot: -4), (t: 40, dx: -3, rot: -10), (t: 50, dx: -5, rot: -14)],
-            "head": [(t: 0, rot: 4), (t: 20, rot: 9), (t: 30), (t: 40, rot: -6), (t: 50, rot: -16)],
-            "arm_front": [(t: 0, rot: -6), (t: 40, rot: -14), (t: 50, rot: -20)],
-            "arm_back": [(t: 0, rot: -4), (t: 40, rot: -10), (t: 50, rot: -16)],
+            "body": [(t: 0), (t: 20, rot: 2), (t: 30, rot: -3), (t: 40, dx: -2, rot: -7), (t: 50, dx: -3, rot: -10)],
+            "head": [(t: 0, rot: 4), (t: 20, rot: 8), (t: 30), (t: 40, rot: -6), (t: 50, rot: -14)],
+            "arm_front": [(t: 0, rot: 40), (t: 30, rot: 38), (t: 50, rot: 34)],
+            "arm_back": [(t: 0, rot: 4), (t: 40, rot: -2), (t: 50, rot: -6)],
             "leg_front": [(t: 0, rot: 6)],
             "leg_back": [(t: 0, rot: -6)],
         },
