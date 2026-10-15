@@ -30,6 +30,9 @@ Skin(
             clips: [
                 "husk_walk",
                 "husk_eat",
+                "twig_husk_walk",
+                "twig_husk_cracked_walk",
+                "twig_husk_bare_walk",
             ],
         ),
         (

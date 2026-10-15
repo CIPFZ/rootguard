@@ -30,5 +30,11 @@ Atlas(
         (name: "husk_eat_4", x: 130, y: 162, w: 128, h: 160, anchor: (0.5, 0.95)),
         (name: "husk_eat_5_flash", x: 520, y: 162, w: 128, h: 160, anchor: (0.5, 0.95)),
         (name: "husk_eat_5", x: 390, y: 162, w: 128, h: 160, anchor: (0.5, 0.95)),
+        (name: "twig_husk_walk_0_flash", x: 780, y: 486, w: 128, h: 160, anchor: (0.5, 0.95)),
+        (name: "twig_husk_walk_0", x: 650, y: 486, w: 128, h: 160, anchor: (0.5, 0.95)),
+        (name: "twig_husk_cracked_walk_0_flash", x: 520, y: 486, w: 128, h: 160, anchor: (0.5, 0.95)),
+        (name: "twig_husk_cracked_walk_0", x: 390, y: 486, w: 128, h: 160, anchor: (0.5, 0.95)),
+        (name: "twig_husk_bare_walk_0_flash", x: 260, y: 486, w: 128, h: 160, anchor: (0.5, 0.95)),
+        (name: "twig_husk_bare_walk_0", x: 130, y: 486, w: 128, h: 160, anchor: (0.5, 0.95)),
     ],
 )

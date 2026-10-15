@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- 枝冠炸掉后表情变惊讶（ART-SPEC 5.2）：小口张成 O，干叶舌头垂着 -->
+  <g transform="translate(4 10) rotate(-24 50 80)">
+    <ellipse cx="41" cy="72" rx="3.6" ry="4.4" fill="@bark_dark" stroke="@husk_outline" stroke-width="2" />
+    <path d="M40.5 75.5 C39.8 78.5 40.6 81 42.6 83 C43.4 80.4 43.2 77.6 42.4 75.4 Z" fill="@straw_dark" stroke="@husk_outline" stroke-width="1.6" stroke-linejoin="round"/>
+  </g>
+</svg>

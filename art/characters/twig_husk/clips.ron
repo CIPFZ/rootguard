@@ -1,0 +1,17 @@
+// A1：只有默认位姿（静态，同枯壳怪 walk 第 0 帧的姿势），动画在 A2。
+Clips([
+    (
+        name: "walk",
+        looping: true,
+        duration: Ticks(40),
+        frames: Every(40),
+        keys: {
+            "body": [(t: 0, rot: -4)],
+            "head": [(t: 0, rot: 3)],
+            "leg_front": [(t: 0, rot: 14)],
+            "leg_back": [(t: 0, rot: -12)],
+            "arm_front": [(t: 0, rot: -14)],
+            "arm_back": [(t: 0, rot: 12)],
+        },
+    ),
+])
