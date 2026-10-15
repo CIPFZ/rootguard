@@ -96,6 +96,10 @@
   idle / snap（张嘴 44° ≤ 45°，gulp 在 11）/ chew；荆棘垫 idle（打盹）/ trigger（绑定 `spikes.interval_ticks`，prick 在 0）；
   树皮墙 idle（偶尔瞟眼）。游戏侧：snap / chew / trigger 的状态选择、被啃 2 px 抖动。帧条（逐帧合成在战场底图上，
   `artgen strip`）：`docs/screenshots/a2-attack.png`。测试 `chomper_and_spikes_clips_follow_state`。
+- [x] 第 2 类 produce（2026-10-16，ADR-016 第 2 节）：生产者改为两层绘制（身体 idle 按时钟 + produce 叠层按生产
+  计时器）。露杯：露珠 12 → 28 px 并越来越亮、末 60 tick 光晕脉冲、pop 后打哈欠；日灯笼：三盏随进度依次点亮、末 60
+  tick 同时爆亮、各自轻摆，第 4 次生产（`bonus_every`）换金色 `produce_gold`。帧条 `docs/screenshots/a2-produce.png`
+  （`底层+叠层` 合成）。测试 `producer_overlay_follows_timer`。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 

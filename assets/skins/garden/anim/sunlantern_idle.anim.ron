@@ -3,6 +3,11 @@ AnimationClip(
     name: "sunlantern_idle",
     looping: true,
     frames: [
-        (frame: "sunlantern_idle_0", ticks: 120),
+        (frame: "sunlantern_idle_0", ticks: 20),
+        (frame: "sunlantern_idle_1", ticks: 20),
+        (frame: "sunlantern_idle_2", ticks: 20),
+        (frame: "sunlantern_idle_3", ticks: 20),
+        (frame: "sunlantern_idle_4", ticks: 20),
+        (frame: "sunlantern_idle_5", ticks: 20),
     ],
 )

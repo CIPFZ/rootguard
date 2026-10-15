@@ -1,4 +1,53 @@
-// A1：只有默认位姿（静态），动画在 A2。
+// 日灯笼片段（ART-SPEC 3.1 / 4.12）。
 Clips([
-    (name: "idle", looping: true, duration: Ticks(120), frames: Every(120)),
+    // rest：完整默认位姿（审核表与卡牌头像用）
+    (name: "rest", looping: false, duration: Ticks(60), frames: Every(60), swaps: { "lantern1": [(0, "lit")], "lantern2": [(0, "lit")], "lantern3": [(0, "lit")] }),
+    // idle 120：老茎极轻微的呼吸；灯笼在 produce 层
+    (
+        name: "idle",
+        looping: true,
+        duration: Ticks(120),
+        frames: Every(20),
+        keys: { "stem": [(t: 0), (t: 60, sy: 1.008), (t: 120)] },
+        swaps: { "lantern1": [(0, "hidden")], "lantern2": [(0, "hidden")], "lantern3": [(0, "hidden")] },
+    ),
+    // produce：时长 = Producer.interval_ticks，相位由生产计时器驱动；三盏依次随进度点亮（1/3、2/3、末 60 tick 第三盏），
+    // 末 60 tick 三盏同时爆亮，pop 在 0；灯笼各自轻摆（120 tick 一周期，相位错开）。只画灯笼层（ADR-016 第 2 节）
+    (
+        name: "produce",
+        looping: true,
+        duration: Rule("defenders.sunlantern.producer.interval_ticks"),
+        frames: Every(20),
+        events: [(0, "pop")],
+        keys: {
+            "lantern1": [(t: 0, rot: -3), (t: 60, rot: 3), (t: 120, rot: -3), (t: 180, rot: 3), (t: 240, rot: -3), (t: 300, rot: 3), (t: 360, rot: -3), (t: 420, rot: 3), (t: 480, rot: -3), (t: 540, rot: 3), (t: 600, rot: -3), (t: 660, rot: 3), (t: 720, rot: -3), (t: 780, rot: 3), (t: 840, rot: -3), (t: 900, rot: 3), (t: 960, rot: -3), (t: 1020, rot: 3), (t: 1080, rot: -3), (t: 1140, rot: 3), (t: 1200, rot: -3), (t: 1260, rot: 3), (t: 1320, rot: -3), (t: 1380, rot: 3), (t: 1440, rot: -3)],
+            "lantern2": [(t: 0, rot: -3), (t: 60, rot: 3), (t: 120, rot: -3), (t: 180, rot: 3), (t: 240, rot: -3), (t: 300, rot: 3), (t: 360, rot: -3), (t: 420, rot: 3), (t: 480, rot: -3), (t: 540, rot: 3), (t: 600, rot: -3), (t: 660, rot: 3), (t: 720, rot: -3), (t: 780, rot: 3), (t: 840, rot: -3), (t: 900, rot: 3), (t: 960, rot: -3), (t: 1020, rot: 3), (t: 1080, rot: -3), (t: 1140, rot: 3), (t: 1200, rot: -3), (t: 1260, rot: 3), (t: 1320, rot: -3), (t: 1380, rot: 3), (t: 1440, rot: -3)],
+            "lantern3": [(t: 0, rot: -3), (t: 60, rot: 3), (t: 120, rot: -3), (t: 180, rot: 3), (t: 240, rot: -3), (t: 300, rot: 3), (t: 360, rot: -3), (t: 420, rot: 3), (t: 480, rot: -3), (t: 540, rot: 3), (t: 600, rot: -3), (t: 660, rot: 3), (t: 720, rot: -3), (t: 780, rot: 3), (t: 840, rot: -3), (t: 900, rot: 3), (t: 960, rot: -3), (t: 1020, rot: 3), (t: 1080, rot: -3), (t: 1140, rot: 3), (t: 1200, rot: -3), (t: 1260, rot: 3), (t: 1320, rot: -3), (t: 1380, rot: 3), (t: 1440, rot: -3)],
+        },
+        swaps: {
+            "shadow": [(0, "hidden")], "stem": [(0, "hidden")], "face": [(0, "hidden")],
+            "lantern1": [(0, "base"), (480, "lit"), (1380, "bright")],
+            "lantern2": [(0, "base"), (960, "lit"), (1380, "bright")],
+            "lantern3": [(0, "base"), (1380, "bright")],
+        },
+    ),
+    // produce_gold：第 4 次生产（每 bonus_every 次的那一次）三盏变成金色（4.12）；游戏按 Producer.produced 选择
+    (
+        name: "produce_gold",
+        looping: true,
+        duration: Rule("defenders.sunlantern.producer.interval_ticks"),
+        frames: Every(20),
+        events: [(0, "pop")],
+        keys: {
+            "lantern1": [(t: 0, rot: -3), (t: 60, rot: 3), (t: 120, rot: -3), (t: 180, rot: 3), (t: 240, rot: -3), (t: 300, rot: 3), (t: 360, rot: -3), (t: 420, rot: 3), (t: 480, rot: -3), (t: 540, rot: 3), (t: 600, rot: -3), (t: 660, rot: 3), (t: 720, rot: -3), (t: 780, rot: 3), (t: 840, rot: -3), (t: 900, rot: 3), (t: 960, rot: -3), (t: 1020, rot: 3), (t: 1080, rot: -3), (t: 1140, rot: 3), (t: 1200, rot: -3), (t: 1260, rot: 3), (t: 1320, rot: -3), (t: 1380, rot: 3), (t: 1440, rot: -3)],
+            "lantern2": [(t: 0, rot: -3), (t: 60, rot: 3), (t: 120, rot: -3), (t: 180, rot: 3), (t: 240, rot: -3), (t: 300, rot: 3), (t: 360, rot: -3), (t: 420, rot: 3), (t: 480, rot: -3), (t: 540, rot: 3), (t: 600, rot: -3), (t: 660, rot: 3), (t: 720, rot: -3), (t: 780, rot: 3), (t: 840, rot: -3), (t: 900, rot: 3), (t: 960, rot: -3), (t: 1020, rot: 3), (t: 1080, rot: -3), (t: 1140, rot: 3), (t: 1200, rot: -3), (t: 1260, rot: 3), (t: 1320, rot: -3), (t: 1380, rot: 3), (t: 1440, rot: -3)],
+            "lantern3": [(t: 0, rot: -3), (t: 60, rot: 3), (t: 120, rot: -3), (t: 180, rot: 3), (t: 240, rot: -3), (t: 300, rot: 3), (t: 360, rot: -3), (t: 420, rot: 3), (t: 480, rot: -3), (t: 540, rot: 3), (t: 600, rot: -3), (t: 660, rot: 3), (t: 720, rot: -3), (t: 780, rot: 3), (t: 840, rot: -3), (t: 900, rot: 3), (t: 960, rot: -3), (t: 1020, rot: 3), (t: 1080, rot: -3), (t: 1140, rot: 3), (t: 1200, rot: -3), (t: 1260, rot: 3), (t: 1320, rot: -3), (t: 1380, rot: 3), (t: 1440, rot: -3)],
+        },
+        swaps: {
+            "shadow": [(0, "hidden")], "stem": [(0, "hidden")], "face": [(0, "hidden")],
+            "lantern1": [(0, "base"), (480, "gold"), (1380, "gold_bright")],
+            "lantern2": [(0, "base"), (960, "gold"), (1380, "gold_bright")],
+            "lantern3": [(0, "base"), (1380, "gold_bright")],
+        },
+    ),
 ])

@@ -656,7 +656,6 @@ fn timer_since(t: &Timer) -> u32 {
 #[derive(Clone, Copy, Default)]
 struct DefenderTimers<'a> {
     shooter: Option<&'a Shooter>,
-    producer: Option<&'a Producer>,
     mine: Option<&'a Mine>,
     blast: Option<&'a Blast>,
     gust: Option<&'a Gust>,
@@ -667,8 +666,9 @@ struct DefenderTimers<'a> {
 }
 
 /// 防御者当前应播放的片段与已播放 tick（SPEC 12.3，ART-SPEC 2.4 / 3.1）。计时类片段由对应计时器的
-/// 进度驱动（与裁决（四）的啃食相同）：`attack` ← 射手冷却（就绪且无目标时回到 idle）、`produce` ←
-/// 生产周期、`arm` ← 武装计时、`fuse` ← 引信；块茎雷武装后 `armed`、咬夹草咀嚼时循环 `attack`、其余
+/// 进度驱动（与裁决（四）的啃食相同）：`attack` ← 射手冷却（就绪且无目标时回到 idle）、`arm` ← 武装计时、
+/// `fuse` ← 引信、`trigger` ← 扎刺计时（格内有敌人时）、`snap` ← 咀嚼计时；生产者的 `produce` 是叠层，见
+/// [`producer_overlay`]；块茎雷武装后 `armed`、咬夹草咀嚼时循环 `chew`（旧皮肤为 `attack`）、其余
 /// idle 按游戏时钟。`hurt` 为真且皮肤有 `<id>_hurt_<片段>` 时用受损版本。
 fn defender_pose_with(
     sk: &Painter<'_>,
@@ -695,7 +695,6 @@ fn defender_pose_with(
         .shooter
         .filter(|s| !s.timer.finished())
         .and_then(|s| timed("attack", &s.timer))
-        .or_else(|| timers.producer.and_then(|p| timed("produce", &p.timer)))
         .or_else(|| {
             timers
                 .mine
@@ -754,17 +753,15 @@ pub fn defender_pose(world: &World, e: Entity) -> Option<(String, u64)> {
         &Health,
         &Cell,
         Option<&Shooter>,
-        Option<&Producer>,
         Option<&Mine>,
         Option<&Blast>,
         Option<&Gust>,
         Option<&Chomper>,
         Option<&Spikes>,
     )>(e);
-    let (d, h, cell, shooter, producer, mine, blast, gust, chomper, spikes) = query.get().ok()?;
+    let (d, h, cell, shooter, mine, blast, gust, chomper, spikes) = query.get().ok()?;
     let timers = DefenderTimers {
         shooter,
-        producer,
         mine,
         blast,
         gust,
@@ -780,6 +777,29 @@ pub fn defender_pose(world: &World, e: Entity) -> Option<(String, u64)> {
         defender_hurt(h),
         timers,
     ))
+}
+
+/// 生产者的叠层（ADR-016 第 2 节）：身体播 `idle`（时钟），叠层播 `produce`（生产计时器进度，`pop` 在 0）；
+/// 下一次生产是额外产量（每 `bonus_every` 次的那一次）时用 `produce_gold`（ART-SPEC 4.12）。皮肤没有叠层片段时为 `None`。
+fn producer_overlay(sk: &Painter<'_>, id: &str, p: &Producer) -> Option<(String, u64)> {
+    let bonus_next = p.bonus_every > 0 && (p.produced + 1).is_multiple_of(p.bonus_every);
+    let gold = format!("{id}_produce_gold");
+    let clip = if bonus_next && sk.has(&gold) {
+        gold
+    } else {
+        format!("{id}_produce")
+    };
+    let len = sk.ticks(&clip)?;
+    timed_elapsed(timer_since(&p.timer), p.timer.duration, len).map(|el| (clip, el))
+}
+
+/// 生产者 `e` 当前叠层的片段与已播放 tick（与绘制同一规则）；不在皮肤模式或没有叠层时为 `None`。
+#[must_use]
+pub fn producer_pose(world: &World, e: Entity) -> Option<(String, u64)> {
+    let painter = Painter::active(world)?;
+    let mut query = world.entities.query_one::<(&DefenderRef, &Producer)>(e);
+    let (d, p) = query.get().ok()?;
+    producer_overlay(&painter, d.id.as_str(), p)
 }
 
 /// 受伤抖动的幅度（px，ART-SPEC 4.3）。
@@ -858,7 +878,6 @@ fn draw_defenders(
         if let Some(sk) = painter {
             let timers = DefenderTimers {
                 shooter,
-                producer,
                 mine,
                 blast,
                 gust,
@@ -885,13 +904,20 @@ fn draw_defenders(
             };
             // 受伤时左右抖 2 px（ART-SPEC 4.3 / 4.9“被啃时轻微抖动”），与闪白同时长
             let shake = if flash { hurt_shake(tick) } else { 0.0 };
-            if sk.draw(
-                list,
-                WORLD,
-                skin::foot(pos) + Vec2::new(shake, 0.0),
-                y,
-                pose,
-            ) {
+            let at = skin::foot(pos) + Vec2::new(shake, 0.0);
+            if sk.draw(list, WORLD, at, y, pose) {
+                // 生产者叠层画在身体之上（同 sort_y，后提交）
+                if let Some((clip, elapsed)) =
+                    producer.and_then(|p| producer_overlay(sk, d.id.as_str(), p))
+                {
+                    let overlay = Pose {
+                        clip: &clip,
+                        elapsed,
+                        flash,
+                        tint,
+                    };
+                    sk.draw(list, WORLD, at, y, overlay);
+                }
                 continue;
             }
         }

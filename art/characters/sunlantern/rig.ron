@@ -1,12 +1,16 @@
 // 日灯笼 Sunlantern（ART-SPEC 4.12）：拱形茎垂挂 3 个发光纸灯笼荚、茎上一张和蔼的老脸。
+// 两层绘制（ADR-016 第 2 节）：idle（时钟）只画茎与脸，produce / produce_gold（生产计时器进度）只画灯笼。
 Rig(
     kind: Guardian,
-    rest: "idle",
+    rest: "rest",
     flash: true,
     parts: [
         (name: "shadow", pivot: (64, 120), z: 0),
         (name: "stem", pivot: (42, 120), z: 1),
-        (name: "lanterns", parent: Some("stem"), pivot: (86, 34), z: 2),
+        // 每盏灯笼绕各自的挂点轻摆（挂点 = 灯笼中心上方 24 px，再经 0.9 缩放）
+        (name: "lantern1", parent: Some("stem"), pivot: (65.8, 43.6), z: 2, variants: ["lit", "bright", "gold", "gold_bright"]),
+        (name: "lantern2", parent: Some("stem"), pivot: (83.8, 45.4), z: 2, variants: ["lit", "bright", "gold", "gold_bright"]),
+        (name: "lantern3", parent: Some("stem"), pivot: (100.0, 52.6), z: 2, variants: ["lit", "bright", "gold", "gold_bright"]),
         (name: "face", parent: Some("stem"), pivot: (46, 80), z: 3),
     ],
 )

@@ -1,0 +1,23 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "dewcup_produce",
+    looping: true,
+    frames: [
+        (frame: "dewcup_produce_0", ticks: 40, event: "pop"),
+        (frame: "dewcup_produce_1", ticks: 80),
+        (frame: "dewcup_produce_2", ticks: 120),
+        (frame: "dewcup_produce_3", ticks: 120),
+        (frame: "dewcup_produce_4", ticks: 120),
+        (frame: "dewcup_produce_5", ticks: 120),
+        (frame: "dewcup_produce_6", ticks: 120),
+        (frame: "dewcup_produce_7", ticks: 120),
+        (frame: "dewcup_produce_8", ticks: 120),
+        (frame: "dewcup_produce_9", ticks: 120),
+        (frame: "dewcup_produce_10", ticks: 120),
+        (frame: "dewcup_produce_11", ticks: 120),
+        (frame: "dewcup_produce_12", ticks: 60),
+        (frame: "dewcup_produce_13", ticks: 20),
+        (frame: "dewcup_produce_14", ticks: 20),
+        (frame: "dewcup_produce_15", ticks: 20),
+    ],
+)

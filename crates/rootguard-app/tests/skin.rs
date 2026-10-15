@@ -702,3 +702,53 @@ fn chomper_and_spikes_clips_follow_state() {
         "应观察到 snap / chew / idle 与 trigger / idle（{seen:?}）"
     );
 }
+
+/// ADR-016 第 2 节：生产者两层绘制——身体 idle（时钟）+ 叠层 produce（相位 = 生产计时器已过 tick，pop 在 0）；
+/// 日灯笼的下一次生产是额外产量时叠层换成 produce_gold（ART-SPEC 4.12）。
+#[test]
+fn producer_overlay_follows_timer() {
+    use rootguard_core::components::{DefenderRef, Producer};
+    use rootguard_core::resources::BattleState;
+    let mut runner = common::battle_runner("1-10", &["dewcup", "sunlantern"]);
+    while state(&runner).is_some_and(|s| s.phase != Phase::Playing) {
+        runner.frame();
+    }
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    runner
+        .app_mut()
+        .world_mut()
+        .resources
+        .expect_mut::<BattleState>()
+        .dew = 9990;
+    send(&mut runner, UiAction::SelectCard(0));
+    send(&mut runner, UiAction::PlaceAt { row: 0, col: 0 });
+    runner.frame();
+    send(&mut runner, UiAction::SelectCard(1));
+    send(&mut runner, UiAction::PlaceAt { row: 1, col: 0 });
+    let mut seen_gold = false;
+    let mut checked = 0;
+    for _ in 0..6000 {
+        runner.frame();
+        let world = runner.app().world();
+        for (e, p, d) in world.query::<(Entity, &Producer, &DefenderRef)>().iter() {
+            let (name, elapsed) = rootguard_app::render::producer_pose(world, e).expect("叠层");
+            let (body, _) = rootguard_app::render::defender_pose(world, e).expect("身体");
+            assert_eq!(body, format!("{}_idle", d.id.as_str()), "身体应播 idle");
+            assert_eq!(elapsed, u64::from(p.timer.duration - p.timer.remaining));
+            let bonus_next = p.bonus_every > 0 && (p.produced + 1) % p.bonus_every == 0;
+            let expect = if bonus_next {
+                "produce_gold"
+            } else {
+                "produce"
+            };
+            assert_eq!(name, format!("{}_{expect}", d.id.as_str()));
+            seen_gold |= bonus_next;
+            checked += 1;
+        }
+    }
+    assert!(
+        checked > 10_000 && seen_gold,
+        "应检查两种生产者并见到金色一轮（{checked}）"
+    );
+}

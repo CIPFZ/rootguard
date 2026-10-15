@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- pop 后打个哈欠（ART-SPEC 4.2）：盖住原来的笑嘴（底色同杯身） -->
+  <ellipse cx="66" cy="84.5" rx="6.5" ry="4.5" fill="@leaf_light"/>
+  <ellipse cx="66" cy="85" rx="3.6" ry="4.2" fill="@bark_dark" stroke="@outline" stroke-width="2.2"/>
+</svg>

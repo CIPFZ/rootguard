@@ -1,0 +1,8 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "sunlantern_rest",
+    looping: false,
+    frames: [
+        (frame: "sunlantern_rest_0", ticks: 60),
+    ],
+)

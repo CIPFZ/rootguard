@@ -1,7 +1,8 @@
 // 露杯 Dewcup（ART-SPEC 4.2）：郁金香杯、闭眼微笑、头顶露珠。以石籽荚为模板（裁决五）。
+// 两层绘制（ADR-016 第 2 节）：idle（时钟）只画杯身，produce（生产计时器进度）只画露珠、光晕与哈欠。
 Rig(
     kind: Guardian,
-    rest: "idle",
+    rest: "rest",
     flash: true,
     parts: [
         (name: "shadow", pivot: (64, 120), z: 0),
@@ -12,5 +13,6 @@ Rig(
         (name: "blush", parent: Some("cup"), pivot: (66, 82), z: 5),
         (name: "eyes", parent: Some("cup"), pivot: (65, 75), z: 6),
         (name: "mouth", parent: Some("cup"), pivot: (65, 85), z: 7),
+        (name: "yawn", parent: Some("cup"), pivot: (66, 85), z: 8, hidden: true),
     ],
 )

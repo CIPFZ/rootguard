@@ -5,7 +5,7 @@
 //! cargo run --release -p artgen -- check            # 只比较，不写盘；不一致时退出码 1
 //! cargo run --release -p artgen -- preview <id>     # 自查图写到 tmp/artgen/（不入库）
 //! cargo run --release -p artgen -- review [--partial] # A1 审核表写到 docs/art/
-//! cargo run --release -p artgen -- strip <out.png> <id:片段[:状态]>...  # 帧条：逐帧合成在战场底图上
+//! cargo run --release -p artgen -- strip <out.png> <id:[底层+]片段[:状态][@n]>...  # 帧条：逐帧合成在战场底图上
 //! ```
 //!
 //! 任意目录执行均可：仓库根由本 crate 位置推出，或用 `--root <dir>` 指定。
@@ -176,6 +176,11 @@ fn strip(root: &Path, out: &Path, specs: &[&str]) -> Result<()> {
     let bg = artgen::bg::render(root, &palette)?.context("没有 art/bg/，无法合成帧条")?;
     let mut rows: Vec<Vec<Image>> = Vec::new();
     for spec in specs {
+        // `@n`：每 n 帧取 1 帧（长片段的帧条）
+        let (spec, step) = match spec.split_once('@') {
+            Some((s, n)) => (s, n.parse::<usize>().context("@ 后应为帧间隔")?.max(1)),
+            None => (*spec, 1),
+        };
         let parts: Vec<&str> = spec.split(':').collect();
         let (id, clip_name, state_name) = match parts.as_slice() {
             [id, clip] => (*id, *clip, ""),
@@ -183,6 +188,11 @@ fn strip(root: &Path, out: &Path, specs: &[&str]) -> Result<()> {
             _ => bail!("帧条参数应为 id:片段[:状态]，实际 {spec}"),
         };
         let ch = artgen::load_character(&root.join("art/characters").join(id), &palette)?;
+        // `底层+叠层`：叠层每帧画在底层同一 tick 的帧上（如生产者的 idle + produce 两层，ADR-016 第 2 节）
+        let (base_name, clip_name) = match clip_name.split_once('+') {
+            Some((b, o)) => (Some(b), o),
+            None => (None, clip_name),
+        };
         let clip = ch
             .clips
             .iter()
@@ -195,7 +205,35 @@ fn strip(root: &Path, out: &Path, specs: &[&str]) -> Result<()> {
             .find(|s| s.name == state_name)
             .with_context(|| format!("{id} 没有状态 {state_name:?}"))?;
         let ticks = frame_ticks(&clip.frames, artgen::clip_duration(&rules, id, clip)?)?;
-        let frames = artgen::render_clip(&ch, &palette, clip, &state, &ticks)?;
+        let mut frames = artgen::render_clip(&ch, &palette, clip, &state, &ticks)?;
+        if let Some(base_name) = base_name {
+            let base = ch
+                .clips
+                .iter()
+                .find(|c| c.name == base_name)
+                .with_context(|| format!("{id} 没有片段 {base_name}"))?;
+            let base_len = artgen::clip_duration(&rules, id, base)?.max(1);
+            let mut start = 0;
+            for (f, t) in frames.iter_mut().zip(&ticks) {
+                let under = ch
+                    .parts
+                    .render(&ch.rig.pose(base, &state, start % base_len), &palette)?;
+                let size = tiny_skia::IntSize::from_wh(f.w, f.h).context("帧")?;
+                let mut p = tiny_skia::Pixmap::from_vec(under.data, size).context("帧")?;
+                let top = tiny_skia::Pixmap::from_vec(f.data.clone(), size).context("帧")?;
+                p.draw_pixmap(
+                    0,
+                    0,
+                    top.as_ref(),
+                    &tiny_skia::PixmapPaint::default(),
+                    tiny_skia::Transform::identity(),
+                    None,
+                );
+                f.data = p.take();
+                start += t;
+            }
+        }
+        let frames: Vec<Image> = frames.into_iter().step_by(step).collect();
         let (ax, ay) = ch.rig.kind.anchor();
         let center = Grid::cell_center(2, 4);
         let ground = !matches!(
