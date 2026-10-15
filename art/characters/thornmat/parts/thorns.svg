@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 64">
+  <!-- 米白短刺当头发（专属色 thorn，ART-SPEC 4.6）；idle 时放平、向后倒 -->
+  <g fill="@thorn" stroke="@outline" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M25 41 L20 33 L34 37 Z"/>
+    <path d="M36 37 L28 25 L45 33 Z"/>
+    <path d="M50 35 L44 22 L59 31 Z"/>
+    <path d="M65 34 L61 21 L73 31 Z"/>
+    <path d="M80 34 L78 21 L88 32 Z"/>
+    <path d="M93 36 L94 24 L101 35 Z"/>
+    <path d="M101 40 L105 31 L106 41 Z"/>
+  </g>
+</svg>

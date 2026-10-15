@@ -1,0 +1,13 @@
+// 荆棘垫 Thornmat（ART-SPEC 4.6）：贴地扁圆藤垫、米白短刺当头发、斜眼坏笑。不可被啃食，无闪白。
+Rig(
+    kind: GuardianGround,
+    rest: "idle",
+    flash: false,
+    parts: [
+        (name: "shadow", pivot: (64, 52), z: 0),
+        (name: "thorns", parent: Some("mat"), pivot: (64, 36), z: 1),
+        (name: "mat", pivot: (64, 52), z: 2),
+        (name: "eyes", parent: Some("mat"), pivot: (78, 41), z: 3),
+        (name: "mouth", parent: Some("mat"), pivot: (80, 47), z: 4),
+    ],
+)

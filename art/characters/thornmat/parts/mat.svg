@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 64">
+  <!-- 贴地扁圆藤垫，leaf_dark 藤（ART-SPEC 4.6）；温室门垫（LORE） -->
+  <path d="M20 44 C20 36 40 31 64 31 C88 31 108 36 108 44 C108 50 88 54 64 54 C40 54 20 50 20 44 Z" fill="@leaf_dark"/>
+  <path d="M21 46 C24 51 42 54 64 54 C86 54 104 51 107 46 C104 49 86 51 64 51 C42 51 24 49 21 46 Z" fill="@leaf_dark.shade"/>
+  <g fill="none" stroke="@leaf" stroke-width="2.2" stroke-linecap="round">
+    <path d="M28 41 C38 36 50 47 62 40 C74 34 86 46 100 40"/>
+    <path d="M26 46 C38 42 48 51 62 46 C76 41 88 51 102 45"/>
+    <path d="M36 36 C44 40 50 36 56 34"/>
+    <path d="M74 34 C80 37 88 35 94 37"/>
+  </g>
+  <path d="M20 44 C20 36 40 31 64 31 C88 31 108 36 108 44 C108 50 88 54 64 54 C40 54 20 50 20 44 Z" fill="none" stroke="@outline" stroke-width="3"/>
+</svg>

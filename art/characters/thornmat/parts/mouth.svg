@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 64">
+  <!-- 一边嘴角上翘的坏笑（ART-SPEC 4.6） -->
+  <path d="M70 48 Q80 50.5 92 45" fill="none" stroke="@outline" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M90 43.5 Q93 44 93.5 47" fill="none" stroke="@outline" stroke-width="1.8" stroke-linecap="round"/>
+</svg>
