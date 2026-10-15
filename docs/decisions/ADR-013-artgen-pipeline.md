@@ -49,6 +49,8 @@ AGENT 4.2）。ART-SPEC 未规定部件 / rig / 片段文件的具体格式、�
 8. **确定性**：只用有序容器；PNG 由 tiny-skia 固定参数编码。`art_assets_up_to_date`（`tools/artgen/tests`）
    重新构建两次并与提交文件比较：RON 逐字节；PNG 在 x86_64 Linux（生成资产的平台）逐字节，其他平台按
    解码后每通道 ±2 比较——tiny-skia 的 SIMD 路径在不同架构上可能在抗锯齿边缘产生最低位差异。
+   文本输出（RON）忽略换行风格比较：Windows 检出时 `core.autocrlf` 会把它们转成 CRLF（首次推送时 Windows CI
+   因此失败，本地把副本转成 CRLF 复现后修正；SVG 源文件含 CRLF 不影响渲染结果）。
 9. **命令**：`cargo run --release -p artgen -- build | check | preview <id>`；`preview` 把默认位姿与每个
    片段的帧条写到 `tmp/artgen/` 供自查（不入库）。A1 的审核表命令 `review` 届时加入。
 

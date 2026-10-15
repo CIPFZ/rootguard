@@ -433,7 +433,12 @@ pub fn pixel_tolerance() -> u8 {
     }
 }
 
-/// 与磁盘上已提交的资产比较；返回差异描述（空 = 一致）。
+/// 去掉回车符：Windows 检出时 git 可能把文本文件转换为 CRLF（`core.autocrlf`），文本输出按 LF 比较。
+fn strip_cr(bytes: &[u8]) -> Vec<u8> {
+    bytes.iter().copied().filter(|&b| b != b'\r').collect()
+}
+
+/// 与磁盘上已提交的资产比较；返回差异描述（空 = 一致）。文本文件忽略换行风格差异。
 ///
 /// # Errors
 ///
@@ -446,7 +451,7 @@ pub fn diff(root: &Path, built: &Built) -> Result<Vec<String>> {
             problems.push(format!("缺少 {rel}"));
             continue;
         };
-        if disk == *bytes {
+        if disk == *bytes || (!rel.ends_with(".png") && strip_cr(&disk) == strip_cr(bytes)) {
             continue;
         }
         if rel.ends_with(".png") && tolerance > 0 {
