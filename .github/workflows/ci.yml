@@ -43,10 +43,13 @@ jobs:
 
       - name: cargo test
         shell: bash
-        # 失败时把失败测试的输出写入步骤摘要（日志页需登录查看，摘要在运行页可见）
+        # 失败时把失败测试的关键输出写成错误注解与步骤摘要（日志页需登录查看，注解在运行页可见）
         run: |
           set -o pipefail
           if ! cargo test --workspace 2>&1 | tee test.log; then
+            grep -E "panicked|FAILED|不一致|与生成结果|left:|right:" test.log | head -n 8 | while IFS= read -r line; do
+              echo "::error title=cargo test::${line}"
+            done
             { echo '### cargo test 失败（${{ matrix.os }}）'; echo '```';
               grep -E "panicked|FAILED|failures:|^---- |left:|right:|不一致|与生成结果" test.log | head -n 80; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
             exit 1
