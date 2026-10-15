@@ -1,6 +1,7 @@
 //! A1 审核表（ART-SPEC 10，AGENT 第 9 章 A1）：全部角色的默认位姿、受损 / 护甲状态与卡牌头像拼成一张图，
 //! 另出纯黑剪影版（剪影测试）。审核表是文档，不是资产，写到 `docs/art/`。
 //!
+//! 葫芦壳另附一张罩在石籽荚上的示意（壳沿下露出宿主的眼睛，ART-SPEC 4.9）。
 //! 每格左上角是角色序号（SPEC 7.1 / 8.1 的表格顺序，部分审核表中序号不变），对照表见 `docs/art/review-A1.md`。
 //! 管线不渲染文字（不引入字体依赖，ADR-013），序号用内置的 3 × 5 点阵数字绘制。
 
@@ -164,8 +165,29 @@ fn sheet(tiles: &[Tile], backdrop: [u8; 3], tile_bg: [u8; 3]) -> Result<tiny_ski
     Ok(p)
 }
 
-/// 一个角色的审核内容：各状态的默认位姿，守卫另加头像与“不可用”头像。
-fn tile_images(ch: &Character, palette: &Palette) -> Result<(Vec<Image>, Vec<Image>)> {
+/// 把 `top` 叠在 `base` 上（同尺寸画布、同锚点，如葫芦壳罩在宿主上，ART-SPEC 2.1）。
+fn over(base: &Image, top: &Image) -> Result<Image> {
+    let size = tiny_skia::IntSize::from_wh(base.w, base.h).context("图像尺寸为 0")?;
+    let mut p = tiny_skia::Pixmap::from_vec(base.data.clone(), size).context("像素数据")?;
+    blit_pixmap(&mut p, top)?;
+    Ok(Image {
+        w: base.w,
+        h: base.h,
+        data: p.take(),
+    })
+}
+
+fn blit_pixmap(p: &mut tiny_skia::Pixmap, img: &Image) -> Result<()> {
+    blit(p, img, 0, 0)
+}
+
+/// 一个角色的审核内容：各状态的默认位姿，守卫另加头像与“不可用”头像；覆盖层（葫芦壳）另加罩在
+/// 宿主 `host` 上的样子。
+fn tile_images(
+    ch: &Character,
+    palette: &Palette,
+    host: Option<&Image>,
+) -> Result<(Vec<Image>, Vec<Image>)> {
     let clip = ch
         .clips
         .iter()
@@ -176,6 +198,11 @@ fn tile_images(ch: &Character, palette: &Palette) -> Result<(Vec<Image>, Vec<Ima
         poses.push(ch.parts.render(&ch.rig.pose(clip, &state, 0), palette)?);
     }
     let mut all = poses.clone();
+    if ch.rig.kind == crate::rig::Kind::Overlay
+        && let (Some(host), Some(shell)) = (host, poses.first())
+    {
+        all.push(over(host, shell)?);
+    }
     if ch.rig.kind.has_portrait() {
         let (on, off) = render_portrait(ch, palette)?;
         all.push(on);
@@ -202,10 +229,16 @@ pub fn review(root: &Path, partial: bool) -> Result<Vec<String>> {
         chars.push((index, ch));
     }
     chars.sort_by_key(|(i, _)| *i);
+    // 覆盖层的示意宿主：守卫模板石籽荚（裁决五）
+    let host = chars
+        .iter()
+        .find(|(_, c)| c.id == "pebble_pod")
+        .map(|(_, c)| crate::render_rest(c, &palette))
+        .transpose()?;
     let mut color_tiles = Vec::new();
     let mut black_tiles = Vec::new();
     for (index, ch) in &chars {
-        let (all, poses) = tile_images(ch, &palette)?;
+        let (all, poses) = tile_images(ch, &palette, host.as_ref())?;
         color_tiles.push(Tile {
             index: *index,
             images: all,
