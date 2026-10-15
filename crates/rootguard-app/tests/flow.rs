@@ -10,8 +10,8 @@ use rootguard_app::save::{self, BACKUP_NAME, FILE_NAME, SaveLocation, SaveSlot};
 use rootguard_app::script::{Replay, Script};
 use rootguard_app::sfx::AudioBank;
 use rootguard_app::{TitleScene, build_app_full};
-use rootguard_core::components::{WalkState, Walker};
-use rootguard_core::data::CardRule;
+use rootguard_core::components::{DefenderRef, Health, StatusEffects, WalkState, Walker};
+use rootguard_core::data::{CardRule, Rules};
 use rootguard_core::events::{Lang, UiAction, VolumeBus};
 use rootguard_core::registry::{DefenderRegistry, EnemyRegistry, LevelRegistry};
 use rootguard_core::resources::{Phase, Progress};
@@ -228,45 +228,98 @@ fn sfx_count(runner: &mut HeadlessRunner, key: &str) -> usize {
         .count()
 }
 
-#[test]
-fn bite_sfx_on_eat_hit() {
-    // 1-1 中路最右格放石籽荚：第一只枯壳怪在被打死前停下啃食，eat 片段每循环进入一次 eat_hit 帧
-    // （ADR-010）。默认占位模式下同样触发：音效不随渲染模式变化。
+/// 1-1 中路最右格放石籽荚，记录每个 tick 的 `sfx.bite` 次数与石籽荚被啃掉血的 tick。
+/// `chill` 为真时让啃食中的敌人保持 Chill（测试直接写 `StatusEffects`，模拟 frost_pebble 命中）。
+/// 返回 (音效 tick, 伤害 tick)。
+fn bite_ticks(chill: bool) -> (Vec<u64>, Vec<u64>) {
     let mut runner = battle_runner("1-1", &[]);
-    let mut first_eat = None;
-    let mut before = 0;
-    let mut during = 0;
+    let mut sfx = Vec::new();
+    let mut damage = Vec::new();
+    let mut last_hp = None;
     for _ in 0..6000 {
         let s = state(&runner).expect("对局");
         if s.level_tick == 60 {
             send(&mut runner, UiAction::SelectCard(0));
             send(&mut runner, UiAction::PlaceAt { row: 2, col: 8 });
         }
+        if chill {
+            let world = runner.app_mut().world_mut();
+            for (walker, status) in world.entities.query_mut::<(&Walker, &mut StatusEffects)>() {
+                if matches!(walker.state, WalkState::Eating(_)) {
+                    status.chill_ticks = 600;
+                }
+            }
+        }
         runner.frame();
-        let eating = runner
+        let tick = state(&runner).expect("对局").level_tick;
+        for _ in 0..sfx_count(&mut runner, "sfx.bite") {
+            sfx.push(tick);
+        }
+        let hp = runner
             .app()
             .world()
-            .query::<&Walker>()
+            .query::<(&Health, &DefenderRef)>()
             .iter()
-            .any(|w| matches!(w.state, WalkState::Eating(_)));
-        if eating && first_eat.is_none() {
-            first_eat = state(&runner).map(|s| s.level_tick);
+            .map(|(h, _)| h.hp)
+            .next();
+        if let (Some(before), Some(now)) = (last_hp, hp)
+            && now < before
+        {
+            damage.push(tick);
         }
-        let n = sfx_count(&mut runner, "sfx.bite");
-        if first_eat.is_none() {
-            before += n;
-        } else {
-            during += n;
-        }
-        if during >= 3 {
+        last_hp = hp;
+        if damage.len() >= 4 {
             break;
         }
     }
-    assert!(first_eat.is_some(), "枯壳怪应停下啃食石籽荚");
-    assert_eq!(before, 0, "开始啃食前不应有啃食音效");
+    (sfx, damage)
+}
+
+/// 每次啃食伤害之前 `0 ..= window` tick 内恰有一次 `sfx.bite`，且没有多余的音效。
+fn assert_bites_in_phase(sfx: &[u64], damage: &[u64], window: u64) {
+    assert!(damage.len() >= 3, "应观察到多次啃食伤害（{damage:?}）");
+    for &d in damage {
+        let near = sfx.iter().filter(|&&s| s <= d && d - s <= window).count();
+        assert_eq!(
+            near, 1,
+            "伤害 tick {d} 之前 {window} tick 内应恰有一次音效（音效 {sfx:?}）"
+        );
+    }
     assert!(
-        during >= 3,
-        "啃食期间应随 eat_hit 帧播放 sfx.bite（{during} 次）"
+        sfx.len() <= damage.len() + 1,
+        "音效 {sfx:?} 多于伤害 {damage:?}"
+    );
+}
+
+#[test]
+fn bite_sfx_on_eat_hit() {
+    // eat_hit 在 eat 片段末帧，片段相位由 Biter 计时器驱动（负责人裁决 2026-10-15（四））：
+    // 音效与啃食伤害同频同相，偏差 ≤ 末帧长度 10 tick；Chill 下间隔翻倍，偏差 ≤ 20 tick。
+    // 默认占位模式下同样触发：音效不随渲染模式变化（ADR-010）。
+    let (sfx, damage) = bite_ticks(false);
+    assert_bites_in_phase(&sfx, &damage, 10);
+    let (sfx, damage) = bite_ticks(true);
+    assert_bites_in_phase(&sfx, &damage, 20);
+    let app = rootguard_app::build_app_with(TitleScene);
+    let world = app.world();
+    let husk = world
+        .resources
+        .expect::<EnemyRegistry>()
+        .iter()
+        .find(|(id, _)| id.as_str() == "husk")
+        .map(|(_, def)| def.bite_interval_ticks)
+        .expect("husk");
+    let chilled = u64::from(
+        husk * world
+            .resources
+            .expect::<Rules>()
+            .status
+            .chill_bite_interval_factor,
+    );
+    let gaps: Vec<u64> = damage.windows(2).map(|w| w[1] - w[0]).collect();
+    assert!(
+        gaps.iter().all(|&g| g == chilled),
+        "Chill 下啃食间隔应为 {chilled}（{gaps:?}）"
     );
 }
 

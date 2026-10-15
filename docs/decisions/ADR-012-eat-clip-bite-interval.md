@@ -36,3 +36,25 @@
 
 - 帧时长 `[20, 20, 20]`：节奏均匀但没有“咬下 → 停顿”的轻重，否决。
 - 在测试中只断言“等于 60”：敌人数据将来若出现不同的啃食间隔，测试无法发现不一致，否决。
+
+## 后续（2026-10-15）：eat 相位由 `Biter` 计时器驱动（负责人裁决（四））
+
+裁决 `docs/owner-decisions/2026-10-15-chill-bite-phase.md` 取代上文后果中的两条“Chill 下不对齐”“只同频不同相”。
+落地时与裁决前提的差异与处理：
+
+1. **`Biter` 没有 `Timer`**：组件是 `elapsed`（当前周期已经过 tick）+ `interval`，`bite_system` 每 tick
+   `elapsed += 1`，达到有效间隔（Chill 时 `interval × chill_bite_interval_factor`）即伤害并归零。
+   因此“`Biter.timer.progress()`”以 `elapsed / 有效间隔` 实现（`render::eat_elapsed`），**呈现层需要读取
+   `StatusEffects` 与 `Rules`**（裁决假设的“无需读 `StatusEffects`”在本实现中不成立），算法与 `bite_system`
+   相同（`render::bite_interval`）。模拟层未改。
+2. **帧序 `[30, 20, 10]`，`eat_hit` 在末帧**：`gen_skins.py` 不改图像，只改片段引用顺序——姿态 0（抬头）30、
+   姿态 2（俯身）20、姿态 1（前倾最深，咬合）10 + `eat_hit`。图集逐字节不变，13 个 `*_eat.anim.ron` 变化。
+3. **事件判定**：`emit_anim_events` 记录每个啃食者上一帧的 (目标, `elapsed`)；`elapsed` 未减小时检查两相位之间
+   进入的事件帧，减小（其间发生过一次啃食）时把本帧相位加一个片段长度；目标变化或刚开始啃食只记录不发送。
+   不再按 `fixed_tick` 补发，暂停期间 `Biter` 不推进，恢复后不会补发。
+4. **偏差**：音效在计时器剩余 10 tick（Chill 下 20 tick）时触发，即裁决允许的上限；未采用“检测计时器刚触发
+   直接发声”的 0 偏差做法，以保持“音效跟动画事件帧”（裁决（三）、SPEC 12.3），且咬合姿态与音效同帧出现。
+5. **测试**：`bite_sfx_on_eat_hit` 改为断言每次啃食伤害之前 10 tick（Chill 20 tick）内恰有一次 `sfx.bite`、
+   Chill 下伤害间隔为规则值；新增 `eat_anim_phase_follows_biter_timer`（正常与 Chill 下逐帧断言相位 =
+   `elapsed × 片段总长 / 有效间隔`，且末帧对应计时器最后一段）。golden 与 `skin_switching_keeps_golden_1_4` 不变。
+6. ART-SPEC 3.1 其余计时类片段（`attack` / `produce` / `fuse` / `arm`）在美术阶段 A0 按同一机制推广。

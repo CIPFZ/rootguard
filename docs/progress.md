@@ -2,6 +2,11 @@
 
 ## 会话记录（新记录追加在最上方）
 
+- 2026-10-15 会话 5：**接手（美术阶段）**，上下文重建自仓库文件（AGENT v1.3、SPEC v1.2、LORE、ART-SPEC v1、
+  负责人裁决四份、ADR-001 ～ 012、`docs/art/v3-*.png`）。起点：`cargo build/test --workspace` 绿色，54 个测试。
+  发现裁决（四）（Chill 下啃食相位）已入库但未落地，而 A0 第 4 项以它为范式，先落地（ADR-012 后续条目）：
+  测试 55 个全绿，golden 未变。随后开始 A0，记录见下方“美术阶段 A0 ～ A3”。
+
 - 2026-10-15 会话 4：执行负责人裁决 `2026-10-15-bite-rhythm.md`（负责人已入库）。eat 片段对齐啃食间隔（ADR-012），
   `subset_font.py` 注释补充 venv 重建说明；CHANGELOG 日期负责人已在 7f3049a 填写（2026-10-14），未再改动；
   禁用词表负责人已填（58 词），`check_ip.sh` 零命中。测试 54 个全绿。回到等待试玩反馈。
@@ -30,8 +35,7 @@
 - [x] ~~**打 `v0.1.0` tag 前**：把 `CHANGELOG.md` 中 `## [0.1.0] - Unreleased` 改为实际日期~~（负责人 7f3049a 已填 2026-10-14），并按需在“已知限制”中
   更新实机验证结果（Release 说明原样取自该条目，ADR-011）；tag 必须与 `Cargo.toml` 的 `0.1.0` 一致，否则 Release 作业失败。
 - [ ] 实机验证（macOS / Windows 启动、音频与交叉淡化听感、新增啃食音效 `sfx.bite` 的密度）结果写入本文件。
-- [ ] **决定**：Chill 状态下啃食音效是伤害频率的 2 倍（裁决（三）假设的 `Animator` 减速在本游戏不存在，ADR-012）。
-  选项：接受现状 / 让呈现层在 Chill 时按 `chill_bite_interval_factor` 放慢 eat 相位（只改 `render.rs`，模拟不变）。
+- [x] ~~**决定**：Chill 状态下啃食音效是伤害频率的 2 倍~~：负责人裁决（四）采用 `Biter` 相位驱动，2026-10-15 落地（ADR-012 后续条目）。
 - [x] ~~【阻塞 G4】1-10 无法写出脚本解~~：负责人裁决 2026-10-14（SPEC v1.1 预算上限阶梯），已按第 1 档解决。
 - [ ] **手动试玩 10 关**并填 `docs/levels.md` 的“手动用时 / 主观难度”列。建议重点关注 1-9（第 2 档，搜索合格率
   4 / 1536）与 1-10（第 1 档，合格率 16 / 1536）：机器人的合格解很少，真人难度可能偏高。
@@ -50,12 +54,33 @@
 - [x] 确认 Sprint 阈值：负责人裁决 2026-10-14 采用“≤ 50%”，ADR-002 第 14 条已标记确认。
 - [ ] 仓库原有目录 `assests/icon/` 疑为笔误，已移动为 SPEC / AGENT / README 所述的 `assets/icon/`（文件未改动）。
 
+## 美术阶段 A0 ～ A3（ART-SPEC v1，2026-10-15 起）
+
+任务顺序见 AGENT.md 第 9 章；规格见 `ART-SPEC.md` 第 11 ～ 12 章。A1 是审核门（负责人批准 `review-A1.png` 前不开始 A2）。
+难度校准（SPEC 20.2）仍等待 `docs/levels.md` 主观难度列，与 A 阶段并行、分开提交。
+
+| 里程碑 | 状态 |
+|---|---|
+| A0 管线 | 进行中 |
+| A1 全员静态（审核门） | 未开始 |
+| A2 全员动画与特效 | 未开始 |
+| A3 战场与叙事 | 未开始 |
+
+### A0 管线
+
+- [ ] ADR-013：`tools/artgen` 设计与白名单依赖；`check_deps.sh` 允许表
+- [ ] `art/palette.ron`；`tools/artgen` 解析 rig / clips → 合成 → 渲染 → 图集 → 引擎 RON；ART-SPEC 9.2 校验；确定性
+- [ ] 样板角色 `pebble_pod`（4.1）、`husk`（5.1）：全部片段、闪白帧、`attack` / `eat` 进度驱动
+- [ ] 游戏侧多皮肤（`default` / `garden`）；`attack` / `produce` / `fuse` / `arm` 进度驱动
+- [ ] 测试 `art_assets_up_to_date`、`art_clips_match_rules`、`skin_garden_loads`；golden 不变
+- [ ] 实机截图：两个角色在 1-1 中显示与动画正常
+
 ## 收尾期（SPEC v1.2 第 20 章，2026-10-14 起）
 
 负责人裁决 `docs/owner-decisions/2026-10-14-g5-closure.md`；任务顺序见 AGENT.md 第 9 章。
 
-**当前状态：等待负责人。** 等待：`docs/levels.md` 主观难度列（手动试玩 10 关，重点 1-9 / 1-10）。
-收到后按 SPEC 20.2 与 AGENT 3.4 逐关处理；在此之前不做其他改动（AGENT 3.1）。
+**当前状态：** 等待 `docs/levels.md` 主观难度列（手动试玩 10 关，重点 1-9 / 1-10），收到后按 SPEC 20.2 与
+AGENT 3.4 逐关处理；等待期间进行美术阶段（AGENT v1.3 第 9 章）。
 
 ### 1. 发布清单 SPEC 20.3（2026-10-14，除打 tag 外完成）
 
@@ -86,8 +111,11 @@
   与 `bite_interval_ticks` 一致，`eat_hit` 每秒 1 次（ADR-012）。`gen_skins.py` 校验总长，新增测试
   `eat_clip_matches_bite_interval`（先红：carrier_husk_eat 30 ≠ 60）；只有 13 个 `*_eat.anim.ron` 变化，图集逐字节不变；
   `bite_sfx_on_eat_hit`、`determinism_golden_1_4`、`skin_switching_keeps_golden_1_4` 通过。测试 54 个全绿。提交 f088b42。
-- **待负责人决定**：Chill 下仍不对齐。游戏不使用引擎 `Animator`（ADR-007），eat 相位不随 Chill 减速，
-  Chill 时音效 60 tick 一次，伤害 120 tick 一次（ADR-012 后果）。未按裁决前提添加代码。
+- ~~**待负责人决定**：Chill 下仍不对齐~~ → 2026-10-15 按裁决（四）落地：eat 相位 = `Biter.elapsed / 有效间隔`
+  × 片段总长，帧序 `[30, 20, 10]`、`eat_hit` 在末帧（图集逐字节不变，13 个 eat 片段变化）。音效在伤害前
+  ≤ 10 tick（Chill ≤ 20 tick）触发，同频同相。测试 `bite_sfx_on_eat_hit`（改写，先红：伤害前 10 tick 内无音效）、
+  新增 `eat_anim_phase_follows_biter_timer`（先红：`eat_hit` 不在末帧）；golden 与 `skin_switching_keeps_golden_1_4`
+  通过。实现与裁决前提的差异（`Biter` 无 `Timer`，呈现层需读 `StatusEffects` / `Rules`）见 ADR-012 后续条目。
 
 ### 其他
 

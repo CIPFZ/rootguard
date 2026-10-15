@@ -3,8 +3,8 @@ AnimationClip(
     name: "twig_husk_eat",
     looping: true,
     frames: [
-        (frame: "twig_husk_eat_0", ticks: 20),
+        (frame: "twig_husk_eat_0", ticks: 30),
+        (frame: "twig_husk_eat_2", ticks: 20),
         (frame: "twig_husk_eat_1", ticks: 10, event: "eat_hit"),
-        (frame: "twig_husk_eat_2", ticks: 30),
     ],
 )

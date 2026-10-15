@@ -7,10 +7,11 @@ use std::collections::{BTreeMap, HashMap};
 
 use rootguard_core::Grid;
 use rootguard_core::components::{
-    Armor, Cell, ChompState, Chomper, DefenderRef, DewPickup, EnemyRef, Health, Mine, OverlayOf,
-    Placeholder, ProjectileBody, ProjectileRef, Shooter, StatusEffects, WalkState, Walker,
+    Armor, Biter, Cell, ChompState, Chomper, DefenderRef, DewPickup, EnemyRef, Health, Mine,
+    OverlayOf, Placeholder, ProjectileBody, ProjectileRef, Shooter, StatusEffects, WalkState,
+    Walker,
 };
-use rootguard_core::data::ArmorKind;
+use rootguard_core::data::{ArmorKind, Rules};
 use rootguard_core::events::EnemyDamaged;
 use rootguard_core::resources::{BattleState, LaneState};
 use rootguard_core::systems::check_placement;
@@ -78,8 +79,8 @@ pub struct RenderState {
     flying: Vec<TweenVec2>,
     /// 当前横幅文字与入场补间（0 → 1）。
     banner: Option<(String, TweenF32)>,
-    /// 已发送动画事件的最后一个 `fixed_tick`（进入对局后的第一帧为 `None`）。
-    anim_tick: Option<u64>,
+    /// 上一帧处于啃食的敌人：实体位 → (啃食目标, `Biter.elapsed`)，用于判断 eat 片段进入事件帧。
+    eat_seen: BTreeMap<u64, (Entity, u32)>,
 }
 
 impl RenderState {
@@ -177,34 +178,51 @@ fn track_hurt(world: &mut World) {
 
 /// 敌人 eat 片段进入事件帧（`eat_hit`）时发送引擎 `AnimationEvent`（SPEC 12.3，ADR-010），供音效消费。
 ///
-/// 帧与绘制时一样由 `fixed_tick` 推导（[`phase`]，ADR-007），不使用引擎 `Animator`；与渲染模式无关，
-/// 只要皮肤已加载就发送，使两种模式的音效一致。一帧最多补发 [`MAX_TICKS_PER_FRAME`] 个 tick，
-/// 暂停后恢复时不会补发暂停期间的事件。
+/// eat 片段的相位由 `Biter` 计时器决定（[`eat_elapsed`]，负责人裁决 2026-10-15（四）），因此只需比较
+/// 本帧与上一帧的 `Biter.elapsed`：未回绕时检查两者之间进入的事件帧，回绕（本帧之间发生过一次啃食）
+/// 时把本帧位置加一个片段长度。啃食目标变化或刚开始啃食时只记录不发送。与渲染模式无关，只要皮肤已
+/// 加载就发送，使两种模式的音效一致；暂停时不调用，`Biter` 也不推进，恢复后不会补发。
 fn emit_anim_events(world: &mut World) {
-    let tick = world.resources.expect::<Time>().fixed_tick;
-    let Some(last) = world
+    let factor = chill_bite_factor(world);
+    let Some(seen) = world
         .resources
         .get_mut::<RenderState>()
-        .and_then(|s| s.anim_tick.replace(tick))
+        .map(|s| std::mem::take(&mut s.eat_seen))
     else {
         return;
     };
-    let from = last.max(tick.saturating_sub(u64::from(MAX_TICKS_PER_FRAME)));
-    if from >= tick {
-        return;
-    }
     let (Some(skin), Some(clips)) = (
         world.resources.get::<skin::SkinAssets>(),
         world.resources.get::<Assets<AnimationClip>>(),
     ) else {
         return;
     };
+    let mut next = BTreeMap::new();
     let mut events = Vec::new();
-    for (e, h, armor, enemy, walker) in world
-        .query::<(Entity, &Health, Option<&Armor>, &EnemyRef, &Walker)>()
+    for (e, h, armor, enemy, walker, biter, status) in world
+        .query::<(
+            Entity,
+            &Health,
+            Option<&Armor>,
+            &EnemyRef,
+            &Walker,
+            &Biter,
+            &StatusEffects,
+        )>()
         .iter()
     {
-        if !h.alive() || !matches!(walker.state, WalkState::Eating(_)) {
+        let WalkState::Eating(target) = walker.state else {
+            continue;
+        };
+        if !h.alive() {
+            continue;
+        }
+        let key = e.to_bits().get();
+        next.insert(key, (target, biter.elapsed));
+        let Some(&(prev_target, prev)) = seen.get(&key) else {
+            continue;
+        };
+        if prev_target != target {
             continue;
         }
         let armored = armor.is_some_and(|a| a.hp > 0);
@@ -212,16 +230,105 @@ fn emit_anim_events(world: &mut World) {
         let Some(clip) = skin.clip(&name).and_then(|h| clips.get(h)) else {
             continue;
         };
-        for event in skin::events_between(clip, phase(e, from), phase(e, tick)) {
+        let len = skin::clip_ticks(clip);
+        let interval = bite_interval(biter, status, factor);
+        let from = eat_elapsed(prev, interval, len);
+        let mut to = eat_elapsed(biter.elapsed, interval, len);
+        if biter.elapsed < prev {
+            to += len;
+        }
+        for event in skin::events_between(clip, from, to) {
             events.push(AnimationEvent {
                 entity: e,
                 event: event.to_owned(),
             });
         }
     }
+    if let Some(state) = world.resources.get_mut::<RenderState>() {
+        state.eat_seen = next;
+    }
     for event in events {
         world.events.send(event);
     }
+}
+
+/// Chill 啃食间隔倍率（规则数据，SPEC 8.2）；规则缺失时为 1。
+fn chill_bite_factor(world: &World) -> u32 {
+    world
+        .resources
+        .get::<Rules>()
+        .map_or(1, |r| r.status.chill_bite_interval_factor)
+}
+
+/// 本 tick 的有效啃食间隔：与 `bite_system` 同一算法（SPEC 8.2，Chill 时按规则倍增）。
+fn bite_interval(biter: &Biter, status: &StatusEffects, chill_factor: u32) -> u32 {
+    let interval = if status.chilled() {
+        biter.interval * chill_factor
+    } else {
+        biter.interval
+    };
+    interval.max(1)
+}
+
+/// eat 片段的已播放 tick：啃食进度 `elapsed / interval` 映射到片段总长（负责人裁决 2026-10-15（四））。
+/// 片段末帧带 `eat_hit`，对应计时器到期前的最后一段；Chill 下间隔翻倍，相位自动随之变慢。
+#[must_use]
+pub fn eat_elapsed(elapsed: u32, interval: u32, clip_ticks: u64) -> u64 {
+    let interval = interval.max(1);
+    u64::from(elapsed.min(interval - 1)) * clip_ticks / u64::from(interval)
+}
+
+/// 敌人当前应播放的片段与已播放 tick：行走按游戏时钟（[`phase`]），啃食按 `Biter` 相位（[`eat_elapsed`]）。
+/// `ticks` 返回片段总长（片段缺失为 `None`）。
+fn enemy_pose_with(
+    ticks: impl Fn(&str) -> Option<u64>,
+    e: Entity,
+    tick: u64,
+    id: &str,
+    armored: bool,
+    walker: &Walker,
+    eat: Option<(&Biter, &StatusEffects, u32)>,
+) -> (String, u64) {
+    let eating = matches!(walker.state, WalkState::Eating(_));
+    let clip = enemy_clip(|c| ticks(c).is_some(), id, eating, armored);
+    let elapsed = match (eating, eat, ticks(&clip)) {
+        (true, Some((biter, status, factor)), Some(len)) => {
+            eat_elapsed(biter.elapsed, bite_interval(biter, status, factor), len)
+        }
+        _ => phase(e, tick),
+    };
+    (clip, elapsed)
+}
+
+/// 敌人 `e` 当前的皮肤片段名与已播放 tick（与绘制、动画事件同一规则）；不是存活敌人或皮肤未加载时为 `None`。
+#[must_use]
+pub fn enemy_pose(world: &World, e: Entity) -> Option<(String, u64)> {
+    let skin = world.resources.get::<skin::SkinAssets>()?;
+    let clips = world.resources.get::<Assets<AnimationClip>>()?;
+    let tick = world.resources.get::<Time>()?.fixed_tick;
+    let factor = chill_bite_factor(world);
+    let mut query = world.entities.query_one::<(
+        &EnemyRef,
+        &Walker,
+        Option<&Armor>,
+        Option<&Biter>,
+        &StatusEffects,
+    )>(e);
+    let (enemy, walker, armor, biter, status) = query.get().ok()?;
+    let ticks = |c: &str| {
+        skin.clip(c)
+            .and_then(|h| clips.get(h))
+            .map(skin::clip_ticks)
+    };
+    Some(enemy_pose_with(
+        ticks,
+        e,
+        tick,
+        enemy.id.as_str(),
+        armor.is_some_and(|a| a.hp > 0),
+        walker,
+        biter.map(|b| (b, status, factor)),
+    ))
 }
 
 fn color(hex: u32) -> Color {
@@ -568,7 +675,8 @@ fn draw_enemies(
     painter: Option<&Painter<'_>>,
 ) {
     let hurt = world.resources.get::<RenderState>();
-    for (e, t, p, h, lane, status, armor, enemy, walker) in world
+    let factor = chill_bite_factor(world);
+    for (e, t, p, h, lane, status, armor, enemy, walker, biter) in world
         .query::<(
             Entity,
             &Transform2D,
@@ -579,6 +687,7 @@ fn draw_enemies(
             Option<&Armor>,
             &EnemyRef,
             &Walker,
+            Option<&Biter>,
         )>()
         .iter()
     {
@@ -592,8 +701,15 @@ fn draw_enemies(
             .is_some_and(|&at| tick.saturating_sub(at) < HURT_FLASH_TICKS);
         let armored = armor.is_some_and(|a| a.hp > 0);
         if let Some(sk) = painter {
-            let eating = matches!(walker.state, WalkState::Eating(_));
-            let clip = enemy_clip(|c| sk.has(c), enemy.id.as_str(), eating, armored);
+            let (clip, elapsed) = enemy_pose_with(
+                |c| sk.ticks(c),
+                e,
+                tick,
+                enemy.id.as_str(),
+                armored,
+                walker,
+                biter.map(|b| (b, status, factor)),
+            );
             let tint = if status.chilled() {
                 mix(Color::WHITE, color(palette::CHILL_TINT), CHILL_MIX)
             } else {
@@ -601,7 +717,7 @@ fn draw_enemies(
             };
             let pose = Pose {
                 clip: &clip,
-                elapsed: phase(e, tick),
+                elapsed,
                 flash: flashing,
                 tint,
             };

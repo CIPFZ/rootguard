@@ -13,9 +13,10 @@
     anim/<id>_<动作>.anim.ron  引擎动画片段 RON
 
 动作：防御者 idle 4 帧（射手 / 咬夹草另有 attack 3 帧，块茎雷另有 armed 2 帧）；敌人 walk 4 帧、
-eat 3 帧（第 2 帧带 `eat_hit` 事件），有护甲的敌人另有 bare_walk / bare_eat（护甲破损后）。
+eat 3 帧（末帧带 `eat_hit` 事件），有护甲的敌人另有 bare_walk / bare_eat（护甲破损后）。
 eat 片段总长必须等于该敌人的 `bite_interval_ticks`（读取 assets/data/enemies/*.enemy.ron，不符即报错），
-使每循环一次的 `eat_hit` 啃食音效与模拟中的伤害同频（负责人裁决 2026-10-15，ADR-010）。
+使每循环一次的 `eat_hit` 啃食音效与模拟中的伤害同频（负责人裁决 2026-10-15（三），ADR-012）；
+呈现层按 `Biter` 计时器进度取帧，`eat_hit` 在末帧即与计时器到期同相（裁决（四））。
 弹丸与 Dew 各 1 帧，锚点在中心；其余锚点在底部中心。
 
 需要 Pillow（开发期工具）：python3 scripts/gen_skins.py
@@ -32,9 +33,11 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 OUT = os.path.join(ROOT, "assets", "skins", "default")
 CELL = 96
 SS = 4  # 超采样
-# eat 帧时长：抬头 → 咬下（eat_hit）→ 停顿；总和须等于 bite_interval_ticks
-EAT_TICKS = (20, 10, 30)
-EAT_HIT_FRAME = 1
+# eat 片段：抬头 → 俯身 → 咬合（eat_hit，末帧）；总和须等于 bite_interval_ticks（裁决（四））。
+# EAT_POSES 为每个片段帧使用的姿态图序号（姿态 1 前倾最深，即咬合）。
+EAT_POSES = (0, 2, 1)
+EAT_TICKS = (30, 20, 10)
+EAT_HIT_FRAME = 2
 OUTLINE = (52, 40, 32, 255)
 LINE_W = 3
 
@@ -471,13 +474,13 @@ def frames():
                 add(f"{name}_flash", flash(img))
                 walk.append((name, 12, None))
             clips.append((f"{eid}_{prefix}walk", True, walk))
-            eat = []
             for e in range(3):
                 name = f"{eid}_{prefix}eat_{e}"
                 img = fn(0, eat=e, armored=arm)
                 add(name, img)
                 add(f"{name}_flash", flash(img))
-                eat.append((name, EAT_TICKS[e], "eat_hit" if e == EAT_HIT_FRAME else None))
+            eat = [(f"{eid}_{prefix}eat_{pose}", EAT_TICKS[i], "eat_hit" if i == EAT_HIT_FRAME else None)
+                   for i, pose in enumerate(EAT_POSES)]
             clips.append((f"{eid}_{prefix}eat", True, eat))
     for oid, fn in OTHER.items():
         add(f"{oid}_0", fn(0), anchor=(0.5, 0.5))

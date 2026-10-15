@@ -8,8 +8,10 @@ use common::{next_id, runner_with, send, state};
 use rootguard_app::script::{Replay, Script};
 use rootguard_app::skin::SkinAssets;
 use rootguard_app::{BattleScene, build_app_with};
-use rootguard_core::components::{BattleTag, Cell, DewPickup, EnemyRef, ProjectileBody};
-use rootguard_core::data::EnemyDef;
+use rootguard_core::components::{
+    BattleTag, Biter, Cell, DewPickup, EnemyRef, ProjectileBody, StatusEffects, WalkState, Walker,
+};
+use rootguard_core::data::{EnemyDef, Rules};
 use rootguard_core::events::{SkinMode, UiAction};
 use rootguard_core::registry::{DefenderRegistry, EnemyRegistry, ProjectileRegistry};
 use rootguard_core::resources::Phase;
@@ -122,6 +124,91 @@ fn eat_clip_matches_bite_interval() {
         }
     }
     assert!(checked >= 9, "应检查全部敌人的 eat 片段（{checked}）");
+}
+
+/// 负责人裁决 2026-10-15（四）：敌人啃食时 eat 片段的相位由 `Biter` 计时器决定，而非游戏时钟。
+/// 进度 p = elapsed / 有效间隔（Chill 时乘以规则倍率）映射到片段总长；`eat_hit` 帧是末帧，
+/// 对应计时器到期前的最后一段。前半段正常，后半段让啃食者保持 Chill。
+#[test]
+fn eat_anim_phase_follows_biter_timer() {
+    let mut runner = common::battle_runner("1-1", &[]);
+    let mut checked = [0, 0];
+    for _ in 0..4000 {
+        let s = state(&runner).expect("对局");
+        if s.level_tick == 60 {
+            send(&mut runner, UiAction::SelectCard(0));
+            send(&mut runner, UiAction::PlaceAt { row: 2, col: 8 });
+        }
+        let chill = checked[0] >= 150;
+        if chill {
+            for (w, st) in runner
+                .app_mut()
+                .world_mut()
+                .entities
+                .query_mut::<(&Walker, &mut StatusEffects)>()
+            {
+                if matches!(w.state, WalkState::Eating(_)) {
+                    st.chill_ticks = 600;
+                }
+            }
+        }
+        runner.frame();
+        let world = runner.app().world();
+        let skin = world.resources.expect::<SkinAssets>();
+        let clips = world.resources.expect::<Assets<AnimationClip>>();
+        let factor = world
+            .resources
+            .expect::<Rules>()
+            .status
+            .chill_bite_interval_factor;
+        for (e, w, b, st) in world
+            .query::<(Entity, &Walker, &Biter, &StatusEffects)>()
+            .iter()
+        {
+            if !matches!(w.state, WalkState::Eating(_)) {
+                continue;
+            }
+            let (name, elapsed) = rootguard_app::render::enemy_pose(world, e).expect("姿态");
+            assert_eq!(name, "husk_eat");
+            let clip = clips.get(skin.clip(&name).expect("片段")).expect("片段");
+            let total = rootguard_app::skin::clip_ticks(clip);
+            let interval = if st.chilled() {
+                b.interval * factor
+            } else {
+                b.interval
+            };
+            assert_eq!(
+                elapsed,
+                u64::from(b.elapsed) * total / u64::from(interval),
+                "eat 相位应为 Biter 进度 × 片段总长（chill = {}）",
+                st.chilled()
+            );
+            let frame = rootguard_app::skin::frame_index_at(clip, elapsed);
+            let last = clip.frames.len() - 1;
+            assert_eq!(
+                clip.frames[frame].event.as_deref() == Some("eat_hit"),
+                frame == last,
+                "eat_hit 应在末帧"
+            );
+            // 末帧 = 计时器剩余不超过末帧长度对应的 tick
+            let last_ticks =
+                u64::from(clip.frames[last].duration_ticks) * u64::from(interval) / total;
+            assert_eq!(
+                frame == last,
+                u64::from(interval - b.elapsed) <= last_ticks,
+                "末帧应对应计时器最后 {last_ticks} tick（elapsed {}）",
+                b.elapsed
+            );
+            checked[usize::from(st.chilled())] += 1;
+        }
+        if checked[1] >= 300 {
+            break;
+        }
+    }
+    assert!(
+        checked[0] >= 150 && checked[1] >= 300,
+        "应在正常与 Chill 下都检查到啃食帧（{checked:?}）"
+    );
 }
 
 /// 回放 1-4 脚本 `ticks` 帧；`skin_at(frame)` 给出该帧开始前要切换到的模式（`None` 不切换）。

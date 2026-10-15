@@ -3,8 +3,8 @@ AnimationClip(
     name: "clay_husk_bare_eat",
     looping: true,
     frames: [
-        (frame: "clay_husk_bare_eat_0", ticks: 20),
+        (frame: "clay_husk_bare_eat_0", ticks: 30),
+        (frame: "clay_husk_bare_eat_2", ticks: 20),
         (frame: "clay_husk_bare_eat_1", ticks: 10, event: "eat_hit"),
-        (frame: "clay_husk_bare_eat_2", ticks: 30),
     ],
 )
