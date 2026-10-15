@@ -3,6 +3,17 @@ AnimationClip(
     name: "drum_husk_bare_walk",
     looping: true,
     frames: [
-        (frame: "drum_husk_bare_walk_0", ticks: 60),
+        (frame: "drum_husk_bare_walk_0", ticks: 5),
+        (frame: "drum_husk_bare_walk_1", ticks: 5),
+        (frame: "drum_husk_bare_walk_2", ticks: 5),
+        (frame: "drum_husk_bare_walk_3", ticks: 5, event: "thud"),
+        (frame: "drum_husk_bare_walk_4", ticks: 5),
+        (frame: "drum_husk_bare_walk_5", ticks: 5),
+        (frame: "drum_husk_bare_walk_6", ticks: 5),
+        (frame: "drum_husk_bare_walk_7", ticks: 5),
+        (frame: "drum_husk_bare_walk_8", ticks: 5),
+        (frame: "drum_husk_bare_walk_9", ticks: 5, event: "thud"),
+        (frame: "drum_husk_bare_walk_10", ticks: 5),
+        (frame: "drum_husk_bare_walk_11", ticks: 5),
     ],
 )

@@ -1,0 +1,13 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "sprinter_husk_eat",
+    looping: true,
+    frames: [
+        (frame: "sprinter_husk_eat_0", ticks: 10),
+        (frame: "sprinter_husk_eat_1", ticks: 10),
+        (frame: "sprinter_husk_eat_2", ticks: 10),
+        (frame: "sprinter_husk_eat_3", ticks: 10),
+        (frame: "sprinter_husk_eat_4", ticks: 10),
+        (frame: "sprinter_husk_eat_5", ticks: 10, event: "eat_hit"),
+    ],
+)

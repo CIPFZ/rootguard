@@ -3,6 +3,13 @@ AnimationClip(
     name: "sproutling_walk",
     looping: true,
     frames: [
-        (frame: "sproutling_walk_0", ticks: 16),
+        (frame: "sproutling_walk_0", ticks: 2),
+        (frame: "sproutling_walk_1", ticks: 2),
+        (frame: "sproutling_walk_2", ticks: 2),
+        (frame: "sproutling_walk_3", ticks: 2),
+        (frame: "sproutling_walk_4", ticks: 2),
+        (frame: "sproutling_walk_5", ticks: 2),
+        (frame: "sproutling_walk_6", ticks: 2),
+        (frame: "sproutling_walk_7", ticks: 2),
     ],
 )

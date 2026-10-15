@@ -3,6 +3,13 @@ AnimationClip(
     name: "carrier_husk_walk",
     looping: true,
     frames: [
-        (frame: "carrier_husk_walk_0", ticks: 48),
+        (frame: "carrier_husk_walk_0", ticks: 6),
+        (frame: "carrier_husk_walk_1", ticks: 6),
+        (frame: "carrier_husk_walk_2", ticks: 6),
+        (frame: "carrier_husk_walk_3", ticks: 6),
+        (frame: "carrier_husk_walk_4", ticks: 6),
+        (frame: "carrier_husk_walk_5", ticks: 6),
+        (frame: "carrier_husk_walk_6", ticks: 6),
+        (frame: "carrier_husk_walk_7", ticks: 6),
     ],
 )

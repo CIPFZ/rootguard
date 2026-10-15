@@ -1,4 +1,31 @@
-// A1：只有默认位姿（静态），动画在 A2。
+// 鼓腹枯壳片段（ART-SPEC 3.1 / 5.8）。walk 相位由走过的距离决定（ADR-016 第 4 节）；eat 由 Biter 计时器驱动。
 Clips([
-    (name: "walk", looping: true, duration: Ticks(60), frames: Every(60)),
+    // walk 60：每步整身一沉，落地有 thud（5.8）
+    (
+        name: "walk",
+        looping: true,
+        duration: Ticks(60),
+        frames: Every(5),
+        events: [(15, "thud"), (45, "thud")],
+        keys: {
+            "drum": [(t: 0), (t: 15, dy: 3), (t: 22), (t: 30), (t: 45, dy: 3), (t: 52), (t: 60)],
+            "leg_front": [(t: 0, rot: 8), (t: 30, rot: -8), (t: 60, rot: 8)],
+            "leg_back": [(t: 0, rot: -8), (t: 30, rot: 8), (t: 60, rot: -8)],
+            "arms": [(t: 0, rot: -2), (t: 30, rot: 2), (t: 60, rot: -2)],
+            "head": [(t: 0, rot: 2), (t: 30, rot: -2), (t: 60, rot: 2)],
+        },
+    ),
+    // eat：整个身体前倾压上去，eat_hit 帧“咚”一下（5.8）
+    (
+        name: "eat",
+        looping: true,
+        duration: Rule("enemies.drum_husk.bite_interval_ticks"),
+        frames: List([10, 10, 10, 10, 10, 10]),
+        events: [(50, "eat_hit")],
+        keys: {
+            "drum": [(t: 0), (t: 20, rot: 2), (t: 30, rot: -2), (t: 40, rot: -5, dx: -3), (t: 50, rot: -8, dx: -5, dy: 2)],
+            "head": [(t: 0, rot: 3), (t: 40, rot: -6), (t: 50, rot: -12)],
+            "arms": [(t: 0), (t: 50, rot: -6)],
+        },
+    ),
 ])

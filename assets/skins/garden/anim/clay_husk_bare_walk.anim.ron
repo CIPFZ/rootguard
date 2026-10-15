@@ -3,6 +3,13 @@ AnimationClip(
     name: "clay_husk_bare_walk",
     looping: true,
     frames: [
-        (frame: "clay_husk_bare_walk_0", ticks: 40),
+        (frame: "clay_husk_bare_walk_0", ticks: 5),
+        (frame: "clay_husk_bare_walk_1", ticks: 5),
+        (frame: "clay_husk_bare_walk_2", ticks: 5),
+        (frame: "clay_husk_bare_walk_3", ticks: 5),
+        (frame: "clay_husk_bare_walk_4", ticks: 5),
+        (frame: "clay_husk_bare_walk_5", ticks: 5),
+        (frame: "clay_husk_bare_walk_6", ticks: 5),
+        (frame: "clay_husk_bare_walk_7", ticks: 5),
     ],
 )

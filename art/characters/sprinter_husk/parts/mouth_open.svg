@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160">
+  <!-- sprint：嘴张开（ART-SPEC 5.4）；歪斜的小口，无成排牙（v1.1 1.2） -->
+  <g transform="translate(56 84) rotate(-10) scale(0.85) translate(-48 -84)">
+    <ellipse cx="41" cy="72" rx="4" ry="4.8" fill="@bark_dark" stroke="@husk_outline" stroke-width="2"/>
+    <ellipse cx="39.6" cy="69.4" rx="1.2" ry="1.5" fill="@straw" stroke="@husk_outline" stroke-width="1"/>
+  </g>
+</svg>

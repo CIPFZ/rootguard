@@ -1,7 +1,7 @@
-// 枯壳怪片段（ART-SPEC v1.1 3.1 / 5.1）。tick 为片段内时间。
+// 枯壳怪片段（ART-SPEC 3.1 / 5.1）。walk 的相位由走过的距离决定（ADR-016 第 4 节）；eat 时长 = bite_interval_ticks、
+// 相位由 Biter 计时器驱动（裁决四），eat_hit 在末帧 50。以枯壳怪为模板（裁决六），去鸟化后的共用基础形（裁决七）。
 Clips([
-    // walk：40 tick 循环（基础速度 0.30 时一周期 12 px），左右摇摆 ± 4°，根须腿交替，
-    // 下垂的双臂与同侧腿反相摆动（v1.1 5.1）
+    // walk 40：左右摇摆 ± 4°，根须腿交替，下垂的双臂与同侧腿反相摆动
     (
         name: "walk",
         looping: true,
@@ -10,14 +10,12 @@ Clips([
         keys: {
             "body": [(t: 0, rot: -4), (t: 10, dy: -2), (t: 20, rot: 4), (t: 30, dy: -2), (t: 40, rot: -4)],
             "head": [(t: 0, rot: 3), (t: 20, rot: -3), (t: 40, rot: 3)],
-            "leg_front": [(t: 0, rot: 14), (t: 20, rot: -12), (t: 40, rot: 14)],
-            "leg_back": [(t: 0, rot: -12), (t: 20, rot: 14), (t: 40, rot: -12)],
-            "arm_front": [(t: 0, rot: -14), (t: 20, rot: 12), (t: 40, rot: -14)],
-            "arm_back": [(t: 0, rot: 12), (t: 20, rot: -14), (t: 40, rot: 12)],
+            "leg_front": [(t: 0, rot: 13), (t: 20, rot: -12), (t: 40, rot: 13)],
+            "leg_back": [(t: 0, rot: -12), (t: 20, rot: 13), (t: 40, rot: -12)],
+            "arm_front": [(t: 0, rot: -13), (t: 20, rot: 12), (t: 40, rot: -13)],
+            "arm_back": [(t: 0, rot: 12), (t: 20, rot: -13), (t: 40, rot: 12)],
         },
     ),
-    // eat：时长 = bite_interval_ticks，相位由 Biter 计时器驱动（3.1，裁决（四））。
-    // 0 ～ 29 抬头、前臂扶上守卫，30 ～ 49 俯身，50 ～ 59 咬合；eat_hit 在 50（末帧）：头部猛点、掉两粒碎屑。
     (
         name: "eat",
         looping: true,
@@ -27,7 +25,7 @@ Clips([
         keys: {
             "body": [(t: 0), (t: 20, rot: 2), (t: 30, rot: -3), (t: 40, dx: -2, rot: -7), (t: 50, dx: -3, rot: -10)],
             "head": [(t: 0, rot: 4), (t: 20, rot: 8), (t: 30), (t: 40, rot: -6), (t: 50, rot: -14)],
-            "arm_front": [(t: 0, rot: 40), (t: 30, rot: 38), (t: 50, rot: 34)],
+            "arm_front": [(t: 0, rot: 24), (t: 30, rot: 22), (t: 50, rot: 18)],
             "arm_back": [(t: 0, rot: 4), (t: 40, rot: -2), (t: 50, rot: -6)],
             "leg_front": [(t: 0, rot: 6)],
             "leg_back": [(t: 0, rot: -6)],

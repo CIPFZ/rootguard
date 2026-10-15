@@ -808,3 +808,113 @@ fn fuse_and_arm_clips_follow_timers() {
     }
     assert_eq!(seen.len(), 4, "应见到两种 fuse 与 arm / armed（{seen:?}）");
 }
+
+/// ADR-016 第 4 节：回放 1-10 脚本（全部敌人种类），花园皮肤下每个敌人每帧的片段与模拟状态一致——啃食 eat、
+/// 跨越 vault、Sprint 触发后 sprint、跨越落地后 vaulted_、护甲 ≤ 1/2 时 cracked_、护甲没了 bare_、小芽怪生成后
+/// spawn；行走相位 = 走过的距离 ÷ 步幅（`stride_elapsed`）。
+#[test]
+fn husk_clips_follow_movement_and_state() {
+    use rootguard_core::components::{Armor, EnemyRef, Vaulter};
+    use rootguard_core::registry::EnemyRegistry;
+    use trellia::prelude::Transform2D as T2;
+    let script = script("1-10");
+    let scene = BattleScene::new(script.level, script.cards.clone(), None);
+    let mut runner = runner_with(scene, &format!("husk-clips-{}", next_id()));
+    let mut replay = Replay::new(script);
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    let mut seen = std::collections::BTreeSet::new();
+    runner.frame();
+    for _ in 0..40_000 {
+        let s = state(&runner).expect("对局");
+        if matches!(s.phase, Phase::Won | Phase::Lost) {
+            break;
+        }
+        if s.phase == Phase::Playing {
+            for a in replay.due(s.level_tick) {
+                send(&mut runner, a);
+            }
+        }
+        runner.frame();
+        let world = runner.app().world();
+        let skin = world
+            .resources
+            .expect::<Skins>()
+            .get(SkinName::Garden)
+            .expect("garden");
+        let clips = world.resources.expect::<Assets<AnimationClip>>();
+        let reg = world.resources.expect::<EnemyRegistry>();
+        for (e, enemy, t, w, armor, vaulter) in world
+            .query::<(
+                Entity,
+                &EnemyRef,
+                &T2,
+                &Walker,
+                Option<&Armor>,
+                Option<&Vaulter>,
+            )>()
+            .iter()
+        {
+            let id = enemy.id.as_str();
+            let (name, elapsed) = rootguard_app::render::enemy_pose(world, e).expect("姿态");
+            let vaulting = matches!(w.state, WalkState::Vaulting { .. });
+            if vaulter.is_some_and(|v| v.used) && !vaulting {
+                assert!(name.contains("_vaulted_"), "{name}");
+                seen.insert("vaulted");
+            } else if let Some(a) = armor.filter(|a| a.hp > 0) {
+                if a.hp * 2 <= a.max {
+                    assert!(name.contains("_cracked_"), "{name}");
+                    seen.insert("cracked");
+                } else {
+                    assert!(
+                        !name.contains("_cracked_") && !name.contains("_bare_"),
+                        "{name}"
+                    );
+                }
+            } else if reg.get(enemy.id).is_some_and(|d| d.armor.is_some()) {
+                assert!(name.contains("_bare_"), "{name}");
+                seen.insert("bare");
+            }
+            match w.state {
+                WalkState::Eating(_) => {
+                    assert!(name.ends_with("_eat"), "{name}");
+                    seen.insert("eat");
+                }
+                WalkState::Vaulting { .. } => {
+                    assert!(name.ends_with("_vault"), "{name}");
+                    seen.insert("vault");
+                }
+                _ if name.ends_with("_spawn") => {
+                    seen.insert("spawn");
+                }
+                _ => {
+                    let speed = reg.get(enemy.id).map_or(0.0, |d| d.speed);
+                    let sprinting = w.base_speed > speed + f32::EPSILON;
+                    if sprinting && skin.has_clip(&format!("{id}_sprint")) {
+                        assert!(name.ends_with("_sprint"), "{name}");
+                        seen.insert("sprint");
+                    } else {
+                        assert!(name.ends_with("_walk"), "{name}");
+                    }
+                    let len = rootguard_app::skin::clip_ticks(
+                        clips.get(skin.clip(&name).expect("片段")).expect("片段"),
+                    );
+                    assert_eq!(
+                        elapsed,
+                        rootguard_app::render::stride_elapsed(t.pos.x, w.base_speed, len),
+                        "{name} 的相位应由走过的距离决定"
+                    );
+                    seen.insert("walk");
+                }
+            }
+        }
+        if seen.len() >= 8 {
+            break;
+        }
+    }
+    for k in [
+        "walk", "eat", "cracked", "bare", "sprint", "vault", "vaulted", "spawn",
+    ] {
+        assert!(seen.contains(k), "1-10 回放中应见到 {k}（{seen:?}）");
+    }
+}

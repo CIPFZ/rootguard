@@ -1,4 +1,40 @@
-// A1：只有默认位姿（静态），动画在 A2。
+// 小芽怪片段（ART-SPEC 3.1 / 5.9）。walk 相位由走过的距离决定（ADR-016 第 4 节）；eat 由 Biter 计时器驱动；
+// spawn 在生成后播放一次。
 Clips([
-    (name: "walk", looping: true, duration: Ticks(16), frames: Every(16)),
+    // walk 16：小碎步
+    (
+        name: "walk",
+        looping: true,
+        duration: Ticks(16),
+        frames: Every(2),
+        keys: {
+            "feet": [(t: 0, dy: -1.5, dx: 1), (t: 4), (t: 8, dy: -1.5, dx: -1), (t: 12), (t: 16, dy: -1.5, dx: 1)],
+            "seed": [(t: 0, rot: -4), (t: 8, rot: 4, dy: -1), (t: 16, rot: -4)],
+            "sprout": [(t: 0, rot: 4), (t: 8, rot: -4), (t: 16, rot: 4)],
+        },
+    ),
+    // eat：跳起来咬（5.9）
+    (
+        name: "eat",
+        looping: true,
+        duration: Rule("enemies.sproutling.bite_interval_ticks"),
+        frames: List([10, 10, 10, 10, 10, 10]),
+        events: [(50, "eat_hit")],
+        keys: {
+            "seed": [(t: 0), (t: 20, sy: 0.92, dy: 1), (t: 30, dy: -8, rot: -6), (t: 40, dy: -10, rot: -10, dx: -3), (t: 50, dy: -3, rot: -14, dx: -5)],
+            "sprout": [(t: 0), (t: 30, rot: -8), (t: 50, rot: 10)],
+        },
+    ),
+    // spawn 15：从种子里弹出（5.9），生成后播放一次（ADR-016 第 4 节）
+    (
+        name: "spawn",
+        looping: false,
+        duration: Ticks(15),
+        frames: List([3, 3, 3, 3, 3]),
+        keys: {
+            "seed": [(t: 0, sx: 0.4, sy: 0.3, dy: 4, ease: Linear), (t: 6, sx: 1.1, sy: 1.2, dy: -4, ease: Linear), (t: 9, sx: 0.95, sy: 0.9), (t: 12)],
+            "sprout": [(t: 0, sx: 0.1, sy: 0.1, ease: Linear), (t: 6, sx: 0.6, sy: 0.6, ease: Linear), (t: 12, sx: 1.1, sy: 1.1), (t: 15)],
+            "feet": [(t: 0, sx: 0.5, sy: 0.5), (t: 9)],
+        },
+    ),
 ])

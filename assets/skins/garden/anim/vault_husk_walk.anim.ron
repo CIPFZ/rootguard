@@ -3,6 +3,13 @@ AnimationClip(
     name: "vault_husk_walk",
     looping: true,
     frames: [
-        (frame: "vault_husk_walk_0", ticks: 40),
+        (frame: "vault_husk_walk_0", ticks: 4),
+        (frame: "vault_husk_walk_1", ticks: 4),
+        (frame: "vault_husk_walk_2", ticks: 4),
+        (frame: "vault_husk_walk_3", ticks: 4),
+        (frame: "vault_husk_walk_4", ticks: 4),
+        (frame: "vault_husk_walk_5", ticks: 4),
+        (frame: "vault_husk_walk_6", ticks: 4),
+        (frame: "vault_husk_walk_7", ticks: 4),
     ],
 )

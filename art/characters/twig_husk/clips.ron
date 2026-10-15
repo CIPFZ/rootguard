@@ -1,17 +1,38 @@
-// A1：只有默认位姿（静态，同枯壳怪 walk 第 0 帧的姿势），动画在 A2。
+// 枝冠枯壳片段（ART-SPEC 3.1 / 5.2）。walk 的相位由走过的距离决定（ADR-016 第 4 节）；eat 时长 = bite_interval_ticks、
+// 相位由 Biter 计时器驱动（裁决四），eat_hit 在末帧 50。以枯壳怪为模板（裁决六），去鸟化后的共用基础形（裁决七）。
 Clips([
+    // walk 40：同枯壳怪；枝冠随头
     (
         name: "walk",
         looping: true,
         duration: Ticks(40),
-        frames: Every(40),
+        frames: Every(5),
         keys: {
-            "body": [(t: 0, rot: -4)],
-            "head": [(t: 0, rot: 3)],
-            "leg_front": [(t: 0, rot: 14)],
-            "leg_back": [(t: 0, rot: -12)],
-            "arm_front": [(t: 0, rot: -14)],
-            "arm_back": [(t: 0, rot: 12)],
+            "body": [(t: 0, rot: -4), (t: 10, dy: -2), (t: 20, rot: 4), (t: 30, dy: -2), (t: 40, rot: -4)],
+            "head": [(t: 0, rot: 3), (t: 20, rot: -3), (t: 40, rot: 3)],
+            "leg_front": [(t: 0, rot: 13), (t: 20, rot: -12), (t: 40, rot: 13)],
+            "leg_back": [(t: 0, rot: -12), (t: 20, rot: 13), (t: 40, rot: -12)],
+            "arm_front": [(t: 0, rot: -13), (t: 20, rot: 12), (t: 40, rot: -13)],
+            "arm_back": [(t: 0, rot: 12), (t: 20, rot: -13), (t: 40, rot: 12)],
+        },
+    ),
+    (
+        name: "eat",
+        looping: true,
+        duration: Rule("enemies.twig_husk.bite_interval_ticks"),
+        frames: List([10, 10, 10, 10, 10, 10]),
+        events: [(50, "eat_hit")],
+        keys: {
+            "body": [(t: 0), (t: 20, rot: 2), (t: 30, rot: -3), (t: 40, dx: -2, rot: -7), (t: 50, dx: -3, rot: -10)],
+            "head": [(t: 0, rot: 4), (t: 20, rot: 8), (t: 30), (t: 40, rot: -6), (t: 50, rot: -14)],
+            "arm_front": [(t: 0, rot: 24), (t: 30, rot: 22), (t: 50, rot: 18)],
+            "arm_back": [(t: 0, rot: 4), (t: 40, rot: -2), (t: 50, rot: -6)],
+            "leg_front": [(t: 0, rot: 6)],
+            "leg_back": [(t: 0, rot: -6)],
+        },
+        swaps: {
+            "mouth": [(0, "base"), (50, "chomp")],
+            "crumbs": [(50, "base")],
         },
     ),
 ])

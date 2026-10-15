@@ -104,6 +104,13 @@
   风铃花 fuse（花瓣逐帧加速旋转、腮越鼓越大，钟口单独不转）、块茎雷 arm（随进度从土里露出、芽长出）/ armed（芽尖
   每 30 tick 一闪）；引信芽加高 30% 多卷半圈（裁决七）。帧条 `docs/screenshots/a2-fuse.png`。测试
   `fuse_and_arm_clips_follow_timers`。
+  提交纪律记录：本类提交 a1f73c3 时我没看测试结果就提交推送（`skin_garden_loads` 的回退示例因 garden 新增
+  `tuberblast_armed` 失效），随后 919e243 修复；之后每次提交命令都在测试失败时中止。
+- [x] 第 4 类 Husk walk + eat（2026-10-16，ADR-016 第 4 节）：9 个 Husk 的 walk / eat（全部状态各一套）、疾行枯壳
+  sprint、跳栏枯壳 vault（绑定数据中的 40 tick；ART-SPEC 写 30）、小芽怪 spawn；陶盆走路晃、门板随步上下且啃食时侧开、
+  背篓一颠、鼓腹每步一沉（thud 事件）、小芽怪跳起来咬。游戏侧：walk / sprint 由走过的距离驱动（脚不打滑、Chill 自然
+  减半），sprint / vault / spawn 的状态选择，`vaulted_` / `cracked_` / `bare_` 前缀。帧条
+  `docs/screenshots/a2-husk-walk-eat.png`。测试 `husk_clips_follow_movement_and_state`。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 

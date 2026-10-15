@@ -29,7 +29,8 @@ impl Rules {
     ///
     /// - `defenders.<id>.<behavior>.<field>`，behavior 为 `shooter` / `producer` / `spikes` / `mine` /
     ///   `blast` / `chomper` / `gust`，field 为该行为的 tick 或计数字段（SPEC 4.1）；
-    /// - `enemies.<id>.bite_interval_ticks`（SPEC 4.3）。
+    /// - `enemies.<id>.bite_interval_ticks`（SPEC 4.3）；
+    /// - `enemies.<id>.vault.ticks`（Vault 特性的跨越耗时，ADR-002）。
     ///
     /// # Errors
     ///
@@ -50,6 +51,18 @@ impl Rules {
                     .find_map(|b| behavior_field(b, behavior, field))
                     .with_context(|| format!("规则 {path}：{id} 没有 {behavior}.{field}"))
             }
+            ["enemies", id, "vault", "ticks"] => self
+                .content
+                .enemies
+                .iter()
+                .find(|(k, _)| k.as_str() == *id)
+                .and_then(|(_, e)| {
+                    e.traits.iter().find_map(|t| match t {
+                        rootguard_core::data::Trait::Vault { ticks } => Some(*ticks),
+                        _ => None,
+                    })
+                })
+                .with_context(|| format!("规则 {path}：{id} 没有 Vault 特性")),
             ["enemies", id, "bite_interval_ticks"] => self
                 .content
                 .enemies
@@ -89,7 +102,12 @@ impl Rules {
             };
             return Some(format!("defenders.{id}.{key}"));
         }
-        (clip == "eat").then(|| format!("enemies.{id}.bite_interval_ticks"))
+        match clip {
+            "eat" => Some(format!("enemies.{id}.bite_interval_ticks")),
+            // 跨越时长 = Vault.ticks（SPEC 8.1 / ADR-002）；ART-SPEC 5.5 写 30，以数据为准（ADR-016 第 4 节）
+            "vault" => Some(format!("enemies.{id}.vault.ticks")),
+            _ => None,
+        }
     }
 
     /// 射手每次连发的弹丸数（`attack` 片段的 `fire` 事件数，ART-SPEC 9.2）。

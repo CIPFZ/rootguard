@@ -3,6 +3,13 @@ AnimationClip(
     name: "sprinter_husk_walk",
     looping: true,
     frames: [
-        (frame: "sprinter_husk_walk_0", ticks: 24),
+        (frame: "sprinter_husk_walk_0", ticks: 3),
+        (frame: "sprinter_husk_walk_1", ticks: 3),
+        (frame: "sprinter_husk_walk_2", ticks: 3),
+        (frame: "sprinter_husk_walk_3", ticks: 3),
+        (frame: "sprinter_husk_walk_4", ticks: 3),
+        (frame: "sprinter_husk_walk_5", ticks: 3),
+        (frame: "sprinter_husk_walk_6", ticks: 3),
+        (frame: "sprinter_husk_walk_7", ticks: 3),
     ],
 )

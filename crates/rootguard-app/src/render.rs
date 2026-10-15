@@ -9,7 +9,7 @@ use rootguard_core::Grid;
 use rootguard_core::components::{
     Armor, Biter, Blast, Cell, ChompState, Chomper, DefenderRef, DewPickup, EnemyRef, Gust, Health,
     Mine, OverlayOf, Placeholder, Producer, ProjectileBody, ProjectileRef, Shooter, Spikes,
-    StatusEffects, WalkState, Walker,
+    StatusEffects, Vaulter, WalkState, Walker,
 };
 use rootguard_core::data::{ArmorKind, Rules};
 use rootguard_core::events::EnemyDamaged;
@@ -83,6 +83,8 @@ pub struct RenderState {
     hurt_at: HashMap<Entity, u64>,
     /// 防御者上一帧的生命值（只做按键查找），用于判定受伤闪白。
     defender_hp: HashMap<Entity, i32>,
+    /// 敌人实体位 → 呈现层首次看到它的 `fixed_tick`（`spawn` 片段，ADR-016 第 4 节）。
+    first_seen: BTreeMap<u64, u64>,
     /// 上一帧可见的 Dew：实体位 → (位置, 过期计时剩余)。
     dew_seen: BTreeMap<u64, (Vec2, u32)>,
     /// 飞向 HUD 的 Dew。
@@ -110,6 +112,7 @@ impl RenderState {
 /// `Update`（`BattleScene::update`，暂停时不调用）：推进全部呈现层状态。
 pub fn track_visuals(world: &mut World) {
     track_hurt(world);
+    track_enemies(world);
     emit_anim_events(world);
     let dt = world.resources.expect::<Time>().real_dt;
     let dew: BTreeMap<u64, (Vec2, u32)> = world
@@ -147,6 +150,23 @@ pub fn track_visuals(world: &mut World) {
                 TweenF32::new(0.0, 1.0, BANNER_IN_SECS, Easing::EaseOutQuad),
             ));
         }
+    }
+}
+
+/// 记录每个敌人首次出现的 tick（生成动画用），并删掉已不存在的。
+fn track_enemies(world: &mut World) {
+    let tick = world.resources.expect::<Time>().fixed_tick;
+    let alive: Vec<u64> = world
+        .query::<(Entity, &EnemyRef)>()
+        .iter()
+        .map(|(e, _)| e.to_bits().get())
+        .collect();
+    if let Some(state) = world.resources.get_mut::<RenderState>() {
+        let mut next = BTreeMap::new();
+        for key in alive {
+            next.insert(key, state.first_seen.get(&key).copied().unwrap_or(tick));
+        }
+        state.first_seen = next;
     }
 }
 
@@ -227,7 +247,7 @@ fn emit_anim_events(world: &mut World) {
     };
     let mut next = BTreeMap::new();
     let mut events = Vec::new();
-    for (e, h, armor, enemy, walker, biter, status) in world
+    for (e, h, armor, enemy, walker, biter, status, vaulter) in world
         .query::<(
             Entity,
             &Health,
@@ -236,6 +256,7 @@ fn emit_anim_events(world: &mut World) {
             &Walker,
             &Biter,
             &StatusEffects,
+            Option<&Vaulter>,
         )>()
         .iter()
     {
@@ -253,8 +274,23 @@ fn emit_anim_events(world: &mut World) {
         if prev_target != target {
             continue;
         }
-        let armored = armor.is_some_and(|a| a.hp > 0);
-        let name = enemy_clip(|c| skin.has_clip(c), enemy.id.as_str(), true, armored);
+        let look = EnemyLook {
+            id: enemy.id.as_str(),
+            x: 0.0,
+            walker,
+            biter: Some(biter),
+            status,
+            armor,
+            vaulter,
+            def_speed: None,
+            age: None,
+        };
+        let name = enemy_clip(
+            |c| skin.has_clip(c),
+            enemy.id.as_str(),
+            enemy_state(&look),
+            "eat",
+        );
         let Some(clip) = skin.clip(&name).and_then(|h| clips.get(h)) else {
             continue;
         };
@@ -306,26 +342,117 @@ pub fn eat_elapsed(elapsed: u32, interval: u32, clip_ticks: u64) -> u64 {
     u64::from(elapsed.min(interval - 1)) * clip_ticks / u64::from(interval)
 }
 
-/// 敌人当前应播放的片段与已播放 tick：行走按游戏时钟（[`phase`]），啃食按 `Biter` 相位（[`eat_elapsed`]）。
-/// `ticks` 返回片段总长（片段缺失为 `None`）。
+/// 行走相位的参考 x：距离 = 参考 x − 当前 x（任意常数都可，取逻辑宽度）。
+const WALK_REF_X: f32 = 1280.0;
+
+/// 敌人的呈现输入（只读模拟组件）。
+#[derive(Clone, Copy)]
+struct EnemyLook<'a> {
+    id: &'a str,
+    /// 当前 x（插值后）。
+    x: f32,
+    walker: &'a Walker,
+    biter: Option<&'a Biter>,
+    status: &'a StatusEffects,
+    armor: Option<&'a Armor>,
+    vaulter: Option<&'a Vaulter>,
+    /// 数据中的基础速度（Sprint 判定用）。
+    def_speed: Option<f32>,
+    /// 生成后经过的 tick（呈现层记录，`spawn` 用）。
+    age: Option<u64>,
+}
+
+/// 敌人的状态前缀（ART-SPEC 2.4 / 5.5，ADR-016 第 4 节）：跨越落地后 `vaulted`；护甲 ≤ 1/2 时 `cracked`；
+/// 护甲没了 `bare`；否则无。皮肤缺少带前缀的片段时回退无前缀的。
+fn enemy_state(look: &EnemyLook<'_>) -> &'static str {
+    if look.vaulter.is_some_and(|v| v.used)
+        && !matches!(look.walker.state, WalkState::Vaulting { .. })
+    {
+        return "vaulted";
+    }
+    match look.armor {
+        Some(a) if a.hp > 0 && a.hp * 2 <= a.max => "cracked",
+        Some(a) if a.hp > 0 => "",
+        _ => "bare",
+    }
+}
+
+/// 片段名：`<id>_<状态>_<动作>`，缺失时回退 `<id>_<动作>`。
+fn enemy_clip(has: impl Fn(&str) -> bool, id: &str, state: &str, act: &str) -> String {
+    if !state.is_empty() {
+        let name = format!("{id}_{state}_{act}");
+        if has(&name) {
+            return name;
+        }
+    }
+    format!("{id}_{act}")
+}
+
+/// 位置驱动的循环相位（ADR-016 第 4 节）：走过的距离 ÷ 步幅 × 片段长，步幅 = 速度 × 片段长（ART-SPEC 3.1“基础
+/// 速度 0.30 时一周期 12 px”）。脚不打滑，Chill 减速、停步时自然变慢 / 停住。
+#[must_use]
+pub fn stride_elapsed(x: f32, speed: f32, len: u64) -> u64 {
+    let stride = speed * len as f32;
+    if stride <= 0.0 {
+        return 0;
+    }
+    let cycles = ((WALK_REF_X - x) / stride).rem_euclid(1.0);
+    ((cycles * len as f32) as u64).min(len.saturating_sub(1))
+}
+
+/// 敌人当前应播放的片段与已播放 tick：`eat` 按 Biter 相位（[`eat_elapsed`]）、`vault` 按跨越进度、`spawn` 按生成
+/// 后经过的 tick、`sprint` / `walk` 按走过的距离（[`stride_elapsed`]）。`ticks` 返回片段总长（缺失为 `None`）。
 fn enemy_pose_with(
     ticks: impl Fn(&str) -> Option<u64>,
-    e: Entity,
+    look: &EnemyLook<'_>,
     tick: u64,
-    id: &str,
-    armored: bool,
-    walker: &Walker,
-    eat: Option<(&Biter, &StatusEffects, u32)>,
+    e: Entity,
+    factor: u32,
 ) -> (String, u64) {
-    let eating = matches!(walker.state, WalkState::Eating(_));
-    let clip = enemy_clip(|c| ticks(c).is_some(), id, eating, armored);
-    let elapsed = match (eating, eat, ticks(&clip)) {
-        (true, Some((biter, status, factor)), Some(len)) => {
-            eat_elapsed(biter.elapsed, bite_interval(biter, status, factor), len)
+    let has = |c: &str| ticks(c).is_some();
+    let state = enemy_state(look);
+    let clip = |act: &str| enemy_clip(has, look.id, state, act);
+    match look.walker.state {
+        WalkState::Eating(_) => {
+            let name = clip("eat");
+            let elapsed = match (look.biter, ticks(&name)) {
+                (Some(b), Some(len)) => {
+                    eat_elapsed(b.elapsed, bite_interval(b, look.status, factor), len)
+                }
+                _ => phase(e, tick),
+            };
+            return (name, elapsed);
         }
-        _ => phase(e, tick),
+        WalkState::Vaulting { t, .. } => {
+            let name = clip("vault");
+            if let (Some(len), Some(v)) = (ticks(&name), look.vaulter)
+                && let Some(el) = timed_elapsed(t, v.ticks, len)
+            {
+                return (name, el);
+            }
+        }
+        _ => {}
+    }
+    let spawn = clip("spawn");
+    if let (Some(len), Some(age)) = (ticks(&spawn), look.age)
+        && age < len
+    {
+        return (spawn, age);
+    }
+    let sprinting = look
+        .def_speed
+        .is_some_and(|s| look.walker.base_speed > s + f32::EPSILON);
+    let sprint = clip("sprint");
+    let name = if sprinting && has(&sprint) {
+        sprint
+    } else {
+        clip("walk")
     };
-    (clip, elapsed)
+    let elapsed = ticks(&name).map_or_else(
+        || phase(e, tick),
+        |len| stride_elapsed(look.x, look.walker.base_speed, len),
+    );
+    (name, elapsed)
 }
 
 /// 敌人 `e` 当前的皮肤片段名与已播放 tick（与绘制、动画事件同一规则）；不是存活敌人或皮肤未加载时为 `None`。
@@ -337,26 +464,50 @@ pub fn enemy_pose(world: &World, e: Entity) -> Option<(String, u64)> {
     let factor = chill_bite_factor(world);
     let mut query = world.entities.query_one::<(
         &EnemyRef,
+        &Transform2D,
         &Walker,
         Option<&Armor>,
         Option<&Biter>,
         &StatusEffects,
+        Option<&Vaulter>,
     )>(e);
-    let (enemy, walker, armor, biter, status) = query.get().ok()?;
+    let (enemy, t, walker, armor, biter, status, vaulter) = query.get().ok()?;
     let ticks = |c: &str| {
         skin.clip(c)
             .and_then(|h| clips.get(h))
             .map(skin::clip_ticks)
     };
-    Some(enemy_pose_with(
-        ticks,
-        e,
-        tick,
-        enemy.id.as_str(),
-        armor.is_some_and(|a| a.hp > 0),
+    let look = EnemyLook {
+        id: enemy.id.as_str(),
+        x: t.pos.x,
         walker,
-        biter.map(|b| (b, status, factor)),
-    ))
+        biter,
+        status,
+        armor,
+        vaulter,
+        def_speed: enemy_def_speed(world, enemy),
+        age: enemy_age(world, e, tick),
+    };
+    Some(enemy_pose_with(ticks, &look, tick, e, factor))
+}
+
+/// 数据中的基础速度（`EnemyRegistry`）。
+fn enemy_def_speed(world: &World, enemy: &EnemyRef) -> Option<f32> {
+    world
+        .resources
+        .get::<rootguard_core::registry::EnemyRegistry>()?
+        .get(enemy.id)
+        .map(|d| d.speed)
+}
+
+/// 敌人生成后经过的 tick（呈现层首次看到它的 tick 起算）。
+fn enemy_age(world: &World, e: Entity, tick: u64) -> Option<u64> {
+    let born = *world
+        .resources
+        .get::<RenderState>()?
+        .first_seen
+        .get(&e.to_bits().get())?;
+    Some(tick.saturating_sub(born))
 }
 
 fn color(hex: u32) -> Color {
@@ -979,18 +1130,6 @@ fn draw_defenders(
     }
 }
 
-/// 敌人当前应播放的片段（SPEC 12.3：walk / eat，护甲破损后换 `bare_` 版）。
-fn enemy_clip(has: impl Fn(&str) -> bool, id: &str, eating: bool, armored: bool) -> String {
-    let act = if eating { "eat" } else { "walk" };
-    if !armored {
-        let bare = format!("{id}_bare_{act}");
-        if has(&bare) {
-            return bare;
-        }
-    }
-    format!("{id}_{act}")
-}
-
 fn draw_enemies(
     world: &World,
     list: &mut DrawList,
@@ -1011,6 +1150,7 @@ fn draw_enemies(
         &EnemyRef,
         &Walker,
         Option<&Biter>,
+        Option<&Vaulter>,
     )>();
     let mut enemies: Vec<_> = query.iter().collect();
     // 同一行内从右到左提交（sort_y 相同时按提交顺序叠放）：最靠左者画在最上面。它是弹丸最先命中的目标
@@ -1020,7 +1160,7 @@ fn draw_enemies(
             .partial_cmp(&(b.4.row, a.1.pos.x, b.0.to_bits()))
             .unwrap_or(std::cmp::Ordering::Equal)
     });
-    for (e, t, p, h, lane, status, armor, enemy, walker, biter) in enemies {
+    for (e, t, p, h, lane, status, armor, enemy, walker, biter, vaulter) in enemies {
         if !h.alive() {
             continue;
         }
@@ -1029,17 +1169,19 @@ fn draw_enemies(
         let flashing = hurt
             .and_then(|s| s.hurt_at.get(&e))
             .is_some_and(|&at| tick.saturating_sub(at) < HURT_FLASH_TICKS);
-        let armored = armor.is_some_and(|a| a.hp > 0);
         if let Some(sk) = painter {
-            let (clip, elapsed) = enemy_pose_with(
-                |c| sk.ticks(c),
-                e,
-                tick,
-                enemy.id.as_str(),
-                armored,
+            let look = EnemyLook {
+                id: enemy.id.as_str(),
+                x: pos.x,
                 walker,
-                biter.map(|b| (b, status, factor)),
-            );
+                biter,
+                status,
+                armor,
+                vaulter,
+                def_speed: enemy_def_speed(world, enemy),
+                age: enemy_age(world, e, tick),
+            };
+            let (clip, elapsed) = enemy_pose_with(|c| sk.ticks(c), &look, tick, e, factor);
             let tint = if status.chilled() {
                 mix(Color::WHITE, color(palette::CHILL_TINT), CHILL_MIX)
             } else {

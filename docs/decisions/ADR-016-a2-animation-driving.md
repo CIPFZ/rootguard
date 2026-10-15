@@ -50,6 +50,22 @@
 4. 块茎雷：引信芽加高 30%、多卷半圈（裁决七第 1 节），块茎整体下沉 4 px 以守住 1.4 的贴地类 48 px。
 5. 测试：`fuse_and_arm_clips_follow_timers`（1-10）。
 
+### 4. Husk walk + eat（2026-10-16）
+
+1. **walk / sprint 由走过的距离驱动**：片段时间 = ((1280 − x) ÷ 步幅 的小数部分) × 片段长，步幅 = `Walker.base_speed`
+   × 片段长（ART-SPEC 3.1“基础速度 0.30 时一周期 12 px”）。脚不打滑；Chill 速度减半时步频自动减半（ART-SPEC 3.3
+   “walk 速度按 StatusEffects 减半”）；停步、被推（风铃花）时相位跟着位置走。取代 ADR-007 第 2 条的时钟相位。
+2. **sprint**：`Walker.base_speed` 高于数据中的基础速度（Sprint 特性已把它 × 1.5）时播 `sprint`。
+3. **vault**：`WalkState::Vaulting { t }` 时播 `vault`，相位 = `t / Vaulter.ticks × 片段长`；时长绑定
+   `Rule("enemies.vault_husk.vault.ticks")`（数据 40）。ART-SPEC 5.5 写 30 tick，与数据冲突，以数据为准。
+   跨越中的水平位置由模拟线性移动，弧线高度只在动画里。
+4. **spawn**：呈现层记录每个敌人首次出现的 tick，生成后 `spawn` 片段长度内播放 `spawn`（小芽怪）。
+5. **状态前缀**：跨越落地后 `vaulted_`；护甲 hp ≤ 1/2 max 时 `cracked_`；护甲没了 `bare_`（沿用 default 皮肤的命名）；
+   皮肤缺少带前缀的片段时回退无前缀的。A2 的“护甲破碎替换”因此由这里完成（第 5 类只剩守卫受损分级与破碎特效）。
+6. 啃食时一臂扶在守卫侧面：去鸟化后头坐在前肩上，原 40° 的扶臂从下巴下伸出像根棍子，改为 18 ～ 24°。
+7. 测试：`husk_clips_follow_movement_and_state`（回放 1-10，walk / eat / cracked / bare / sprint / vault / vaulted /
+   spawn 全部出现且与模拟一致，行走相位逐帧等于位置公式）。
+
 ## 后果
 
 - 新片段都由模拟状态唯一决定，暂停、回放、切换渲染模式都不会让动画与模拟错位。

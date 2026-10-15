@@ -13,7 +13,7 @@ Rig(
         // 身体以髋部为枢轴：行走左右摇摆 ± 4°、啃食俯身
         (name: "body", pivot: (64, 112), z: 4),
         (name: "head", parent: Some("body"), pivot: (56, 82), z: 6),
-        (name: "mouth", parent: Some("head"), pivot: (46, 82), z: 7, variants: ["chomp"]),
+        (name: "mouth", parent: Some("head"), pivot: (46, 82), z: 7, variants: ["chomp", "open"]),
         // 前臂在头后：驼背时头压在前肩上
         (name: "arm_front", parent: Some("body"), pivot: (52, 93), z: 5),
         (name: "crumbs", pivot: (34, 86), z: 8, hidden: true),
