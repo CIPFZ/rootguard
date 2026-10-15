@@ -61,8 +61,8 @@
 
 | 里程碑 | 状态 |
 |---|---|
-| A0 管线 | 进行中 |
-| A1 全员静态（审核门） | 未开始 |
+| A0 管线 | ✅ 2026-10-15 |
+| A1 全员静态（审核门） | 进行中 |
 | A2 全员动画与特效 | 未开始 |
 | A3 战场与叙事 | 未开始 |
 
@@ -87,7 +87,14 @@
   `render` 单元测试 2 个；golden 与 `skin_switching_keeps_golden_1_4` 通过。测试 76 个全绿（artgen 15、core 23、
   content 6、app 32）。说明：`attack_anim_phase_follows_shooter_timer` 在旧映射下也会通过（garden 的 attack 长度
   恰等于周期），新映射的差异部分由 `timed_elapsed` 单元测试覆盖
-- [ ] 实机截图：两个角色在 1-1 中显示与动画正常
+- [x] 实机截图（Xvfb，release 不带 devtools，隔离存档设为“皮肤 + 花园”，`--autoplay tests/scripts/1-1.ron`）：
+  `docs/screenshots/a0-garden-1-1.png`（第 60 s 全屏：石籽荚、两只枯壳怪、卡槽图标均为 garden；弹丸与 Dew 回退
+  default）与 `a0-garden-1-1-strip.png`（第 30 / 45 / 75 / 90 / 105 s 的激活车道：行走相位各异、石籽荚射击）。
+  1-1 脚本解中枯壳怪走不到石籽荚面前，eat 片段未入镜，由 `eat_anim_phase_follows_biter_timer` 覆盖。
+  未经人眼观看连续动画（Xvfb 只能截静帧）
+
+**A0 验收**（ART-SPEC 11）：`art_assets_up_to_date`、`art_clips_match_rules` 通过；golden 未变；实机截图两角色正常。
+提交 da89f41（artgen）、0791a00（pebble_pod）、ee6e6e3（husk）、5dcc6db（游戏侧）。
 
 ## 收尾期（SPEC v1.2 第 20 章，2026-10-14 起）
 
