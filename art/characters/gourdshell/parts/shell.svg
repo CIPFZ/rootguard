@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <g transform="translate(0 -10)">
+  <!-- 半球硬壳，偏棕的葫芦色（专属色 gourd）、深棕条纹（ART-SPEC 4.9）；壳本身无脸 -->
+  <path d="M22 58 C22 34 40 20 64 20 C88 20 106 34 106 58 C98 62 82 63 64 63 C46 63 30 62 22 58 Z" fill="@gourd"/>
+  <path d="M22 58 C22 34 40 20 64 20 C50 24 40 38 40 61.5 C32 61 26 60 22 58 Z" fill="@gourd.shade"/>
+  <g fill="none" stroke="@bark_dark" stroke-width="2.6" stroke-linecap="round">
+    <path d="M50 24 C42 34 40 48 42 61"/><path d="M64 20 C62 34 62 48 64 63"/><path d="M78 24 C86 34 88 48 86 61"/>
+  </g>
+  <ellipse cx="82" cy="34" rx="4" ry="6.5" transform="rotate(-40 82 34)" fill="@dew_glow" opacity="0.8"/>
+  <path d="M60 21 C59 16 61 13 65 12 C66 15 66 18 68 21 Z" fill="@bark" stroke="@outline" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M22 58 C22 34 40 20 64 20 C88 20 106 34 106 58 C98 62 82 63 64 63 C46 63 30 62 22 58 Z" fill="none" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+  <!-- 壳沿：宿主的眼睛从下面露出来（4.9） -->
+  <path d="M22 58 C30 62 46 63 64 63 C82 63 98 62 106 58 L105 63 C97 67 82 68 64 68 C46 68 31 67 23 63 Z" fill="@gourd.shade" stroke="@outline" stroke-width="2.6" stroke-linejoin="round"/>
+  </g>
+</svg>

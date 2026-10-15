@@ -1,0 +1,16 @@
+// 葫芦壳 Gourdshell（ART-SPEC 4.9）：罩在宿主上的半球硬壳，无脸；与宿主同锚，层级 +1。
+Rig(
+    kind: Overlay,
+    rest: "idle",
+    flash: true,
+    parts: [
+        (name: "shell", pivot: (64, 53), z: 0),
+        (name: "cracks", parent: Some("shell"), pivot: (74, 30), z: 1, variants: ["deep"], hidden: true),
+    ],
+    // ART-SPEC 2.4：3 级（hp > 2/3 完好、> 1/3 裂纹、其余重裂）
+    states: [
+        (name: "", set: {}),
+        (name: "cracked", set: {"cracks": "base"}),
+        (name: "split", set: {"cracks": "deep"}),
+    ],
+)

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <g transform="translate(0 -10)">
+  <!-- 第 2 级受损：裂纹（ART-SPEC 2.4 / 4.9） -->
+  <path d="M74 21 L71 30 L77 36 L73 45" fill="none" stroke="@outline" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
