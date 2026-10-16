@@ -207,7 +207,7 @@ RUST_LOG=rootguard=debug cargo run -p rootguard-app
 
 | 路径 | 内容 | 你的操作 |
 |---|---|---|
-| `SPEC.md`（v1.1） | 游戏需求唯一来源 | 只读 |
+| `SPEC.md`（v1.2） | 玩法与数值唯一来源 | 只读；**唯一例外**：第 13 章音效表可按 ART-SPEC 12 追加行（裁决八） |
 | `AGENT.md` | 本文件 | 只读 |
 | `docs/owner-decisions/*.md` | 负责人裁决 | 只读，优先级高于 ADR |
 | `docs/progress.md` | 里程碑进度与证据 | 每次会话与每个里程碑更新 |
