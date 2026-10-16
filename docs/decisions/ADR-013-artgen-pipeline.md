@@ -44,7 +44,8 @@ AGENT 4.2）。ART-SPEC 未规定部件 / rig / 片段文件的具体格式、�
    Husk 128 × 130 等）；地面阴影不透明度 0.22 低于阈值，不计入。
 7. **图集**：按类别输出 `garden_defenders` / `garden_husks` / `garden_fx`（2.1；`ui` / `bg` 在 A3 加入）。
    像素完全相同的帧只存一份（idle 各周期的重复帧），货架法确定性排布，帧间留 2 px 透明边，宽度取
-   能容纳的最小 2 的幂，任一边超过 4096 即报错。闪白帧 `<帧名>_flash` 为保留 alpha 的纯白剪影（2.3）。
+   能容纳的最小 2 的幂，任一边超过 4096 即报错。闪白帧 `<帧名>_flash`：~~保留 alpha 的纯白剪影~~ → **v1.3（裁决八）**：同一位姿重新合成，描边色（`outline` /
+   `husk_outline`）以外的颜色向白混合 70%（`FLASH_WHITE_MIX`），再渲染；混出的颜色不做调色板校验（本体帧已校验）。
    皮肤清单 `skin.ron` 改为“图集 + 其片段”的列表（游戏侧多图集加载见 ADR-014）。
 8. **确定性**：只用有序容器；PNG 由 tiny-skia 固定参数编码。`art_assets_up_to_date`（`tools/artgen/tests`）
    重新构建两次并与提交文件比较：RON 逐字节；PNG 在 x86_64 Linux（生成资产的平台）逐字节，其他平台按
@@ -52,6 +53,8 @@ AGENT 4.2）。ART-SPEC 未规定部件 / rig / 片段文件的具体格式、�
    **修订（2026-10-16，A2）**：A2 加入大量旋转的细线与半透明叠加后，macOS / Windows 上 `garden_husks.png` 与
    `garden_fx.png` 有少量像素差超过 ±2（CI 注解确认，图集 RON 一致即布局相同，差异在像素本身）。非参考平台改为：
    尺寸相同、超过 ±2 的通道不超过 0.1%（`OUTLIER_PER_MILLE`），不一致时报告超出数量与最大差；Linux x86_64 仍逐字节。
+   **限制（裁决八 2.3）**：该容差只适用于 `art_assets_up_to_date` 这类渲染比对；`determinism_golden_1_4`、
+   `skin_switching_keeps_golden_1_4` 等模拟层快照在三平台仍必须逐字节一致，不得套用此容差。
    文本输出（RON）忽略换行风格比较：Windows 检出时 `core.autocrlf` 会把它们转成 CRLF（首次推送时 Windows CI
    因此失败，本地把副本转成 CRLF 复现后修正；SVG 源文件含 CRLF 不影响渲染结果）。
 9. **命令**：`cargo run --release -p artgen -- build | check | preview <id>`；`preview` 把默认位姿与每个

@@ -50,23 +50,6 @@ pub struct Image {
 }
 
 impl Image {
-    /// 受伤闪白版：保留 alpha，颜色全白（ART-SPEC 2.3）。
-    #[must_use]
-    pub fn flash(&self) -> Self {
-        let mut data = self.data.clone();
-        for px in data.as_chunks_mut::<4>().0 {
-            let a = px[3];
-            px[0] = a;
-            px[1] = a;
-            px[2] = a;
-        }
-        Self {
-            w: self.w,
-            h: self.h,
-            data,
-        }
-    }
-
     /// 去饱和版：每个像素混向其亮度灰（`amount` 0..1），用于“不可用”的卡牌头像（ART-SPEC 4.13）。
     #[must_use]
     pub fn desaturate(&self, amount: f32) -> Self {
@@ -283,6 +266,16 @@ impl Parts {
     ///
     /// 位姿引用了不存在的部件变体时返回错误。
     pub fn compose(&self, pose: &Pose<'_>, palette: &Palette) -> Result<String> {
+        self.compose_with(pose, palette, None)
+    }
+
+    /// 同 [`Parts::compose`]；`flash` 为 `Some(k)` 时把描边色以外的颜色向白色混合 `k`（ART-SPEC v1.3 2.3 闪白帧）。
+    fn compose_with(
+        &self,
+        pose: &Pose<'_>,
+        palette: &Palette,
+        flash: Option<f64>,
+    ) -> Result<String> {
         let (w, h) = self.canvas;
         let mut svg = format!(
             "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{w}\" height=\"{h}\" viewBox=\"0 0 {w} {h}\">\n"
@@ -303,12 +296,15 @@ impl Parts {
                 svg,
                 "<g transform=\"matrix({a:.5} {b:.5} {c:.5} {d:.5} {e:.4} {f:.4})\"{opacity}>"
             );
-            svg.push_str(&substitute(
-                &src.body,
-                palette,
-                &self.character,
-                self.material,
-            ));
+            let body = substitute(&src.body, palette, &self.character, self.material);
+            match flash {
+                Some(k) => svg.push_str(&whiten(
+                    &body,
+                    k,
+                    &outline_hexes(palette, &self.character, self.material),
+                )),
+                None => svg.push_str(&body),
+            }
             svg.push_str("\n</g>\n");
         }
         svg.push_str("</svg>\n");
@@ -323,6 +319,30 @@ impl Parts {
     pub fn render(&self, pose: &Pose<'_>, palette: &Palette) -> Result<Image> {
         let (w, h) = self.canvas;
         self.render_window(pose, palette, (0.0, 0.0, w as f32), (w, h))
+    }
+
+    /// 闪白帧（ART-SPEC v1.3 2.3）：同一位姿重新合成，填充色向白色混合 `amount`，描边色保持原色。
+    /// 混出的颜色不在调色板中，因此不做颜色校验（本体帧已校验过同一位姿）。
+    ///
+    /// # Errors
+    ///
+    /// 合成或解析失败时返回错误。
+    pub fn render_flash(&self, pose: &Pose<'_>, palette: &Palette, amount: f64) -> Result<Image> {
+        let svg = self.compose_with(pose, palette, Some(amount))?;
+        let tree = usvg::Tree::from_str(&svg, &usvg::Options::default())
+            .with_context(|| format!("{}：闪白帧合成后的 SVG 无法解析", self.character))?;
+        let (w, h) = self.canvas;
+        let mut pixmap = tiny_skia::Pixmap::new(w, h).context("画布尺寸为 0")?;
+        resvg::render(
+            &tree,
+            tiny_skia::Transform::identity(),
+            &mut pixmap.as_mut(),
+        );
+        Ok(Image {
+            w,
+            h,
+            data: pixmap.take(),
+        })
     }
 
     /// 合成并把画布中以 `(x, y)` 为左上角、宽 `win_w` 的窗口缩放渲染到 `out` 尺寸（卡牌头像，ART-SPEC 4.13）；
@@ -382,6 +402,35 @@ pub(crate) fn substitute(
             }
         }
         rest = &rest[end..];
+    }
+    out.push_str(rest);
+    out
+}
+
+/// 本角色的描边色（守卫 `outline`、Husk `husk_outline`）的十六进制写法：闪白时保持原色（ART-SPEC v1.3 2.3）。
+fn outline_hexes(palette: &Palette, character: &str, material: Material) -> Vec<String> {
+    ["outline", "husk_outline"]
+        .iter()
+        .filter_map(|n| palette.resolve(character, material, n))
+        .map(Rgb::hex)
+        .collect()
+}
+
+/// 把已替换为 `#RRGGBB` 的颜色属性向白色混合 `k`（`keep` 中的颜色除外）。
+fn whiten(body: &str, k: f64, keep: &[String]) -> String {
+    let mut out = String::with_capacity(body.len());
+    let mut rest = body;
+    while let Some(i) = rest.find("\"#") {
+        out.push_str(&rest[..=i]);
+        let hex = rest.get(i + 1..i + 8).unwrap_or_default();
+        match Rgb::parse(hex) {
+            Ok(c) if !keep.iter().any(|h| h == hex) => {
+                let m = |v: u8| (f64::from(v) + (255.0 - f64::from(v)) * k).round() as u8;
+                out.push_str(&Rgb(m(c.0), m(c.1), m(c.2)).hex());
+                rest = &rest[i + 8..];
+            }
+            _ => rest = &rest[i + 1..],
+        }
     }
     out.push_str(rest);
     out
@@ -501,13 +550,22 @@ mod tests {
     }
 
     #[test]
-    fn flash_keeps_alpha() {
+    fn whiten_keeps_outline() {
+        let body = r##"<circle fill="#5DBB63" stroke="#2F3A2A"/><path fill="#000000"/>"##;
+        let out = whiten(body, 0.7, &["#2F3A2A".to_owned()]);
+        assert_eq!(
+            out,
+            r##"<circle fill="#CEEBD0" stroke="#2F3A2A"/><path fill="#B3B3B3"/>"##
+        );
+    }
+
+    #[test]
+    fn opaque_bounds_ignores_transparent() {
         let img = Image {
             w: 1,
             h: 2,
             data: vec![10, 20, 30, 128, 0, 0, 0, 0],
         };
-        assert_eq!(img.flash().data, vec![128, 128, 128, 128, 0, 0, 0, 0]);
         assert_eq!(img.opaque_bounds(1), Some((0, 0, 0, 0)));
     }
 }

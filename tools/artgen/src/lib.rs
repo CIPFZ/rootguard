@@ -49,6 +49,9 @@ const UI_ATLAS: &str = "garden_ui";
 /// “不可用”头像的去饱和比例（ART-SPEC 4.13）。
 const PORTRAIT_OFF_DESAT: f32 = 0.85;
 
+/// 闪白帧的混白比例（ART-SPEC v1.3 2.3：填充色向白混合 70%，描边保持原色）。
+pub const FLASH_WHITE_MIX: f64 = 0.7;
+
 /// 尺寸校验的 alpha 阈值：抗锯齿边缘的半透明像素不计入外接框。
 const SIZE_ALPHA: u8 = 64;
 
@@ -421,9 +424,10 @@ pub fn build(root: &Path) -> Result<Built> {
                     frames.push((frame.clone(), ticks[i], event));
                     let list = atlas_frames.entry(kind.atlas()).or_default();
                     if ch.rig.flash {
+                        let pose = ch.rig.pose(clip, &state, starts[i]);
                         list.push(FrameIn {
                             name: format!("{frame}_flash"),
-                            image: image.flash(),
+                            image: ch.parts.render_flash(&pose, &palette, FLASH_WHITE_MIX)?,
                             anchor: kind.anchor(),
                         });
                     }
