@@ -11,7 +11,7 @@ use rootguard_core::components::{
     Mine, OverlayOf, Placeholder, Producer, ProjectileBody, ProjectileRef, Shooter, Spikes,
     StatusEffects, Vaulter, WalkState, Walker,
 };
-use rootguard_core::data::{ArmorKind, Rules};
+use rootguard_core::data::{ArmorKind, Rules, TimeOfDay};
 use rootguard_core::events::EnemyDamaged;
 use rootguard_core::resources::{BattleState, LaneState};
 use rootguard_core::systems::check_placement;
@@ -712,6 +712,9 @@ pub fn draw_battle(world: &mut World) {
     draw_defenders(world, &mut list, alpha, tick, painter);
     draw_enemies(world, &mut list, alpha, tick, painter);
     crate::fx::draw(world, &mut list, painter, tick);
+    if painter.is_some() {
+        draw_time_tint(world, &mut list);
+    }
     for (e, t, _, p, lane, pr) in world
         .query::<(
             Entity,
@@ -910,6 +913,42 @@ fn draw_background(world: &World, list: &mut DrawList, painter: Option<&Painter<
 }
 
 /// 左侧温室（含 Hose 可用标记）与右侧入口的占位图形（SPEC 12.2；皮肤版在 A3，ART-SPEC 8.1 L4 / L5）。
+/// 时段色调叠层所在层：`Layer::OVERLAY` 下一层（ART-SPEC 8.2），盖住战场与特效，不盖 HUD。
+pub const TIME_TINT_LAYER: Layer = Layer(Layer::OVERLAY.0 - 1);
+
+/// 时段色调（ART-SPEC 8.2）：(颜色, 不透明度)；上午无叠层。
+#[must_use]
+pub fn time_tint(time: TimeOfDay) -> Option<(u32, f32)> {
+    match time {
+        TimeOfDay::Dawn => Some((0x9D_B9FF, 0.12)),
+        TimeOfDay::Morning => None,
+        TimeOfDay::Noon => Some((0xFF_F2C2, 0.10)),
+        TimeOfDay::Dusk => Some((0xFF_9A5C, 0.18)),
+    }
+}
+
+/// 整屏时段色调（皮肤模式；占位模式保持原样，便于读数）。
+fn draw_time_tint(world: &World, list: &mut DrawList) {
+    let time = world
+        .resources
+        .get::<BattleState>()
+        .and_then(|s| {
+            world
+                .resources
+                .get::<rootguard_core::registry::LevelRegistry>()?
+                .get(s.level)
+                .map(|l| l.time_of_day)
+        })
+        .unwrap_or_default();
+    if let Some((hex, a)) = time_tint(time) {
+        list.rect(
+            TIME_TINT_LAYER,
+            Rect::from_min_size(Vec2::ZERO, LOGICAL_SIZE),
+            color(hex).with_alpha(a),
+        );
+    }
+}
+
 /// 战场精灵片段（ART-SPEC 8.1 L4 ～ L6，`artgen` 的 `scene_<名>`）。
 pub const SCENE_WALL: &str = "scene_greenhouse_wall";
 /// 阀门两态：默认关闭；该行的 Hose 用掉后歪斜滴水。

@@ -1350,3 +1350,59 @@ fn garden_hud_sprites() {
         "藤的长度应为进度 × 210"
     );
 }
+
+/// ART-SPEC 8.2：皮肤模式下按关卡 `time_of_day` 画整屏色调叠层（OVERLAY 下一层）；上午与占位模式不画。
+/// 10 关数据的时段与 LORE §4 一致：1-1 ～ 1-3 清晨、1-4 ～ 1-6 上午、1-7 ～ 1-9 正午、1-10 傍晚。
+#[test]
+fn time_of_day_tint() {
+    use rootguard_app::render::{TIME_TINT_LAYER, time_tint};
+    use rootguard_core::data::TimeOfDay;
+    use rootguard_core::registry::LevelRegistry;
+    let app = build_app_with(rootguard_app::TitleScene);
+    let levels = app.world().resources.expect::<LevelRegistry>();
+    for l in levels.iter() {
+        let n: u32 = l.id.as_str()[2..].parse().expect("关卡号");
+        let want = match n {
+            1..=3 => TimeOfDay::Dawn,
+            4..=6 => TimeOfDay::Morning,
+            7..=9 => TimeOfDay::Noon,
+            _ => TimeOfDay::Dusk,
+        };
+        assert_eq!(l.time_of_day, want, "{}", l.id.as_str());
+    }
+    let tints = |runner: &HeadlessRunner| {
+        runner
+            .last_draw_list()
+            .iter()
+            .filter(|c| c.layer == TIME_TINT_LAYER)
+            .filter_map(|c| match &c.kind {
+                DrawKind::Rect { color, rect, .. } => Some((*color, rect.size())),
+                _ => None,
+            })
+            .collect::<Vec<_>>()
+    };
+    for (level, time) in [
+        ("1-1", TimeOfDay::Dawn),
+        ("1-5", TimeOfDay::Morning),
+        ("1-10", TimeOfDay::Dusk),
+    ] {
+        let mut runner = common::battle_runner(level, &[]);
+        runner.frames(2);
+        assert!(tints(&runner).is_empty(), "占位模式不画色调");
+        send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+        send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+        runner.frames(2);
+        let got = tints(&runner);
+        match time_tint(time) {
+            None => assert!(got.is_empty(), "{level} 上午无叠层"),
+            Some((hex, a)) => {
+                assert_eq!(got.len(), 1, "{level}");
+                let (c, size) = got[0];
+                assert_eq!(size, Vec2::new(1280.0, 720.0));
+                assert!((c.a - a).abs() < 1e-3);
+                let want = Color::from_hex(hex);
+                assert!((c.r - want.r).abs() < 1e-3 && (c.b - want.b).abs() < 1e-3);
+            }
+        }
+    }
+}

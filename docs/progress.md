@@ -157,6 +157,10 @@
 - [x] 第 3 项 HUD 皮肤（ART-SPEC 8.3）：`art/ui/`——顶部木条、木牌卡槽（头像 4.13，不可用时去饱和）、露珠计数木牌与图标、
   园丁小铁铲按钮（egui 按钮在皮肤模式下无边框，压在木牌上）、藤蔓波次条（枯藤轨道 + 由绿到枯黄的藤按进度裁出，大波为
   炽红花苞）、吊挂木牌横幅。布局与占位 HUD 相同。实机截图 `docs/screenshots/a3-hud.png`。测试 `garden_hud_sprites`。
+- [x] 第 4 项 时段色调（ART-SPEC 8.2）：`LevelDef.time_of_day`（`Dawn | Morning | Noon | Dusk`，缺省 `Morning`；ART-SPEC 12
+  允许的数据改动，模拟不读取，golden 不变）；10 关按 LORE §4 填写；皮肤模式在 `Layer::OVERLAY` 下一层画整屏叠层（清晨
+  `#9DB9FF` 12%、正午 `#FFF2C2` 10%、傍晚 `#FF9A5C` 18%）。实机截图 `docs/screenshots/a3-time-of-day.png`（1-1 / 1-5 /
+  1-8 / 1-10）。测试 `time_of_day_tint`。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 

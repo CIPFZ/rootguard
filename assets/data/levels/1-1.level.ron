@@ -8,6 +8,7 @@ Level(
     card_slots: 6,
     cards: Forced(["pebble_pod"]),
     unlock_on_win: ["dewcup"],
+    time_of_day: Dawn,  // ART-SPEC 8.2 / LORE §4
     waves: [
         Wave(delay_ticks: 1500, flag: false, spawns: [(enemy: "husk", count: 1, lane: Random)]),
         Wave(delay_ticks: 1500, flag: false, spawns: [(enemy: "husk", count: 3, lane: Random)]),

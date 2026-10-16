@@ -8,6 +8,7 @@ Level(
     card_slots: 6,
     cards: Forced(["pebble_pod", "dewcup", "barkwall"]),
     unlock_on_win: ["frostpod"],
+    time_of_day: Dawn,  // ART-SPEC 8.2 / LORE §4
     waves: [
         Wave(delay_ticks: 2400, flag: false, spawns: [(enemy: "husk", count: 2, lane: Spread)]),
         Wave(delay_ticks: 1800, flag: false, spawns: [(enemy: "husk", count: 2, lane: Spread), (enemy: "twig_husk", count: 1, lane: Random)]),

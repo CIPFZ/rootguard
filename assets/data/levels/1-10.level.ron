@@ -9,6 +9,7 @@ Level(
     card_slots: 8,
     cards: Choose,
     unlock_on_win: ["gustbloom"],
+    time_of_day: Dusk,  // ART-SPEC 8.2 / LORE §4
     waves: [
         Wave(delay_ticks: 3600, flag: false, spawns: [(enemy: "husk", count: 3, lane: Fixed(2))]),
         Wave(delay_ticks: 3300, flag: false, spawns: [(enemy: "husk", count: 4, lane: Fixed(1)), (enemy: "husk", count: 3, lane: Fixed(3))]),

@@ -9,6 +9,7 @@ Level(
     card_slots: 7,
     cards: Choose,
     unlock_on_win: ["gourdshell"],
+    time_of_day: Noon,  // ART-SPEC 8.2 / LORE §4
     waves: [
         Wave(delay_ticks: 3600, flag: false, spawns: [(enemy: "husk", count: 3, lane: Fixed(2))]),
         Wave(delay_ticks: 2700, flag: false, spawns: [(enemy: "husk", count: 3, lane: Fixed(1)), (enemy: "husk", count: 3, lane: Fixed(3))]),

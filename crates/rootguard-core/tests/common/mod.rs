@@ -60,6 +60,7 @@ pub fn test_level(waves: Vec<WaveDef>) -> LevelDef {
         cards: CardRule::Choose,
         unlock_on_win: vec![],
         waves,
+        time_of_day: Default::default(),
     }
 }
 

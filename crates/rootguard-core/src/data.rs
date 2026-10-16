@@ -364,6 +364,23 @@ pub struct LevelDef {
     pub unlock_on_win: Vec<DefenderId>,
     /// 波次。
     pub waves: Vec<WaveDef>,
+    /// 时段（ART-SPEC 8.2 / 12：只决定呈现层的色调叠层，模拟不读取）。
+    #[serde(default)]
+    pub time_of_day: TimeOfDay,
+}
+
+/// 关卡时段（ART-SPEC 8.2，LORE §5“清晨、上午、正午、傍晚”）。
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum TimeOfDay {
+    /// 清晨（微蓝）。
+    Dawn,
+    /// 上午（无叠层）。
+    #[default]
+    Morning,
+    /// 正午（强光）。
+    Noon,
+    /// 傍晚（橙红）。
+    Dusk,
 }
 
 /// 经济规则（SPEC 9）。
