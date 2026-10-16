@@ -149,6 +149,11 @@
 - [x] A2 审核通过；ADR-015 第 3 条标记已确认；ADR-013 补“容差只用于渲染比对，golden 三平台逐字节”；提交前检查改为
   `scripts/precommit.sh`（任一步失败即退出，提交命令接在其后用 `&&`）。
 - [x] 第 1 项 闪白 70% 混白（ART-SPEC v1.3 2.3）：`artgen` 对同一位姿重新合成，描边以外的颜色向白混 70%；全部角色重新生成。
+- [x] 第 2 项 战场 L4 ～ L6（ART-SPEC 8.1）：`art/bg/scene/`——温室外墙（木框玻璃、苗床剪影、7 颗露珠、铜水管）、阀门两态
+  （`closed` / `spent` 歪斜滴水，按 `LaneState.hose_available`）、右侧栅栏入口（敞开的门扇、枯土路、倒伏玉米秆；门柱画在
+  该行角色之前）、前景花盆与园丁小铁铲 / 翻倒的空水桶。`artgen` 输出图集 `garden_scene` 与 `scene_*` 片段。实机截图
+  `docs/screenshots/a3-battlefield.png`（1-10 第 150 s）。测试 `garden_scene_valves_follow_hose`。截图脚本
+  `scripts/shot_garden.sh`。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 

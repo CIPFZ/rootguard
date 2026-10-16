@@ -35,6 +35,12 @@
    占位图形。占位模式不变。测试 `garden_background_drawn_with_lane_mask`。
 5. 底图是单帧图集 `garden_bg`（图像文件按裁决命名为 `bg_base.png`），不走货架打包。
 
+6. **A3：L4 ～ L6**（裁决八第 3 节第 2 项）：`art/bg/scene/*.svg` 由 `sprites.ron` 列出（名字、锚点；`viewBox` 即尺寸），
+   与角色部件同一套颜色校验，打成单独的图集 `garden_scene`，每个精灵一个单帧片段 `scene_<名>`。游戏
+   `draw_scene` 按设计卡位置画：外墙 (0, 90)、入口 (1160, 90)、前景两角、每行阀门在 (`HOSE_X`, 行中心)；激活车道的
+   Hose 用掉后换 `scene_valve_spent`。门柱在世界层，`sort_y` = 该行下沿 + 0.5：盖住同行的 Husk、被下一行盖住，
+   Husk 看起来从栅栏门后走出。皮肤缺少外墙时回退占位图形。
+
 ## 后果
 
 - 格子几何与模拟用的是同一组常量，网格与底图不会错位。

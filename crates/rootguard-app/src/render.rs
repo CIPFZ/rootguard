@@ -871,7 +871,9 @@ fn draw_background(world: &World, list: &mut DrawList, painter: Option<&Painter<
                 color(palette::LANE_MASK).with_alpha(LANE_MASK_ALPHA),
             );
         }
-        draw_wall_and_entrance(list, &lanes);
+        if !painter.is_some_and(|sk| draw_scene(list, sk, &lanes)) {
+            draw_wall_and_entrance(list, &lanes);
+        }
         return;
     }
     for row in 0..Grid::ROWS {
@@ -908,6 +910,78 @@ fn draw_background(world: &World, list: &mut DrawList, painter: Option<&Painter<
 }
 
 /// 左侧温室（含 Hose 可用标记）与右侧入口的占位图形（SPEC 12.2；皮肤版在 A3，ART-SPEC 8.1 L4 / L5）。
+/// 战场精灵片段（ART-SPEC 8.1 L4 ～ L6，`artgen` 的 `scene_<名>`）。
+pub const SCENE_WALL: &str = "scene_greenhouse_wall";
+/// 阀门两态：默认关闭；该行的 Hose 用掉后歪斜滴水。
+pub const SCENE_VALVE_CLOSED: &str = "scene_valve_closed";
+/// 见 [`SCENE_VALVE_CLOSED`]。
+pub const SCENE_VALVE_SPENT: &str = "scene_valve_spent";
+const SCENE_ENTRANCE: &str = "scene_entrance";
+/// 栅栏门柱：画在该行角色之前（Husk 从门后走出）。
+pub const SCENE_GATE_POST: &str = "scene_gate_post";
+const SCENE_PROPS_LEFT: &str = "scene_props_left";
+const SCENE_PROPS_RIGHT: &str = "scene_props_right";
+/// 门柱的 x（栅栏线）与相对行下沿的下移量。
+const GATE_POST_X: f32 = 1174.0;
+const GATE_POST_DROP: f32 = 4.0;
+/// 门柱相对同一行角色的排序偏移：同行之后、下一行之前。
+const GATE_POST_SORT: f32 = 0.5;
+
+/// 皮肤的战场精灵（ART-SPEC 8.1 L4 ～ L6）：温室外墙、每行阀门（按 `hose_available` 两态）、右侧入口与门柱、
+/// 前景杂物。皮肤缺少外墙时返回 false（调用方改画占位图形）。非激活车道也画阀门（关闭），外墙本来就贯穿 5 行。
+fn draw_scene(list: &mut DrawList, sk: &Painter<'_>, lanes: &LaneState) -> bool {
+    let still = |clip| Pose {
+        clip,
+        elapsed: 0,
+        flash: false,
+        tint: Color::WHITE,
+    };
+    let bg = Layer::BACKGROUND;
+    if !sk.draw(
+        list,
+        bg,
+        Vec2::new(0.0, Grid::ORIGIN.y),
+        0.0,
+        still(SCENE_WALL),
+    ) {
+        return false;
+    }
+    sk.draw(
+        list,
+        bg,
+        Vec2::new(Grid::RIGHT_X, Grid::ORIGIN.y),
+        0.0,
+        still(SCENE_ENTRANCE),
+    );
+    sk.draw(
+        list,
+        bg,
+        Vec2::new(0.0, LOGICAL_SIZE.y),
+        0.0,
+        still(SCENE_PROPS_LEFT),
+    );
+    sk.draw(list, bg, LOGICAL_SIZE, 0.0, still(SCENE_PROPS_RIGHT));
+    for row in 0..Grid::ROWS {
+        let spent = lanes.is_active(row) && !lanes.hose_available[usize::from(row)];
+        let valve = if spent {
+            SCENE_VALVE_SPENT
+        } else {
+            SCENE_VALVE_CLOSED
+        };
+        let y = Grid::row_center_y(row);
+        sk.draw(list, bg, Vec2::new(Grid::HOSE_X, y), 0.0, still(valve));
+        let bottom = Grid::sort_y(row);
+        sk.draw(
+            list,
+            WORLD,
+            Vec2::new(GATE_POST_X, bottom + GATE_POST_DROP),
+            bottom + GATE_POST_SORT,
+            still(SCENE_GATE_POST),
+        );
+    }
+    true
+}
+
 fn draw_wall_and_entrance(list: &mut DrawList, lanes: &LaneState) {
     let grid_rect = Rect::from_min_size(
         Grid::ORIGIN,

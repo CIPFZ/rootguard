@@ -1,0 +1,11 @@
+// 战场独立精灵（ART-SPEC 8.1 L4 ～ L6）：文件名 = 精灵名，`viewBox` = 尺寸；锚点为归一化坐标。
+// 游戏按 ART-SPEC 8.1 的位置绘制（rootguard-app/src/render.rs `draw_scene`）。
+[
+    (name: "greenhouse_wall", anchor: (0.0, 0.0)),  // L4，左上角画在 (0, 90)
+    (name: "valve_closed", anchor: (0.5, 0.42)),    // L4 阀门，中心画在 (HOSE_X, 行中心)
+    (name: "valve_spent", anchor: (0.5, 0.42)),
+    (name: "entrance", anchor: (0.0, 0.0)),         // L5，左上角画在 (1160, 90)
+    (name: "gate_post", anchor: (0.5, 1.0)),        // L5 门柱，底中画在 (1174, 行下沿 + 4)，世界层
+    (name: "props_left", anchor: (0.0, 1.0)),       // L6，左下角画在 (0, 720)
+    (name: "props_right", anchor: (1.0, 1.0)),      // L6，右下角画在 (1280, 720)
+]

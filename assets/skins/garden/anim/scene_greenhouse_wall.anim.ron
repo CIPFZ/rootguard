@@ -1,0 +1,8 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+AnimationClip(
+    name: "scene_greenhouse_wall",
+    looping: false,
+    frames: [
+        (frame: "scene_greenhouse_wall_0", ticks: 60),
+    ],
+)

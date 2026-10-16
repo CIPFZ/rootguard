@@ -37,6 +37,10 @@ const ASSET_PREFIX: &str = "skins/garden";
 /// 战场底图（ART-SPEC 8.1）：图像文件、图集名与片段名。
 pub const BG_IMAGE: &str = "bg_base.png";
 const BG_ATLAS: &str = "garden_bg";
+/// 战场独立精灵图集（ART-SPEC 8.1 L4 ～ L6）。
+const SCENE_ATLAS: &str = "garden_scene";
+/// 战场精灵片段名前缀：`scene_<精灵名>`。
+pub const SCENE_PREFIX: &str = "scene_";
 /// 底图片段名（游戏侧按此名查找，ADR-015）。
 pub const BG_CLIP: &str = "bg_base";
 /// 可读性报告（随构建生成）。
@@ -472,6 +476,45 @@ pub fn build(root: &Path) -> Result<Built> {
             format!("{ASSET_PREFIX}/{atlas}.atlas.ron"),
             clips.into_iter().map(|c| c.name).collect(),
         ));
+    }
+    // ART-SPEC 8.1 L4 ～ L6：战场独立精灵，单独一张图集，每个精灵一个单帧片段 `scene_<名>`
+    let scene = bg::render_scene(root, &palette)?;
+    if !scene.is_empty() {
+        let frames: Vec<FrameIn> = scene
+            .iter()
+            .map(|(name, image, anchor)| FrameIn {
+                name: format!("{SCENE_PREFIX}{name}_0"),
+                image: image.clone(),
+                anchor: *anchor,
+            })
+            .collect();
+        let packed = atlas::pack(SCENE_ATLAS, &frames)?;
+        files.insert(
+            format!("{OUT_DIR}/{SCENE_ATLAS}.png"),
+            packed.image.encode_png()?,
+        );
+        files.insert(
+            format!("{OUT_DIR}/{SCENE_ATLAS}.atlas.ron"),
+            atlas::atlas_ron(&format!("{ASSET_PREFIX}/{SCENE_ATLAS}.png"), &packed).into_bytes(),
+        );
+        let mut names = Vec::new();
+        for (name, _, _) in &scene {
+            let clip = ClipOut {
+                name: format!("{SCENE_PREFIX}{name}"),
+                looping: false,
+                frames: vec![(format!("{SCENE_PREFIX}{name}_0"), 60, None)],
+            };
+            files.insert(
+                format!("{OUT_DIR}/anim/{}.anim.ron", clip.name),
+                atlas::clip_ron(&clip).into_bytes(),
+            );
+            names.push(clip.name);
+        }
+        summary.clips += names.len();
+        summary
+            .atlases
+            .push((SCENE_ATLAS.to_owned(), packed.image.w, packed.image.h));
+        manifest.push((format!("{ASSET_PREFIX}/{SCENE_ATLAS}.atlas.ron"), names));
     }
     if let Some(image) = bg::render(root, &palette)? {
         files.insert(format!("{OUT_DIR}/{BG_IMAGE}"), image.encode_png()?);

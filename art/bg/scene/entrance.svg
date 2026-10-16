@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 575">
+  <!-- L5 右侧入口（ART-SPEC 8.1）：门外枯土路与倒伏玉米秆；低矮木栅栏沿 x ≈ 14 竖向，每行一段敞开的门（门扇向外推开）。
+       立柱另为 gate_post 精灵画在角色前面，Husk 从门后走出 -->
+  <rect x="0" y="0" width="120" height="575" fill="@straw_dark"/>
+  <path d="M0 77.5 C40 67.5 80 83.5 120 73.5 L120 109.5 C80 115.5 40 103.5 0 111.5 Z" fill="@husk_crack" opacity="0.55"/>
+  <path d="M0 192.5 C40 182.5 80 198.5 120 188.5 L120 224.5 C80 230.5 40 218.5 0 226.5 Z" fill="@husk_crack" opacity="0.55"/>
+  <path d="M0 307.5 C40 297.5 80 313.5 120 303.5 L120 339.5 C80 345.5 40 333.5 0 341.5 Z" fill="@husk_crack" opacity="0.55"/>
+  <path d="M0 422.5 C40 412.5 80 428.5 120 418.5 L120 454.5 C80 460.5 40 448.5 0 456.5 Z" fill="@husk_crack" opacity="0.55"/>
+  <path d="M0 537.5 C40 527.5 80 543.5 120 533.5 L120 569.5 C80 575.5 40 563.5 0 571.5 Z" fill="@husk_crack" opacity="0.55"/>
+  <g transform="rotate(-18 60 40)"><path fill="none" d="M20 40 L100 40" stroke="@husk_outline" stroke-width="7" stroke-linecap="round"/><path fill="none" d="M20 40 L100 40" stroke="@straw" stroke-width="3.5" stroke-linecap="round"/><path d="M50 40 C56 28 68 26 76 30" fill="none" stroke="@straw" stroke-width="3" stroke-linecap="round"/></g>
+  <g transform="rotate(12 92 150)"><path fill="none" d="M52 150 L132 150" stroke="@husk_outline" stroke-width="7" stroke-linecap="round"/><path fill="none" d="M52 150 L132 150" stroke="@straw" stroke-width="3.5" stroke-linecap="round"/><path d="M82 150 C88 138 100 136 108 140" fill="none" stroke="@straw" stroke-width="3" stroke-linecap="round"/></g>
+  <g transform="rotate(-8 50 262)"><path fill="none" d="M10 262 L90 262" stroke="@husk_outline" stroke-width="7" stroke-linecap="round"/><path fill="none" d="M10 262 L90 262" stroke="@straw" stroke-width="3.5" stroke-linecap="round"/><path d="M40 262 C46 250 58 248 66 252" fill="none" stroke="@straw" stroke-width="3" stroke-linecap="round"/></g>
+  <g transform="rotate(20 98 378)"><path fill="none" d="M58 378 L138 378" stroke="@husk_outline" stroke-width="7" stroke-linecap="round"/><path fill="none" d="M58 378 L138 378" stroke="@straw" stroke-width="3.5" stroke-linecap="round"/><path d="M88 378 C94 366 106 364 114 368" fill="none" stroke="@straw" stroke-width="3" stroke-linecap="round"/></g>
+  <g transform="rotate(-14 70 500)"><path fill="none" d="M30 500 L110 500" stroke="@husk_outline" stroke-width="7" stroke-linecap="round"/><path fill="none" d="M30 500 L110 500" stroke="@straw" stroke-width="3.5" stroke-linecap="round"/><path d="M60 500 C66 488 78 486 86 490" fill="none" stroke="@straw" stroke-width="3" stroke-linecap="round"/></g>
+  <g stroke="@outline" stroke-width="2.5" fill="@bark">
+    <rect x="8" y="2" width="12" height="24" rx="2"/>
+    <rect x="8" y="95" width="12" height="18" rx="2"/>
+    <path fill="none" d="M18 26 L64 12 L64 40 L18 50 Z"/>
+  </g>
+  <path fill="none" d="M28 29 L56 21 M28 43 L56 35" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="@outline" stroke-width="2.5" fill="@bark">
+    <rect x="8" y="117" width="12" height="24" rx="2"/>
+    <rect x="8" y="210" width="12" height="18" rx="2"/>
+    <path fill="none" d="M18 141 L64 127 L64 155 L18 165 Z"/>
+  </g>
+  <path fill="none" d="M28 144 L56 136 M28 158 L56 150" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="@outline" stroke-width="2.5" fill="@bark">
+    <rect x="8" y="232" width="12" height="24" rx="2"/>
+    <rect x="8" y="325" width="12" height="18" rx="2"/>
+    <path fill="none" d="M18 256 L64 242 L64 270 L18 280 Z"/>
+  </g>
+  <path fill="none" d="M28 259 L56 251 M28 273 L56 265" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="@outline" stroke-width="2.5" fill="@bark">
+    <rect x="8" y="347" width="12" height="24" rx="2"/>
+    <rect x="8" y="440" width="12" height="18" rx="2"/>
+    <path fill="none" d="M18 371 L64 357 L64 385 L18 395 Z"/>
+  </g>
+  <path fill="none" d="M28 374 L56 366 M28 388 L56 380" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="@outline" stroke-width="2.5" fill="@bark">
+    <rect x="8" y="462" width="12" height="24" rx="2"/>
+    <rect x="8" y="555" width="12" height="18" rx="2"/>
+    <path fill="none" d="M18 486 L64 472 L64 500 L18 510 Z"/>
+  </g>
+  <path fill="none" d="M28 489 L56 481 M28 503 L56 495" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+</svg>

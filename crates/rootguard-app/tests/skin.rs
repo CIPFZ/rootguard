@@ -1226,3 +1226,63 @@ fn constructed_effects() {
     assert!((rootguard_app::render::plant_scale(0) - 1.2).abs() < 1e-3);
     assert!((rootguard_app::render::plant_scale(10) - 1.0).abs() < 1e-6);
 }
+
+/// 绘制列表中某片段第 0 帧的全部目标矩形。
+fn drawn_rects(runner: &HeadlessRunner, clip: &str) -> Vec<Rect> {
+    let world = runner.app().world();
+    let garden = world
+        .resources
+        .expect::<Skins>()
+        .get(SkinName::Garden)
+        .expect("garden");
+    let atlases = world.resources.expect::<Assets<Atlas>>();
+    let atlas = atlases
+        .get(garden.atlas_of(clip).expect("片段所在图集"))
+        .expect("图集");
+    let src = atlas
+        .frame(&format!("{clip}_0"))
+        .map(|i| atlas.frames[i].src_px)
+        .expect("帧");
+    runner
+        .last_draw_list()
+        .iter()
+        .filter_map(|c| match &c.kind {
+            DrawKind::Sprite {
+                image, src_px, dst, ..
+            } if *image == atlas.image && *src_px == src => Some(*dst),
+            _ => None,
+        })
+        .collect()
+}
+
+/// ART-SPEC 8.1 L4 ～ L6：花园皮肤画温室外墙、入口、前景与每行的门柱、阀门；某行的 Hose 用掉后该行阀门
+/// 换成 `spent`（测试直接改写 `LaneState` 只为构造状态）。
+#[test]
+fn garden_scene_valves_follow_hose() {
+    use rootguard_app::render::{
+        SCENE_GATE_POST, SCENE_VALVE_CLOSED, SCENE_VALVE_SPENT, SCENE_WALL,
+    };
+    use rootguard_core::resources::LaneState;
+    let mut runner = common::battle_runner("1-10", &[]);
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    runner.frames(2);
+    assert_eq!(drawn_rects(&runner, SCENE_WALL).len(), 1);
+    assert_eq!(drawn_rects(&runner, SCENE_GATE_POST).len(), 5);
+    assert_eq!(drawn_rects(&runner, SCENE_VALVE_CLOSED).len(), 5);
+    assert!(drawn_rects(&runner, SCENE_VALVE_SPENT).is_empty());
+    runner
+        .app_mut()
+        .world_mut()
+        .resources
+        .expect_mut::<LaneState>()
+        .hose_available[2] = false;
+    runner.frame();
+    let spent = drawn_rects(&runner, SCENE_VALVE_SPENT);
+    assert_eq!(spent.len(), 1);
+    assert!(
+        (spent[0].center().y - rootguard_core::Grid::row_center_y(2)).abs() < 20.0,
+        "spent 阀门应在第 2 行"
+    );
+    assert_eq!(drawn_rects(&runner, SCENE_VALVE_CLOSED).len(), 4);
+}

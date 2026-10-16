@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 55">
+  <!-- L6 前景：翻倒的空木水桶（断泉，LORE 2.2），桶口朝左，没有一滴水 -->
+  <ellipse cx="74" cy="50" rx="56" ry="5" fill="@outline" opacity="0.25"/>
+  <path d="M40 12 L112 18 L112 46 L40 50 Z" fill="@bark" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+  <path fill="none" d="M58 13 L58 49 M76 15 L76 48 M94 16 L94 47" stroke="@bark_dark" stroke-width="2"/>
+  <path fill="none" d="M50 12 L50 50 M104 17 L104 46" stroke="@brass" stroke-width="5"/>
+  <path fill="none" d="M50 12 L50 50 M104 17 L104 46" stroke="@outline" stroke-width="1.2" opacity="0.6"/>
+  <ellipse cx="40" cy="31" rx="9" ry="19" fill="@bark_dark" stroke="@outline" stroke-width="3"/>
+  <ellipse cx="41" cy="31" rx="5" ry="14" fill="@outline" opacity="0.6"/>
+</svg>

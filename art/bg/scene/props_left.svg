@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 55">
+  <!-- L6 前景（ART-SPEC 8.1）：园丁的花盆（一棵小苗）与小铁铲——全图唯一的人造工具（LORE 2.1 园丁） -->
+  <ellipse cx="96" cy="50" rx="80" ry="5" fill="@outline" opacity="0.25"/>
+  <path d="M48 20 L84 20 L80 50 L52 50 Z" fill="@terracotta" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="44" y="14" width="44" height="9" rx="2" fill="@terracotta.shade" stroke="@outline" stroke-width="3"/>
+  <path d="M66 14 L66 4 M66 8 C60 2 54 4 56 8 C60 10 64 9 66 8 M66 6 C72 0 78 2 76 6 C72 8 68 7 66 6" fill="@leaf_light" stroke="@outline" stroke-width="2" stroke-linejoin="round"/>
+  <g transform="rotate(-62 124 46)">
+    <rect x="86" y="42" width="34" height="8" rx="3" fill="@bark" stroke="@outline" stroke-width="3"/>
+    <rect x="118" y="44" width="10" height="4" fill="@outline"/>
+    <path d="M127 38 L150 40 C158 42 158 50 150 52 L127 54 Z" fill="@frost.shade" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+    <path fill="none" d="M132 42 L148 43" stroke="@frost" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

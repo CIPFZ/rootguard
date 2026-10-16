@@ -1,0 +1,13 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+Atlas(
+    image: "skins/garden/garden_scene.png",
+    frames: [
+        (name: "scene_greenhouse_wall_0", x: 0, y: 0, w: 260, h: 575, anchor: (0.0, 0.0)),
+        (name: "scene_valve_closed_0", x: 344, y: 577, w: 48, h: 48, anchor: (0.5, 0.42)),
+        (name: "scene_valve_spent_0", x: 394, y: 577, w: 48, h: 48, anchor: (0.5, 0.42)),
+        (name: "scene_entrance_0", x: 262, y: 0, w: 120, h: 575, anchor: (0.0, 0.0)),
+        (name: "scene_gate_post_0", x: 384, y: 0, w: 24, h: 64, anchor: (0.5, 1.0)),
+        (name: "scene_props_left_0", x: 0, y: 577, w: 200, h: 55, anchor: (0.0, 1.0)),
+        (name: "scene_props_right_0", x: 202, y: 577, w: 140, h: 55, anchor: (1.0, 1.0)),
+    ],
+)

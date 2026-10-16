@@ -140,6 +140,18 @@ Skin(
             ],
         ),
         (
+            atlas: "skins/garden/garden_scene.atlas.ron",
+            clips: [
+                "scene_greenhouse_wall",
+                "scene_valve_closed",
+                "scene_valve_spent",
+                "scene_entrance",
+                "scene_gate_post",
+                "scene_props_left",
+                "scene_props_right",
+            ],
+        ),
+        (
             atlas: "skins/garden/garden_bg.atlas.ron",
             clips: [
                 "bg_base",

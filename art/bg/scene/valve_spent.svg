@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- L4 阀门：spent（Hose 用掉后歪斜、滴水，LORE 2.5） -->
+  <rect x="20" y="22" width="8" height="12" fill="@brass.shade" stroke="@outline" stroke-width="2.5"/>
+  <g transform="rotate(28 24 20)">
+    <circle cx="24" cy="20" r="13" fill="none" stroke="@outline" stroke-width="8"/>
+    <circle cx="24" cy="20" r="13" fill="none" stroke="@brass" stroke-width="4"/>
+    <path fill="none" d="M24 7 L24 33 M11 20 L37 20" stroke="@outline" stroke-width="6" stroke-linecap="round"/>
+    <path fill="none" d="M24 7 L24 33 M11 20 L37 20" stroke="@brass" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="24" cy="20" r="4" fill="@brass.shade" stroke="@outline" stroke-width="2"/>
+  </g>
+  <path d="M27 34 C27 38 30 40 30 42 C30 45 24 45 24 42 C24 40 27 38 27 34 Z" fill="@frost" stroke="@outline" stroke-width="1.8"/>
+  <path fill="none" d="M33 30 L35 36" stroke="@frost" stroke-width="2" stroke-linecap="round"/>
+</svg>

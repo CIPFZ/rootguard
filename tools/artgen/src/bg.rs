@@ -109,6 +109,81 @@ pub fn min_diff(c: Rgb, cells: &[Rgb]) -> f64 {
         .fold(f64::INFINITY, f64::min)
 }
 
+/// 战场独立精灵目录（ART-SPEC 8.1 L4 ～ L6）。
+pub const SCENE_DIR: &str = "art/bg/scene";
+
+/// 一个战场精灵：名字、图像、归一化锚点。
+pub type SceneSprite = (String, Image, (f32, f32));
+
+#[derive(serde::Deserialize)]
+struct SceneEntry {
+    name: String,
+    anchor: (f32, f32),
+}
+
+/// 渲染 `art/bg/scene/` 中 `sprites.ron` 列出的精灵（L4 温室外墙与两态阀门、L5 入口与门柱、L6 前景杂物）。
+/// 每个 SVG 的 `viewBox` 即精灵尺寸；颜色校验同角色部件。没有该目录时返回空表。
+///
+/// # Errors
+///
+/// 清单或 SVG 不合规、出现调色板外颜色时返回错误。
+pub fn render_scene(root: &Path, palette: &Palette) -> Result<Vec<SceneSprite>> {
+    let dir = root.join(SCENE_DIR);
+    if !dir.is_dir() {
+        return Ok(Vec::new());
+    }
+    let list =
+        std::fs::read_to_string(dir.join("sprites.ron")).context("art/bg/scene/sprites.ron")?;
+    let entries: Vec<SceneEntry> = ron::from_str(&list).context("art/bg/scene/sprites.ron")?;
+    let mut out = Vec::new();
+    for e in entries {
+        let path = dir.join(format!("{}.svg", e.name));
+        let text =
+            std::fs::read_to_string(&path).with_context(|| format!("读取 {}", path.display()))?;
+        let size = view_box_size(&text).with_context(|| format!("{}：viewBox", path.display()))?;
+        let part = load_part(&path, size, palette, BACKGROUND, Material::Prop)?;
+        let body = substitute(&part.body, palette, BACKGROUND, Material::Prop);
+        let (w, h) = size;
+        let svg = format!(
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{w}\" height=\"{h}\" viewBox=\"0 0 {w} {h}\">{body}</svg>"
+        );
+        let tree = usvg::Tree::from_str(&svg, &usvg::Options::default())
+            .with_context(|| format!("{}", path.display()))?;
+        check_colors(tree.root(), &palette.allowed(BACKGROUND, Material::Prop))
+            .with_context(|| format!("{}：出现调色板外的颜色（ART-SPEC 8.1）", path.display()))?;
+        let mut pixmap = tiny_skia::Pixmap::new(w, h).context("精灵尺寸为 0")?;
+        resvg::render(
+            &tree,
+            tiny_skia::Transform::identity(),
+            &mut pixmap.as_mut(),
+        );
+        out.push((
+            e.name,
+            Image {
+                w,
+                h,
+                data: pixmap.take(),
+            },
+            e.anchor,
+        ));
+    }
+    Ok(out)
+}
+
+/// `viewBox="0 0 W H"` 中的整数尺寸。
+fn view_box_size(text: &str) -> Option<(u32, u32)> {
+    let start = text.find("viewBox=\"")? + "viewBox=\"".len();
+    let end = start + text[start..].find('"')?;
+    let nums: Vec<u32> = text[start..end]
+        .split_whitespace()
+        .filter_map(|n| n.parse().ok())
+        .collect();
+    match nums.as_slice() {
+        [0, 0, w, h] => Some((*w, *h)),
+        _ => None,
+    }
+}
+
 /// 渲染 L0 ～ L2；没有 `art/bg/` 时返回 `None`。
 ///
 /// # Errors
