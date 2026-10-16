@@ -1,6 +1,6 @@
 # Rootguard 美术规格说明书（ART-SPEC.md）v1
 
-> 状态：v1.2，2026-10-16（v1.1：Husk 反骷髅化；v1.2：Husk 反禽类化规则、8.1 战场设计卡、调色板补 `flush`） ｜ 范围：Phase 1 全部 21 个角色、弹丸与拾取物、特效、战场与 HUD 皮肤、关卡叙事文本
+> 状态：v1.3，2026-10-17（v1.3：2.3 闪白改为 70% 混白、3.1 `vault` 时长绑定数据、8.1 可读性以描边为准、4.10 咬夹草特效事件化；源于 A2 审核） ｜ 范围：Phase 1 全部 21 个角色、弹丸与拾取物、特效、战场与 HUD 皮肤、关卡叙事文本
 > 依据：`LORE.md`（出身、性格、设定）、`SPEC.md` 第 7 ～ 9 章与第 13 章（机制、数值、音效表）
 > 读者：实现者（AI 开发者）与负责人
 > 原则：**机制与数值以 `SPEC.md` 为准，本文档只决定它们"看起来、动起来、听起来"是什么**；若本文档与 SPEC 数值冲突，以 SPEC 为准并报告。
@@ -99,7 +99,7 @@
 
 ### 2.3 受伤闪白
 
-沿用现有做法：每个会受伤的角色每帧附一张纯白剪影帧（`<frame>_flash`），受击后 6 tick 显示。不依赖引擎加性着色。
+每个会受伤的角色每帧附一张闪白帧（`<frame>_flash`），受击后 6 tick 显示。不依赖引擎加性着色。**v1.3 修订**：闪白帧不是纯白剪影，而是把本体帧的所有填充色向白色混合 70%（描边保持原色），这样大块角色（树皮墙、鼓腹枯壳）闪白时仍可辨认轮廓与细节，不会成为一块白板。
 
 ### 2.4 护甲与受损阶段
 
@@ -124,7 +124,7 @@
 | `snap` / `chew` | 咬夹草 | `snap` 12 tick；`chew` 循环 60，持续 2520 | 事件触发 / 时钟 | `gulp` |
 | `walk` | 全部 Husk | 40 tick 循环（基础速度 0.30 时一周期 12 px） | 游戏时钟 | — |
 | `eat` | 全部 Husk | **= `bite_interval_ticks`（60）** | `Biter.timer.progress()`（裁决四） | `eat_hit`（末帧） |
-| `vault` | 跳栏枯壳 | 30 tick | 状态进入 | — |
+| `vault` | 跳栏枯壳 | **= 敌人数据 `Vault(ticks)`（当前 40）** | 状态进入，进度驱动 | — |
 | `crumble` | Husk 死亡 | 20 tick（特效实体） | `EnemyDied` | — |
 | `spawn` | 小芽怪 | 15 tick | `EnemySpawned` | — |
 
@@ -244,9 +244,9 @@ Husk 处于 Chill 时：整体 tint 偏 `frost`，`walk` 速度按 `StatusEffect
 - 身份：温室里唯一吃"肉"的，吞下 Husk 慢慢消化干壳里的养分。永远饿。
 - 外形：粗茎顶着一只横向大嘴荚，`leaf_dark` 外壳、淡黄内里（专属色 `#F2E3A0`）、叶齿；饥饿的眼、流一滴露水的口水；两片短叶当手。
 - 机制：费用 150，冷却 450，生命 6。Chomper：敌人进入其格或右侧相邻格时吞食（Heavy 免疫）；目标即死；之后咀嚼 2520 tick 不可再吞。
-- 行为表达：`idle` 嘴微张微合、眼睛跟着最近的 Husk 转；`snap` 12 tick 嘴猛地张到最大再合上，目标消失；`chew` 期间嘴闭合、腮帮鼓动、满足地眯眼，末尾打一个嗝（`gulp`）。
+- 行为表达：`idle` 嘴微张微合、眼睛跟着最近的 Husk 转；`snap` 12 tick 嘴猛地张开（**张开角 ≤ 45°**，裁决七）再合上，目标消失；`chew` 期间嘴闭合、腮帮鼓动、满足地眯眼，末尾打一个嗝（`gulp`）。
 - 动画：`idle` 90；`snap` 12（`gulp` 在 11）；`chew` 60 循环（持续 2520）。
-- 特效：`snap` 时 3 帧叶齿残影；`chew` 结束一个小气泡。
+- 特效：`snap` 时 3 帧叶齿残影（由 `snap` 片段自带，不另发事件）；`chew` 结束时一个小气泡（`chew` 片段末帧事件 `burp`，呈现层消费）。
 - 音效：`sfx.snap`、`sfx.gulp`（新增）。
 
 ### 4.11 风铃花 Gustbloom `gustbloom`
@@ -408,7 +408,7 @@ Husk 处于 Chill 时：整体 tint 偏 `frost`，`walk` 速度按 `StatusEffect
 
 绘制顺序：L0 ～ L2 合成一张静态底图 `bg_base.png`（1280 × 720）；L4 阀门两态、L5、L6 为独立精灵；L3 由渲染层画矩形。
 
-可读性约束：任一格底色与任一角色主色的明度差 ≥ 25%（`artgen` 对 21 个角色主色逐一校验）。
+可读性约束（v1.3 修订，ADR-015）：**强制项**为两种描边色（`outline`、`husk_outline`）与任一格底色的 CIE L* 差 ≥ 25，`artgen` 校验不满足即拒绝生成；角色主色与格底色的明度差只作**报告项**写入 `docs/art/bg-readability.md`，不阻塞。理由：3 px 深色描边才是角色从格子里跳出来的实际原因，主色 25 的下限与设计卡配色在数学上不可同时满足。
 
 A2 期间先产出 L0 ～ L2 的 `bg_base.png`（静态底图）接入 `garden` 皮肤，供 A2 实机审核在接近最终的画面里看角色；L4 ～ L6 与两态阀门在 A3 完成。
 
@@ -484,7 +484,7 @@ assets/skins/garden/            # 输出：*.png 图集、*.atlas.ron、anim/*.a
 ## 12. 对 SPEC 与数据的影响（允许的改动清单）
 
 - 关卡 RON 新增可选字段 `time_of_day`（默认 `Morning`）；i18n 新增 `level.<id>.intro`、`ending.line`。
-- 音效表（SPEC 13）新增：`sfx.bite`（已有）、`sfx.drip`、`sfx.wood_crack`、`sfx.shoot_frost`、`sfx.hit_frost`、`sfx.prick`、`sfx.tuber_burst`、`sfx.ember_burst`、`sfx.shell_crack`、`sfx.snap`、`sfx.gulp`、`sfx.gust`、`sfx.lantern`、`sfx.wilt`、`sfx.twig_snap`、`sfx.pot_break`、`sfx.vault`、`sfx.seeds_spill`、`sfx.thud`、`sfx.gourd_break`、`sfx.sprout_down`。
+- 音效表（SPEC 13）新增（**实现者可直接在 SPEC 13 追加行，这是 SPEC 中唯一允许实现者改动的表**，裁决八）：`sfx.bite`（已有）、`sfx.drip`、`sfx.wood_crack`、`sfx.shoot_frost`、`sfx.hit_frost`、`sfx.prick`、`sfx.tuber_burst`、`sfx.ember_burst`、`sfx.shell_crack`、`sfx.snap`、`sfx.gulp`、`sfx.gust`、`sfx.lantern`、`sfx.wilt`、`sfx.twig_snap`、`sfx.pot_break`、`sfx.vault`、`sfx.seeds_spill`、`sfx.thud`、`sfx.gourd_break`、`sfx.sprout_down`。
 - 依赖白名单新增：`resvg`、`usvg`、`tiny-skia`、`png`（仅 `tools/artgen`）。
 - 模拟层、数值、golden：**零改动**。所有"进度驱动"动画只读取组件状态。
 
