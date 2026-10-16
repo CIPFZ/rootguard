@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 80">
+  <!-- 8.3 HUD：顶部木条（温室的旧木板，钉子钉住），盖住天空上半 -->
+  <rect x="0" y="0" width="1280" height="80" fill="@bark_dark"/>
+  <rect x="-4" y="0" width="1288" height="26" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <path fill="none" d="M40 13.0 C70 9.0 100 17.0 136 13.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M213 13.0 C243 9.0 273 17.0 309 13.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M386 13.0 C416 9.0 446 17.0 482 13.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M559 13.0 C589 9.0 619 17.0 655 13.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M732 13.0 C762 9.0 792 17.0 828 13.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M905 13.0 C935 9.0 965 17.0 1001 13.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M1078 13.0 C1108 9.0 1138 17.0 1174 13.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M1251 13.0 C1281 9.0 1311 17.0 1347 13.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <rect x="-4" y="26" width="1288" height="28" fill="@bark.shade" stroke="@outline" stroke-width="3"/>
+  <path fill="none" d="M40 40.0 C70 36.0 100 44.0 136 40.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M213 40.0 C243 36.0 273 44.0 309 40.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M386 40.0 C416 36.0 446 44.0 482 40.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M559 40.0 C589 36.0 619 44.0 655 40.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M732 40.0 C762 36.0 792 44.0 828 40.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M905 40.0 C935 36.0 965 44.0 1001 40.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M1078 40.0 C1108 36.0 1138 44.0 1174 40.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M1251 40.0 C1281 36.0 1311 44.0 1347 40.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <rect x="-4" y="54" width="1288" height="26" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <path fill="none" d="M40 67.0 C70 63.0 100 71.0 136 67.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M213 67.0 C243 63.0 273 71.0 309 67.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M386 67.0 C416 63.0 446 71.0 482 67.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M559 67.0 C589 63.0 619 71.0 655 67.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M732 67.0 C762 63.0 792 71.0 828 67.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M905 67.0 C935 63.0 965 71.0 1001 67.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M1078 67.0 C1108 63.0 1138 71.0 1174 67.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <path fill="none" d="M1251 67.0 C1281 63.0 1311 71.0 1347 67.0" stroke="@bark_dark" stroke-width="2" stroke-linecap="round"/>
+  <rect x="-4" y="76" width="1288" height="6" fill="@outline"/>
+</svg>

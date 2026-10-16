@@ -363,6 +363,51 @@ impl<'w> Painter<'w> {
         true
     }
 
+    /// 片段第 0 帧画进矩形 `dst`（HUD 精灵与卡牌头像，ART-SPEC 8.3 / 4.13）；`keep_x` < 1 时只画左边这一比例
+    /// （波次藤的进度）。片段缺失时返回 false。
+    pub fn draw_in(
+        &self,
+        list: &mut DrawList,
+        layer: Layer,
+        clip: &str,
+        dst: Rect,
+        keep_x: f32,
+        tint: Color,
+    ) -> bool {
+        let pose = Pose {
+            clip,
+            elapsed: 0,
+            flash: false,
+            tint,
+        };
+        let Some((image, frame)) = self.frame(&pose) else {
+            return false;
+        };
+        let k = keep_x.clamp(0.0, 1.0);
+        if k <= 0.0 {
+            return true;
+        }
+        let src = Rect::from_min_size(
+            frame.src_px.min,
+            Vec2::new(frame.src_px.size().x * k, frame.src_px.size().y),
+        );
+        let dst = Rect::from_min_size(dst.min, Vec2::new(dst.size().x * k, dst.size().y));
+        list.sprite(layer, 0.0, image, src, dst).tint(tint);
+        true
+    }
+
+    /// 片段第 0 帧的像素尺寸。
+    #[must_use]
+    pub fn frame_size(&self, clip: &str) -> Option<Vec2> {
+        let pose = Pose {
+            clip,
+            elapsed: 0,
+            flash: false,
+            tint: Color::WHITE,
+        };
+        self.frame(&pose).map(|(_, f)| f.src_px.size())
+    }
+
     /// 在 `rect` 中央绘制片段第 0 帧的缩小图标（卡槽，SPEC 11.2）；缺失时返回 false。
     pub fn icon(&self, list: &mut DrawList, layer: Layer, rect: Rect, clip: &str) -> bool {
         let pose = Pose {

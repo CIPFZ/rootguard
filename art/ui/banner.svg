@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 64">
+  <!-- 8.3 横幅：吊挂的木牌（两根绳） -->
+  <path fill="none" d="M60 0 L80 14 M500 0 L480 14" stroke="@straw_dark" stroke-width="4" stroke-linecap="round"/>
+  <g transform="translate(20 10)">
+    <rect x="2" y="2" width="516" height="48" rx="5" fill="@bark" stroke="@outline" stroke-width="3"/>
+    <path fill="none" d="M8 18.72 C156.0 16.64 312.0 20.8 512 18.2 M8 36.4 C182.0 38.48 364.0 34.32 512 37.44" stroke="@bark.shade" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="8" cy="8" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
+    <circle cx="512" cy="8" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
+    <circle cx="8" cy="44" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
+    <circle cx="512" cy="44" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
+  </g>
+</svg>

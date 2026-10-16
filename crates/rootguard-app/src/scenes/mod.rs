@@ -54,14 +54,30 @@ pub fn button_at(
     text: &str,
     enabled: bool,
 ) -> bool {
+    button_styled(world, ctx, id, r, text, enabled, true)
+}
+
+/// 同 [`button_at`]；`frame` 为 false 时不画按钮底（皮肤 HUD 的木牌由 `DrawList` 画在下面，ART-SPEC 8.3）。
+pub fn button_styled(
+    world: &World,
+    ctx: &egui::Context,
+    id: &str,
+    r: Rect,
+    text: &str,
+    enabled: bool,
+    frame: bool,
+) -> bool {
     let rect = ui_rect(world, ctx, r);
     let size = 20.0 * ui_scale(world, ctx);
     let mut clicked = false;
     egui::Area::new(egui::Id::new(id))
         .fixed_pos(rect.min)
         .show(ctx, |ui| {
-            let button =
-                egui::Button::new(egui::RichText::new(text).size(size)).min_size(rect.size());
+            let mut label = egui::RichText::new(text).size(size);
+            if !frame {
+                label = label.color(egui::Color32::WHITE);
+            }
+            let button = egui::Button::new(label).min_size(rect.size()).frame(frame);
             clicked = ui.add_enabled(enabled, button).clicked();
         });
     clicked

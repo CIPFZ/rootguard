@@ -1227,8 +1227,13 @@ fn constructed_effects() {
     assert!((rootguard_app::render::plant_scale(10) - 1.0).abs() < 1e-6);
 }
 
-/// 绘制列表中某片段第 0 帧的全部目标矩形。
+/// 绘制列表中某片段第 0 帧的全部目标矩形（只按原图区域的位置比较，裁剪过的也算）。
 fn drawn_rects(runner: &HeadlessRunner, clip: &str) -> Vec<Rect> {
+    drawn_rects_opt(runner, clip).unwrap_or_default()
+}
+
+/// 同 [`drawn_rects`]；一次都没画时为 `None`。
+fn drawn_rects_opt(runner: &HeadlessRunner, clip: &str) -> Option<Vec<Rect>> {
     let world = runner.app().world();
     let garden = world
         .resources
@@ -1243,16 +1248,19 @@ fn drawn_rects(runner: &HeadlessRunner, clip: &str) -> Vec<Rect> {
         .frame(&format!("{clip}_0"))
         .map(|i| atlas.frames[i].src_px)
         .expect("帧");
-    runner
+    let rects: Vec<Rect> = runner
         .last_draw_list()
         .iter()
         .filter_map(|c| match &c.kind {
             DrawKind::Sprite {
                 image, src_px, dst, ..
-            } if *image == atlas.image && *src_px == src => Some(*dst),
+            } if *image == atlas.image && src_px.min == src.min && src_px.max.y == src.max.y => {
+                Some(*dst)
+            }
             _ => None,
         })
-        .collect()
+        .collect();
+    (!rects.is_empty()).then_some(rects)
 }
 
 /// ART-SPEC 8.1 L4 ～ L6：花园皮肤画温室外墙、入口、前景与每行的门柱、阀门；某行的 Hose 用掉后该行阀门
@@ -1285,4 +1293,60 @@ fn garden_scene_valves_follow_hose() {
         "spent 阀门应在第 2 行"
     );
     assert_eq!(drawn_rects(&runner, SCENE_VALVE_CLOSED).len(), 4);
+}
+
+/// ART-SPEC 8.3 / 4.13：花园皮肤的 HUD 画木条、卡槽木牌与卡牌头像（不可用时去饱和版）、园丁小铁铲、藤蔓波次条
+/// （已到波次按进度裁出左段）；默认皮肤仍是占位 HUD。
+#[test]
+fn garden_hud_sprites() {
+    use rootguard_app::hud::{UI_HUD_BAR, UI_SHOVEL, UI_WAVE_FILL};
+    use rootguard_core::resources::WaveState;
+    let mut runner = common::battle_runner("1-10", &[]);
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    runner.frames(2);
+    assert!(
+        drawn_rects_opt(&runner, UI_HUD_BAR).is_none(),
+        "default 皮肤没有 HUD 精灵"
+    );
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    runner.frames(2);
+    assert_eq!(drawn_rects(&runner, UI_HUD_BAR).len(), 1);
+    assert_eq!(drawn_rects(&runner, UI_SHOVEL).len(), 1);
+    // 头像：可用（ready 且不在冷却）为原图，否则为去饱和版；至少两种都出现
+    let cards = runner
+        .app()
+        .world()
+        .resources
+        .expect::<rootguard_core::resources::CardTray>()
+        .cards
+        .clone();
+    let mut kinds = std::collections::BTreeSet::new();
+    for c in &cards {
+        let id = c.defender.as_str();
+        let usable = c.ready && c.cooldown.remaining == 0;
+        let (want, other) = if usable {
+            (format!("{id}_portrait"), format!("{id}_portrait_off"))
+        } else {
+            (format!("{id}_portrait_off"), format!("{id}_portrait"))
+        };
+        assert_eq!(drawn_rects(&runner, &want).len(), 1, "{want}");
+        assert!(drawn_rects(&runner, &other).is_empty(), "{other}");
+        kinds.insert(usable);
+    }
+    assert_eq!(kinds.len(), 2, "应同时有可用与不可用的卡");
+    // 波次藤：进度 = 已生成波 / 总波
+    {
+        let world = runner.app_mut().world_mut();
+        let w = world.resources.expect_mut::<WaveState>();
+        w.next_wave = w.total_waves / 2;
+    }
+    runner.frame();
+    let waves = runner.app().world().resources.expect::<WaveState>();
+    let k = waves.next_wave as f32 / waves.total_waves as f32;
+    let fill = drawn_rects(&runner, UI_WAVE_FILL);
+    assert_eq!(fill.len(), 1);
+    assert!(
+        (fill[0].size().x - 210.0 * k).abs() < 0.5,
+        "藤的长度应为进度 × 210"
+    );
 }

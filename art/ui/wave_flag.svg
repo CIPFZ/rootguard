@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 22">
+  <!-- 8.3 大波标记：藤上的一朵炽红花苞 -->
+  <path fill="none" d="M8 22 L8 12" stroke="@leaf_dark" stroke-width="3" stroke-linecap="round"/>
+  <path d="M8 2 C13 4 14 10 8 13 C2 10 3 4 8 2 Z" fill="@ember" stroke="@outline" stroke-width="2" stroke-linejoin="round"/>
+</svg>

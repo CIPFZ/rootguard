@@ -154,6 +154,9 @@
   该行角色之前）、前景花盆与园丁小铁铲 / 翻倒的空水桶。`artgen` 输出图集 `garden_scene` 与 `scene_*` 片段。实机截图
   `docs/screenshots/a3-battlefield.png`（1-10 第 150 s）。测试 `garden_scene_valves_follow_hose`。截图脚本
   `scripts/shot_garden.sh`。
+- [x] 第 3 项 HUD 皮肤（ART-SPEC 8.3）：`art/ui/`——顶部木条、木牌卡槽（头像 4.13，不可用时去饱和）、露珠计数木牌与图标、
+  园丁小铁铲按钮（egui 按钮在皮肤模式下无边框，压在木牌上）、藤蔓波次条（枯藤轨道 + 由绿到枯黄的藤按进度裁出，大波为
+  炽红花苞）、吊挂木牌横幅。布局与占位 HUD 相同。实机截图 `docs/screenshots/a3-hud.png`。测试 `garden_hud_sprites`。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 

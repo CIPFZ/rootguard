@@ -128,13 +128,26 @@ struct SceneEntry {
 ///
 /// 清单或 SVG 不合规、出现调色板外颜色时返回错误。
 pub fn render_scene(root: &Path, palette: &Palette) -> Result<Vec<SceneSprite>> {
-    let dir = root.join(SCENE_DIR);
+    render_sprites(root, SCENE_DIR, palette)
+}
+
+/// HUD 皮肤精灵目录（ART-SPEC 8.3）。
+pub const UI_DIR: &str = "art/ui";
+
+/// 渲染 `<rel>/sprites.ron` 列出的单帧精灵（战场 L4 ～ L6 与 HUD 共用）。没有该目录时返回空表。
+///
+/// # Errors
+///
+/// 清单或 SVG 不合规、出现调色板外颜色时返回错误。
+pub fn render_sprites(root: &Path, rel: &str, palette: &Palette) -> Result<Vec<SceneSprite>> {
+    let dir = root.join(rel);
     if !dir.is_dir() {
         return Ok(Vec::new());
     }
-    let list =
-        std::fs::read_to_string(dir.join("sprites.ron")).context("art/bg/scene/sprites.ron")?;
-    let entries: Vec<SceneEntry> = ron::from_str(&list).context("art/bg/scene/sprites.ron")?;
+    let list = std::fs::read_to_string(dir.join("sprites.ron"))
+        .with_context(|| format!("{rel}/sprites.ron"))?;
+    let entries: Vec<SceneEntry> =
+        ron::from_str(&list).with_context(|| format!("{rel}/sprites.ron"))?;
     let mut out = Vec::new();
     for e in entries {
         let path = dir.join(format!("{}.svg", e.name));

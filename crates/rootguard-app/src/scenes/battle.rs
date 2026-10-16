@@ -9,7 +9,7 @@ use trellia::egui;
 use trellia::prelude::*;
 
 use crate::i18n::t;
-use crate::scenes::{OutcomeScene, TitleScene, button_at, send};
+use crate::scenes::{OutcomeScene, TitleScene, button_styled, send};
 use crate::script::{Replay, Script};
 use crate::sfx::{self, Track};
 use crate::{hud, render, save};
@@ -221,20 +221,35 @@ impl Scene for BattleScene {
             .resources
             .get::<BattleState>()
             .is_some_and(|s| s.shovel_mode);
-        let mut label = t(world, "battle.shovel");
-        if shovel_on {
+        // 皮肤 HUD：铲子按钮只显示园丁小铁铲（DrawList 中），egui 按钮无边框、无文字（ART-SPEC 8.3）
+        let skinned = hud::skinned_hud(crate::skin::Painter::active(world).as_ref());
+        let mut label = if skinned {
+            String::new()
+        } else {
+            t(world, "battle.shovel")
+        };
+        if shovel_on && !skinned {
             label.push_str(" *");
         }
-        if button_at(world, ctx, "hud_shovel", hud::SHOVEL_BUTTON, &label, true) {
+        if button_styled(
+            world,
+            ctx,
+            "hud_shovel",
+            hud::SHOVEL_BUTTON,
+            &label,
+            true,
+            !skinned,
+        ) {
             send(world, UiAction::ToggleShovel);
         }
-        if button_at(
+        if button_styled(
             world,
             ctx,
             "hud_pause",
             hud::PAUSE_BUTTON,
             &t(world, "battle.pause"),
             true,
+            !skinned,
         ) {
             send(world, UiAction::PauseToggle);
         }

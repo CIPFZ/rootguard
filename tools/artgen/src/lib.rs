@@ -39,6 +39,8 @@ pub const BG_IMAGE: &str = "bg_base.png";
 const BG_ATLAS: &str = "garden_bg";
 /// 战场独立精灵图集（ART-SPEC 8.1 L4 ～ L6）。
 const SCENE_ATLAS: &str = "garden_scene";
+/// HUD 精灵片段名前缀：`ui_<精灵名>`。
+pub const UI_PREFIX: &str = "ui_";
 /// 战场精灵片段名前缀：`scene_<精灵名>`。
 pub const SCENE_PREFIX: &str = "scene_";
 /// 底图片段名（游戏侧按此名查找，ADR-015）。
@@ -451,6 +453,20 @@ pub fn build(root: &Path) -> Result<Built> {
     }
     let mut files = BTreeMap::new();
     let mut manifest = Vec::new();
+    // ART-SPEC 8.3 HUD 精灵：与卡牌头像同在 garden_ui，片段 `ui_<名>`
+    for (name, image, anchor) in bg::render_sprites(root, bg::UI_DIR, &palette)? {
+        let clip = format!("{UI_PREFIX}{name}");
+        atlas_frames.entry(UI_ATLAS).or_default().push(FrameIn {
+            name: format!("{clip}_0"),
+            image,
+            anchor,
+        });
+        atlas_clips.entry(UI_ATLAS).or_default().push(ClipOut {
+            frames: vec![(format!("{clip}_0"), 60, None)],
+            name: clip,
+            looping: false,
+        });
+    }
     for (atlas, frames) in &atlas_frames {
         let packed = atlas::pack(atlas, frames)?;
         let image_rel = format!("{ASSET_PREFIX}/{atlas}.png");

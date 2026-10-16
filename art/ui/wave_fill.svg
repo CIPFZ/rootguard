@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 24">
+  <!-- 8.3 波次进度条：从绿到枯黄的藤（已到的波次），游戏按进度裁出左段 -->
+  <path fill="none" d="M4 12 C30 4 50 20 76 12 C102 4 122 20 148 12 C170 6 188 18 206 12" stroke="@outline" stroke-width="9" stroke-linecap="round"/>
+  <path fill="none" d="M4.0 12 L54.5 12" stroke="@leaf" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M54.5 12 L105.0 12" stroke="@leaf" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M105.0 12 L155.5 12" stroke="@leaf_light" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M155.5 12 L206.0 12" stroke="@straw" stroke-width="5" stroke-linecap="round"/>
+  <path d="M40 12 C44 2 52 2 54 6 C50 8 44 8 40 12 Z" fill="@leaf" stroke="@outline" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M96 12 C100 22 108 22 110 18 C106 16 100 16 96 12 Z" fill="@leaf_light" stroke="@outline" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M150 12 C154 2 162 2 164 6 C160 8 154 8 150 12 Z" fill="@straw" stroke="@outline" stroke-width="1.8" stroke-linejoin="round"/>
+</svg>

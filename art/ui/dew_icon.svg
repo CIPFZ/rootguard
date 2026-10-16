@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 40">
+  <!-- 8.3 Dew 图标：一颗露珠（与露水拾取物同色） -->
+  <path d="M18 3 C26 14 32 21 32 27 C32 34 26 38 18 38 C10 38 4 34 4 27 C4 21 10 14 18 3 Z" fill="@dew" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+  <path fill="none" d="M11 26 C11 22 13 19 15 17" stroke="@dew_glow" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="23" cy="30" r="2" fill="@dew_glow"/>
+</svg>
