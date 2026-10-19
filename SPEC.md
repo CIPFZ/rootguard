@@ -1,6 +1,6 @@
 # Rootguard 游戏规格说明书（v1）
 
-> 状态：v1.2，2026-10-14（v1.1：10.2 预算上限、10.3 脚本解质量、8.1 Sprint 阈值、解锁顺序；v1.2：10.3 适用范围澄清、16.2 `audio_events_mapped` 允许交叉淡化、新增第 20 章 Phase 1 收尾与难度校准）
+> 状态：v1.3，2026-10-19（v1.3：12.1 默认渲染模式改为 Skinned；v1.1：10.2 预算上限、10.3 脚本解质量、8.1 Sprint 阈值、解锁顺序；v1.2：10.3 适用范围澄清、16.2 `audio_events_mapped` 允许交叉淡化、新增第 20 章 Phase 1 收尾与难度校准）
 > 适用范围：Rootguard Phase 1（白天花园，10 关）
 > 读者：负责从 0 实现游戏的 AI 开发者与项目负责人
 > 前置：Trellia 引擎 v1（https://github.com/CIPFZ/trellia，M5 已验收）
@@ -535,7 +535,7 @@ Esc 暂停 / 取消选卡；数字 1 ～ 8 选卡；空格 继续；F1 调试面
 
 ### 12.1 两种模式
 
-`SkinMode::Placeholder`（默认，必须完整可玩）与 `SkinMode::Skinned`。切换只影响 `rootguard-app` 的渲染系统，模拟层无感知。Phase 1 验收以 Placeholder 为准；Skinned 为"尽力而为"，允许部分实体回退占位。
+`SkinMode::Placeholder`（必须完整可玩）与 `SkinMode::Skinned`。**v1.3：默认为 `Skinned`（皮肤 `garden`）**；Placeholder 保留为设置中的可选项与 CI / 测试的基准。切换只影响 `rootguard-app` 的渲染系统，模拟层无感知。自动化验收仍以 Placeholder 为准；Skinned 允许部分实体回退占位。
 
 ### 12.2 占位渲染
 
@@ -567,27 +567,6 @@ Esc 暂停 / 取消选卡；数字 1 ～ 8 选卡；空格 继续；F1 调试面
 | `EnemyDied` | `sfx.husk_down` |
 | `WaveStarted(flag)` | `sfx.flag_wave` |
 | `HoseTriggered` | `sfx.hose` |
-| `AnimationEvent { event: "eat_hit" }`（敌人 eat 片段的啃食帧，SPEC 12.3） | `sfx.bite`（收尾期补充，ADR-010） |
-| `DewSpawned`（生产者产出；ART-SPEC 4.2 / 4.12） | `sfx.drip`（美术阶段，ART-SPEC 12） |
-| `DefenderRemoved(Killed)` 树皮墙（4.3） | `sfx.wood_crack`（美术阶段，ART-SPEC 12） |
-| `ProjectileFired` 冰石（4.4） | `sfx.shoot_frost`（美术阶段，ART-SPEC 12） |
-| `ProjectileHit` 冰石（6 章） | `sfx.hit_frost`（美术阶段，ART-SPEC 12） |
-| 荆棘垫 `trigger` 片段事件帧 `prick`（4.6） | `sfx.prick`（美术阶段，ART-SPEC 12） |
-| `DefenderRemoved(Consumed)` 块茎雷（4.7） | `sfx.tuber_burst`（美术阶段，ART-SPEC 12） |
-| `DefenderRemoved(Consumed)` 炽球（4.8） | `sfx.ember_burst`（美术阶段，ART-SPEC 12） |
-| `DefenderRemoved(Killed)` 葫芦壳（4.9） | `sfx.shell_crack`（美术阶段，ART-SPEC 12） |
-| `EnemyDamaged(Chomp)`（4.10） | `sfx.snap`（美术阶段，ART-SPEC 12） |
-| 咬夹草 `snap` 片段事件帧 `gulp`（4.10） | `sfx.gulp`（美术阶段，ART-SPEC 12） |
-| `DefenderRemoved(Consumed)` 风铃花（4.11） | `sfx.gust`（美术阶段，ART-SPEC 12） |
-| `DewSpawned` 日灯笼第 `bonus_every` 次（4.12） | `sfx.lantern`（美术阶段，ART-SPEC 12） |
-| `DefenderRemoved(Killed)` 其他守卫（4.13） | `sfx.wilt`（美术阶段，ART-SPEC 12） |
-| `EnemyArmorBroken` 枝冠（5.2） | `sfx.twig_snap`（美术阶段，ART-SPEC 12） |
-| `EnemyArmorBroken` 陶盆（5.3） | `sfx.pot_break`（美术阶段，ART-SPEC 12） |
-| 跳栏 `vault` 片段事件帧（5.5） | `sfx.vault`（美术阶段，ART-SPEC 12） |
-| `EnemyDied` 背篓枯壳（与 `sfx.husk_down` 同时，5.7） | `sfx.seeds_spill`（美术阶段，ART-SPEC 12） |
-| 鼓腹枯壳 `walk` 片段事件帧 `thud`（5.8） | `sfx.thud`（美术阶段，ART-SPEC 12） |
-| `EnemyArmorBroken` 葫芦（5.8） | `sfx.gourd_break`（美术阶段，ART-SPEC 12） |
-| `EnemyDied` 小芽怪（代替 `sfx.husk_down`，5.9） | `sfx.sprout_down`（美术阶段，ART-SPEC 12） |
 | `BattleEnded(Won/Lost)` | `sfx.win` / `sfx.lose` |
 | 场景 | Title / Battle / Outcome 各一首循环 BGM |
 
@@ -732,3 +711,4 @@ G5 关闭后、Phase 2 spec 之前，项目处于**收尾期**。本章定义收
 - Git tag `v0.1.0`，CI 以 tag 触发时上传三平台安装包为 Release 资产。
 - `README.md` 补充：截图（占位 / 皮肤各一张，由 CI Xvfb 截图或负责人提供）、安装方法、操作说明、许可证说明。
 - 负责人实机验证记录（macOS / Windows 启动、音频听感）写入 `docs/progress.md`；未验证项在 Release 说明中标注。
+
