@@ -210,10 +210,10 @@ pub enum Lang {
 /// 渲染模式（SPEC 12.1）。
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum SkinMode {
-    /// 占位渲染（默认，必须完整可玩）。
-    #[default]
+    /// 占位渲染（必须完整可玩；设置中的可选项与 CI / 测试的基准）。
     Placeholder,
-    /// 原创皮肤（用哪套由 [`SkinName`] 决定）。
+    /// 原创皮肤（用哪套由 [`SkinName`] 决定）；默认（SPEC v1.3 12.1，裁决十）。
+    #[default]
     Skinned,
 }
 

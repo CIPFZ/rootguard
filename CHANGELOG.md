@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-19
+
+### 变更
+
+- **默认画面改为花园皮肤**：新装首次启动即为 `garden` 皮肤（SPEC v1.3 12.1）。0.2.0 安装后默认仍是占位几何体，
+  需要进设置才能看到新美术，这一版修正。
+- **旧存档自动切换**：存档版本升到 2；读取 0.1.0 / 0.2.0 的存档时渲染模式改为皮肤模式、皮肤为花园，进度与其他
+  设置不变。之后在设置里选的占位模式会照常保留。
+- **菜单按钮木牌化**：标题与结算画面的按钮改为与 HUD 一致的木牌。
+- 设置中的画面选项改为“花园 / 几何（0.1.0）/ 占位”，花园排最前。
+
+玩法、数值与关卡不变，同种子同操作的对局结果与 0.2.0 逐字节一致。
+
 ## [0.2.0] - 2026-10-19
 
 美术阶段（ART-SPEC v1.3，A0 ～ A3）：新的 `garden` 皮肤成为皮肤模式的默认外观。玩法、数值与关卡**完全不变**，
@@ -80,6 +93,7 @@ Phase 1 首个版本：白天花园、冒险模式 10 关。
 - **皮肤为简单几何造型**：每角色 ≤ 6 个形状、96 px 帧。
 - **Dew 飞行动画为启发式**：恰在过期前约 5 tick 内收集的 Dew 不播放飞行动画（纯视觉）。
 
-[Unreleased]: https://github.com/CIPFZ/rootguard/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/CIPFZ/rootguard/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/CIPFZ/rootguard/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/CIPFZ/rootguard/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/CIPFZ/rootguard/releases/tag/v0.1.0

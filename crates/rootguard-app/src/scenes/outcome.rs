@@ -6,7 +6,7 @@ use trellia::egui;
 use trellia::prelude::*;
 
 use crate::i18n::t;
-use crate::scenes::{button_at, menu_slot, send};
+use crate::scenes::{draw_wood_buttons, menu_button, menu_slot, send};
 use crate::sfx::{self, Track};
 use crate::{LOGICAL_SIZE, render};
 
@@ -134,6 +134,17 @@ impl OutcomeScene {
         drew
     }
 
+    /// 第 `i` 个菜单按钮。结局静帧：按钮放在玻璃墙的空处，不挡住光束、根须与小芽怪。
+    fn slot(&self, i: usize) -> Rect {
+        let top = if self.ending { 250.0 } else { 440.0 };
+        menu_slot(LOGICAL_SIZE.x / 2.0, top, 66.0, i)
+    }
+
+    /// 按钮数：下一关（胜利且有下一关）、重试、返回。
+    fn buttons(&self) -> usize {
+        if self.won && self.has_next { 3 } else { 2 }
+    }
+
     fn primary(&self) -> UiAction {
         if self.won && self.has_next {
             UiAction::NextLevel
@@ -165,6 +176,19 @@ impl Scene for OutcomeScene {
     }
 
     fn draw(&mut self, world: &mut World) {
+        self.draw_screen(world);
+        // 菜单木牌（裁决九第 2 节），按钮本身在 `ui` 中为无边框 egui 按钮
+        let slots: Vec<(Rect, bool)> = (0..self.buttons()).map(|i| (self.slot(i), true)).collect();
+        draw_wood_buttons(world, &slots);
+    }
+
+    fn ui(&mut self, world: &mut World, ctx: &egui::Context) {
+        self.ui_buttons(world, ctx);
+    }
+}
+
+impl OutcomeScene {
+    fn draw_screen(&mut self, world: &mut World) {
         let title = t(
             world,
             if self.won {
@@ -200,13 +224,11 @@ impl Scene for OutcomeScene {
         render::overlay(world.resources.expect_mut::<DrawList>(), &title, &hint);
     }
 
-    fn ui(&mut self, world: &mut World, ctx: &egui::Context) {
-        // 结局静帧：按钮放在玻璃墙的空处，不挡住光束、根须与小芽怪
-        let top = if self.ending { 250.0 } else { 440.0 };
-        let slot = |i| menu_slot(LOGICAL_SIZE.x / 2.0, top, 66.0, i);
+    fn ui_buttons(&mut self, world: &mut World, ctx: &egui::Context) {
+        let slot = |i| self.slot(i);
         let mut i = 0;
         if self.won && self.has_next {
-            if button_at(
+            if menu_button(
                 world,
                 ctx,
                 "outcome_next",
@@ -218,7 +240,7 @@ impl Scene for OutcomeScene {
             }
             i += 1;
         }
-        if button_at(
+        if menu_button(
             world,
             ctx,
             "outcome_retry",
@@ -228,7 +250,7 @@ impl Scene for OutcomeScene {
         ) {
             send(world, UiAction::Restart);
         }
-        if button_at(
+        if menu_button(
             world,
             ctx,
             "outcome_back",

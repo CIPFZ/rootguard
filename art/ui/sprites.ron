@@ -11,4 +11,5 @@
     (name: "wave_fill", anchor: (0.0, 0.5)),
     (name: "wave_flag", anchor: (0.5, 1.0)),
     (name: "banner", anchor: (0.5, 0.5)),
+    (name: "menu_button", anchor: (0.0, 0.0)),
 ]

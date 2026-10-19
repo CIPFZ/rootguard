@@ -73,6 +73,11 @@ fn level_1_1_idle_lose() {
 #[test]
 fn placeholder_mode_draws_all_entities() {
     let mut runner = battle_runner("1-1", &[]);
+    // 默认渲染模式为 Skinned（SPEC v1.3 12.1）：本测试检查占位渲染，显式切到 Placeholder
+    send(
+        &mut runner,
+        UiAction::SetSkin(rootguard_core::events::SkinMode::Placeholder),
+    );
     let mut checked = 0;
     for _ in 0..6000 {
         let s = state(&runner).expect("对局中");
@@ -102,6 +107,11 @@ fn placeholder_mode_draws_all_entities() {
 #[test]
 fn rows_occlude_by_sort_y() {
     let mut runner = battle_runner("1-1", &[]);
+    // 默认渲染模式为 Skinned（SPEC v1.3 12.1）：本测试检查占位渲染，显式切到 Placeholder
+    send(
+        &mut runner,
+        UiAction::SetSkin(rootguard_core::events::SkinMode::Placeholder),
+    );
     let rows: Vec<f32> = (0..rootguard_core::Grid::ROWS)
         .map(rootguard_core::Grid::sort_y)
         .collect();

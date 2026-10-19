@@ -7,7 +7,7 @@ use trellia::prelude::*;
 
 use crate::i18n::t;
 use crate::save::{self, SaveSlot};
-use crate::scenes::{SettingsScene, button_at, draw_menu, menu_slot, send};
+use crate::scenes::{SettingsScene, draw_menu, draw_wood_buttons, menu_button, menu_slot, send};
 use crate::sfx::{self, Track};
 use crate::{LOGICAL_SIZE, TITLE};
 
@@ -16,6 +16,13 @@ pub const TITLE_BG: &str = "story_title_bg";
 
 /// 标题场景。
 pub struct TitleScene;
+
+/// 标题菜单：继续 / 新游戏 / 设置 / 退出。
+const TITLE_BUTTONS: usize = 4;
+
+fn title_slot(i: usize) -> Rect {
+    menu_slot(LOGICAL_SIZE.x / 2.0, 280.0, 70.0, i)
+}
 
 fn has_save(world: &World) -> bool {
     world.resources.get::<SaveSlot>().is_some_and(|s| s.existed)
@@ -53,12 +60,18 @@ impl Scene for TitleScene {
             );
         }
         world.resources.insert(list);
+        // 菜单木牌（裁决九第 2 节），按钮本身在 `ui` 中为无边框 egui 按钮
+        let can_continue = has_save(world);
+        let slots: Vec<(Rect, bool)> = (0..TITLE_BUTTONS)
+            .map(|i| (title_slot(i), i != 0 || can_continue))
+            .collect();
+        draw_wood_buttons(world, &slots);
     }
 
     fn ui(&mut self, world: &mut World, ctx: &egui::Context) {
-        let slot = |i| menu_slot(LOGICAL_SIZE.x / 2.0, 280.0, 70.0, i);
+        let slot = title_slot;
         let can_continue = has_save(world);
-        if button_at(
+        if menu_button(
             world,
             ctx,
             "title_continue",
@@ -68,7 +81,7 @@ impl Scene for TitleScene {
         ) {
             send(world, UiAction::BackToLevelSelect);
         }
-        if button_at(
+        if menu_button(
             world,
             ctx,
             "title_new",
@@ -90,7 +103,7 @@ impl Scene for TitleScene {
             save::save(world);
             send(world, UiAction::BackToLevelSelect);
         }
-        if button_at(
+        if menu_button(
             world,
             ctx,
             "title_settings",
@@ -103,7 +116,7 @@ impl Scene for TitleScene {
                 .expect_mut::<SceneCommands>()
                 .push(SettingsScene);
         }
-        if button_at(
+        if menu_button(
             world,
             ctx,
             "title_quit",

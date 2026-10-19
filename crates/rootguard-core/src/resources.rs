@@ -245,6 +245,15 @@ pub struct Progress {
 }
 
 impl Progress {
-    /// 当前存档版本。
-    pub const VERSION: u32 = 1;
+    /// 当前存档版本。v2（裁决十）：默认渲染模式改为 `Skinned` + `garden`；v1 存档读取时迁移（[`Progress::migrate_v1`]）。
+    pub const VERSION: u32 = 2;
+
+    /// v1（0.1.0 / 0.2.0）存档迁移到 v2：渲染模式一律置为 `Skinned`、皮肤为 `Garden`（SPEC v1.3 12.1），其余不变。
+    #[must_use]
+    pub fn migrate_v1(mut self) -> Self {
+        self.version = Self::VERSION;
+        self.settings.skin = SkinMode::Skinned;
+        self.settings.skin_name = SkinName::Garden;
+        self
+    }
 }

@@ -110,19 +110,25 @@ impl Scene for SettingsScene {
                 send(world, UiAction::SetLanguage(lang));
             }
         }
-        // 占位 / 几何皮肤 default / 花园皮肤 garden（SPEC 12.1，ART-SPEC 0）
+        // 花园（默认）/ 几何（0.1.0）/ 占位（SPEC v1.3 12.1，裁决十：花园排最前）
+        let skin_opt = |j: usize| {
+            Rect::from_min_size(
+                Vec2::new(600.0 + 200.0 * j as f32, 488.0),
+                Vec2::new(190.0, 44.0),
+            )
+        };
         for (j, (skin, name, key)) in [
-            (SkinMode::Placeholder, None, "settings.skin.placeholder"),
-            (
-                SkinMode::Skinned,
-                Some(SkinName::Default),
-                "settings.skin.skinned",
-            ),
             (
                 SkinMode::Skinned,
                 Some(SkinName::Garden),
                 "settings.skin.garden",
             ),
+            (
+                SkinMode::Skinned,
+                Some(SkinName::Default),
+                "settings.skin.skinned",
+            ),
+            (SkinMode::Placeholder, None, "settings.skin.placeholder"),
         ]
         .into_iter()
         .enumerate()
@@ -132,14 +138,7 @@ impl Scene for SettingsScene {
             if current {
                 label = format!("[{label}]");
             }
-            if button_at(
-                world,
-                ctx,
-                key,
-                opt(600.0 + 160.0 * j as f32, 488.0),
-                &label,
-                true,
-            ) {
+            if button_at(world, ctx, key, skin_opt(j), &label, true) {
                 send(world, UiAction::SetSkin(skin));
                 if let Some(name) = name {
                     send(world, UiAction::SetSkinName(name));

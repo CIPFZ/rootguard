@@ -53,7 +53,8 @@ pub fn default_progress(rules: Option<&Rules>) -> Progress {
     }
 }
 
-/// 读取存档。文件不存在 → 默认进度；损坏或版本不符 → 备份为 `.bak`、`log::warn!` 并返回默认进度。
+/// 读取存档。文件不存在 → 默认进度；v1 → 迁移到 v2（[`Progress::migrate_v1`]）；损坏或其他版本 → 备份为
+/// `.bak`、`log::warn!` 并返回默认进度。
 /// 返回 `(进度, 是否读到有效存档)`。
 #[must_use]
 pub fn load(dir: &Path, rules: Option<&Rules>) -> (Progress, bool) {
@@ -70,6 +71,8 @@ pub fn load(dir: &Path, rules: Option<&Rules>) -> (Progress, bool) {
     };
     match rootguard_core::data::parse_ron::<Progress>(&text) {
         Ok(p) if p.version == Progress::VERSION => (p, true),
+        // v1 → v2：默认渲染模式改为花园皮肤（裁决十）；下次写入时以 v2 保存
+        Ok(p) if p.version == 1 => (p.migrate_v1(), true),
         Ok(p) => {
             backup(
                 dir,

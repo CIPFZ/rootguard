@@ -6,7 +6,9 @@
 #   ./scripts/shot_garden.sh - /tmp/shots/title 3        # 脚本写 - 时普通启动（标题画面）
 #
 # 依赖同 scripts/screenshot.sh（Xvfb、ImageMagick import、Mesa）。存档目录隔离（ROOTGUARD_SAVE_DIR）。
-# 环境变量 SHOT_LANG（Zh / En，默认 Zh）。截图时刻按真实时间，画面不逐帧固定。
+# 环境变量：SHOT_LANG（Zh / En，默认 Zh）；SHOT_SAVE（garden = 写入花园皮肤设置的存档〔默认〕、none = 无存档
+# 〔新装〕、v1 = 0.1.0 格式的占位模式存档〔验证迁移〕）；SHOT_ARGS（追加的游戏参数，如 "--level 1-1"）。
+# 截图时刻按真实时间，画面不逐帧固定。
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -22,11 +24,22 @@ Xvfb "$display" -screen 0 1280x720x24 >/dev/null 2>&1 &
 xvfb=$!
 trap 'kill "$xvfb" "${game:-}" 2>/dev/null || true; rm -rf "$work"' EXIT
 sleep 1
-cat > "$work/progress.ron" <<RON
-(version: 1, cleared: [], unlocked: [], settings: (sfx: 0.0, music: 0.0, lang: $lang, skin: Skinned, skin_name: Garden))
+case "${SHOT_SAVE:-garden}" in
+    garden) cat > "$work/progress.ron" <<RON
+(version: 2, cleared: [], unlocked: [], settings: (sfx: 0.0, music: 0.0, lang: $lang, skin: Skinned, skin_name: Garden))
 RON
+    ;;
+    v1) cat > "$work/progress.ron" <<RON
+(version: 1, cleared: ["1-1"], unlocked: ["pebble_pod", "dewcup"], settings: (sfx: 0.0, music: 0.0, lang: $lang, skin: Placeholder))
+RON
+    ;;
+    none) ;;
+    *) echo "未知 SHOT_SAVE=${SHOT_SAVE}" >&2; exit 2 ;;
+esac
 args=()
 if [ "$script" != "-" ]; then args=(--autoplay "$script"); fi
+# shellcheck disable=SC2206
+args+=(${SHOT_ARGS:-})
 DISPLAY="$display" ROOTGUARD_SAVE_DIR="$work" target/release/rootguard "${args[@]}" >"$work/log" 2>&1 &
 game=$!
 start=$(date +%s.%N)

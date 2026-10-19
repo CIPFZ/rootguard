@@ -390,7 +390,7 @@ fn chinese_hud_when_lang_zh() {
     assert!(font.is_file());
 }
 
-/// ART-SPEC 0 / ADR-014：设置新增 `skin_name` 前写下的存档（无该字段）照常读取，不走备份路径。
+/// ART-SPEC 0 / ADR-014：设置新增 `skin_name` 前写下的存档（无该字段）照常读取，不走备份路径（v1，按裁决十迁移）。
 #[test]
 fn save_without_skin_name_loads() {
     let dir = temp_save(&format!("save-compat-{}", next_id()));
@@ -626,5 +626,52 @@ fn cjk_font_covers_text_tables() {
     assert!(
         missing.is_empty(),
         "字体缺少 {missing:?}：请运行 scripts/subset_font.py 并更新 assets/SOURCES.md"
+    );
+}
+
+/// 裁决十 / SPEC v1.3 12.1：存档 v1 → v2 迁移。v1 存档（0.1.0 / 0.2.0）一律改为 Skinned + Garden，其余照旧、
+/// 不走备份；v2 存档照常读取（玩家在 v2 里主动选的占位模式保留）；更高的版本仍走备份路径。新存档默认 Skinned + Garden。
+#[test]
+fn save_v1_migrates_to_skinned_garden() {
+    use rootguard_core::events::{SkinMode, SkinName};
+    let load = |text: &str| {
+        let dir = temp_save(&format!("migrate-{}", next_id()));
+        std::fs::create_dir_all(&dir).expect("目录");
+        std::fs::write(dir.join(FILE_NAME), text).expect("写入");
+        let (p, ok) = save::load(&dir, None);
+        (p, ok, dir.join(BACKUP_NAME).exists())
+    };
+    let v1 = r#"Progress(version: 1, cleared: ["1-1", "1-2"], unlocked: ["pebble_pod", "dewcup"],
+        settings: (sfx: 0.5, music: 0.75, lang: En, skin: Placeholder, skin_name: Default))"#;
+    let (p, ok, bak) = load(v1);
+    assert!(ok && !bak, "v1 存档应迁移而不是备份");
+    assert_eq!(p.version, Progress::VERSION);
+    assert_eq!(p.settings.skin, SkinMode::Skinned);
+    assert_eq!(p.settings.skin_name, SkinName::Garden);
+    assert_eq!(p.cleared.len(), 2, "进度不变");
+    assert!(
+        (p.settings.sfx - 0.5).abs() < 1e-6 && p.settings.lang == Lang::En,
+        "其他设置不变"
+    );
+
+    let v2 = r#"Progress(version: 2, cleared: [], unlocked: ["pebble_pod"],
+        settings: (sfx: 1.0, music: 1.0, lang: Zh, skin: Placeholder, skin_name: Default))"#;
+    let (p, ok, bak) = load(v2);
+    assert!(ok && !bak);
+    assert_eq!(
+        p.settings.skin,
+        SkinMode::Placeholder,
+        "v2 中主动选的占位模式保留"
+    );
+    assert_eq!(p.settings.skin_name, SkinName::Default);
+
+    let (_, ok, bak) = load(&v2.replace("version: 2", "version: 3"));
+    assert!(!ok && bak, "未知版本仍走备份路径");
+
+    let fresh = save::default_progress(None);
+    assert_eq!(fresh.version, 2);
+    assert_eq!(
+        (fresh.settings.skin, fresh.settings.skin_name),
+        (SkinMode::Skinned, SkinName::Garden)
     );
 }

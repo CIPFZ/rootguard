@@ -77,10 +77,52 @@ pub fn button_styled(
             if !frame {
                 label = label.color(egui::Color32::WHITE);
             }
-            let button = egui::Button::new(label).min_size(rect.size()).frame(frame);
-            clicked = ui.add_enabled(enabled, button).clicked();
+            let button = egui::Button::new(label).frame(frame);
+            // add_sized：按钮占满矩形且文字居中（只设 min_size 时文字靠左）
+            ui.add_enabled_ui(enabled, |ui| {
+                clicked = ui.add_sized(rect.size(), button).clicked();
+            });
         });
     clicked
+}
+
+/// 菜单木牌按钮的片段（`art/ui/menu_button.svg`，ART-SPEC 8.3 / 裁决九第 2 节）。
+pub const MENU_BUTTON: &str = "ui_menu_button";
+
+/// 皮肤是否提供菜单木牌（皮肤模式且皮肤有该精灵）。
+#[must_use]
+pub fn wood_buttons(world: &World) -> bool {
+    crate::skin::Painter::active(world).is_some_and(|sk| sk.has(MENU_BUTTON))
+}
+
+/// 在 `DrawList` 中画菜单木牌（egui 按钮在其上无边框，见 [`menu_button`]）；`(矩形, 是否可用)`，不可用的木牌变暗。
+pub fn draw_wood_buttons(world: &mut World, slots: &[(Rect, bool)]) {
+    let Some(mut list) = world.resources.remove::<DrawList>() else {
+        return;
+    };
+    if let Some(sk) = crate::skin::Painter::active(world) {
+        for &(r, enabled) in slots {
+            let tint = if enabled {
+                Color::WHITE
+            } else {
+                Color::rgba(0.55, 0.55, 0.55, 1.0)
+            };
+            sk.draw_in(&mut list, Layer::OVERLAY, MENU_BUTTON, r, 1.0, tint);
+        }
+    }
+    world.resources.insert(list);
+}
+
+/// 菜单按钮：皮肤有菜单木牌时无边框（木牌由 [`draw_wood_buttons`] 画在下面），否则同 [`button_at`]。
+pub fn menu_button(
+    world: &World,
+    ctx: &egui::Context,
+    id: &str,
+    r: Rect,
+    text: &str,
+    enabled: bool,
+) -> bool {
+    button_styled(world, ctx, id, r, text, enabled, !wood_buttons(world))
 }
 
 /// 菜单按钮列：以 `center_x` 为中心、自 `top` 起每行 `step` 的第 `i` 个按钮矩形。

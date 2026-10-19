@@ -148,6 +148,7 @@ Skin(
                 "ui_wave_fill",
                 "ui_wave_flag",
                 "ui_banner",
+                "ui_menu_button",
             ],
         ),
         (

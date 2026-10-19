@@ -481,3 +481,16 @@ AGENT 3.4 逐关处理；等待期间进行美术阶段（AGENT v1.3 第 9 章�
 
 规模：rootguard-core 4652 行、rootguard-content 577 行、rootguard-app 5718 行（含测试与文档注释）；
 测试 51 个（core 23、content 6、app 22）。决策：ADR-007、ADR-008、ADR-009。
+
+## v0.2.1（裁决十 `docs/owner-decisions/2026-10-19-default-skinned.md`，2026-10-19）
+
+- [x] 默认渲染模式 `Skinned` + `garden`（SPEC v1.3 12.1）；存档 v2，v1 读取时迁移为 Skinned + Garden（ADR-018）。
+- [x] 依赖默认值的 4 个测试显式切到 Placeholder；新增 `save_v1_migrates_to_skinned_garden`、`menu_buttons_are_wooden_signs`。
+- [x] 设置画面：花园 / 几何（0.1.0）/ 占位；标题与结算菜单按钮为木牌（`art/ui/menu_button.svg`）。
+  顺带：egui 按钮文字改为居中（原先 `min_size` 时靠左，占位模式同样受益，纯视觉）。
+- [x] SPEC 13 音效表：裁决十的 SPEC v1.3 提交（f09e13b）连带删掉了按裁决八追加的 21 行音效，已按原文恢复（该表为唯一
+  允许实现者追加的地方）。
+- [x] CHANGELOG `[0.2.1]`，workspace 版本 0.2.1。
+- [x] 验收截图：`docs/screenshots/v021-fresh.png`（无存档新装，`--level 1-1`）、`v021-migrated.png`（0.1.0 格式的 v1 存档，
+  渲染模式为 Placeholder，`--level 1-1`）——两张都是花园皮肤。
+- **停下**：等负责人打 `v0.2.1`。

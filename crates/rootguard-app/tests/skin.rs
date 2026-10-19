@@ -1388,6 +1388,7 @@ fn time_of_day_tint() {
         ("1-10", TimeOfDay::Dusk),
     ] {
         let mut runner = common::battle_runner(level, &[]);
+        send(&mut runner, UiAction::SetSkin(SkinMode::Placeholder));
         runner.frames(2);
         assert!(tints(&runner).is_empty(), "占位模式不画色调");
         send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
@@ -1434,6 +1435,7 @@ fn title_background_and_ending_still() {
         runner.frames(2);
     };
     let mut title = runner_with(rootguard_app::TitleScene, &format!("title-{}", next_id()));
+    send(&mut title, UiAction::SetSkin(SkinMode::Placeholder));
     title.frames(2);
     assert!(!drew(&title, TITLE_BG), "占位模式不画标题背景");
     skinned(&mut title);
@@ -1447,6 +1449,7 @@ fn title_background_and_ending_still() {
         OutcomeScene::new(true, vec![], false).with_ending(true),
         &format!("ending-{}", next_id()),
     );
+    send(&mut end, UiAction::SetSkin(SkinMode::Placeholder));
     end.frames(2);
     assert!(!drew(&end, ENDING_BACK));
     assert!(
@@ -1597,4 +1600,33 @@ fn skinned_defaults_to_garden() {
     send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
     runner.frames(2);
     assert!(drawn_rects_opt(&runner, rootguard_app::hud::UI_HUD_BAR).is_some());
+}
+
+/// 裁决九第 2 节 / 裁决十：标题（4 个）与结算（重试 / 返回，有下一关时 3 个）的菜单按钮在皮肤模式下画木牌；
+/// 占位模式不画。
+#[test]
+fn menu_buttons_are_wooden_signs() {
+    use rootguard_app::scenes::{MENU_BUTTON, OutcomeScene};
+    let mut title = runner_with(rootguard_app::TitleScene, &format!("menu-{}", next_id()));
+    title.frames(2);
+    assert_eq!(
+        drawn_rects(&title, MENU_BUTTON).len(),
+        4,
+        "默认（Skinned + garden）应画木牌"
+    );
+    send(&mut title, UiAction::SetSkin(SkinMode::Placeholder));
+    title.frames(2);
+    assert!(drawn_rects(&title, MENU_BUTTON).is_empty());
+    for (has_next, n) in [(true, 3), (false, 2)] {
+        let mut out = runner_with(
+            OutcomeScene::new(true, vec![], has_next).with_ending(!has_next),
+            &format!("menu-out-{}", next_id()),
+        );
+        out.frames(2);
+        assert_eq!(
+            drawn_rects(&out, MENU_BUTTON).len(),
+            n,
+            "has_next = {has_next}"
+        );
+    }
 }
