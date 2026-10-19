@@ -407,9 +407,10 @@ fn save_without_skin_name_loads() {
     let p = world.resources.expect::<Progress>();
     assert!(p.cleared.contains(&lid("1-1")));
     assert_eq!(p.settings.skin, rootguard_core::events::SkinMode::Skinned);
+    // 缺省的皮肤为 garden（裁决八第 3 节第 7 项：Skinned 默认 garden）
     assert_eq!(
         p.settings.skin_name,
-        rootguard_core::events::SkinName::Default
+        rootguard_core::events::SkinName::Garden
     );
 }
 

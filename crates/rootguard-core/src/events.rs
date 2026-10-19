@@ -232,9 +232,9 @@ pub enum SkinMode {
 )]
 pub enum SkinName {
     /// G5 的几何皮肤 `default`（SPEC 12.3）。
-    #[default]
     Default,
-    /// 美术阶段的 `garden` 皮肤（ART-SPEC）。
+    /// 美术阶段的 `garden` 皮肤（ART-SPEC）；`SkinMode::Skinned` 的默认（裁决八第 3 节第 7 项）。
+    #[default]
     Garden,
 }
 

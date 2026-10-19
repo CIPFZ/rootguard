@@ -176,7 +176,7 @@ checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
 
 [[package]]
 name = "artgen"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "resvg",
@@ -2398,7 +2398,7 @@ dependencies = [
 
 [[package]]
 name = "rootguard-app"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "directories",
@@ -2413,7 +2413,7 @@ dependencies = [
 
 [[package]]
 name = "rootguard-content"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "log",
  "rootguard-core",
@@ -2424,7 +2424,7 @@ dependencies = [
 
 [[package]]
 name = "rootguard-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "log",
  "ron",

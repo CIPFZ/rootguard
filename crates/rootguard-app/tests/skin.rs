@@ -1303,6 +1303,7 @@ fn garden_hud_sprites() {
     use rootguard_core::resources::WaveState;
     let mut runner = common::battle_runner("1-10", &[]);
     send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Default));
     runner.frames(2);
     assert!(
         drawn_rects_opt(&runner, UI_HUD_BAR).is_none(),
@@ -1586,4 +1587,14 @@ fn shield_break_spawns_plank_fx() {
     assert_eq!(count(&runner), 1);
     runner.frame();
     assert_eq!(count(&runner), 1, "双缓冲事件不应生成第二份");
+}
+
+/// 裁决八第 3 节第 7 项：只切到皮肤模式、未选皮肤时用 garden。
+#[test]
+fn skinned_defaults_to_garden() {
+    assert_eq!(SkinName::default(), SkinName::Garden);
+    let mut runner = common::battle_runner("1-1", &[]);
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    runner.frames(2);
+    assert!(drawn_rects_opt(&runner, rootguard_app::hud::UI_HUD_BAR).is_some());
 }

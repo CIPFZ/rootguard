@@ -76,7 +76,7 @@
 | A0 管线 | ✅ 2026-10-15 |
 | A1 全员静态（审核门） | ✅ 2026-10-16（裁决七：守卫通过、Husk 去鸟化后放行） |
 | A2 全员动画与特效 | ✅ 2026-10-16（裁决八通过） |
-| A3 战场与叙事 | 进行中 |
+| A3 战场与叙事 | ✅ 2026-10-19（等负责人审看并打 v0.2.0） |
 
 ### A2 全员动画与特效（裁决七放行，2026-10-16）
 
@@ -172,6 +172,11 @@
 - [x] 第 6 项 咬夹草 `burp` 与门板碎片单测（裁决八 2.4）：`chew` 末帧事件 `burp`，只在最后一个循环生成 `burp_bubble`（16 tick，
   上升胀大后破掉）；测试 `snapmaw_burps_once_per_chew`（1-4，每次咀嚼恰好一个气泡）、`shield_break_spawns_plank_fx`（直接发
   `EnemyArmorBroken { kind: Shield }`，不依赖脚本解）。A3 的呈现决策见 ADR-017。
+- [x] 第 7 项 `SkinMode::Skinned` 默认 `garden`（`SkinName` 缺省改为 `Garden`；占位模式仍是默认渲染模式，SPEC 12.1；
+  0.1.0 存档中没有 `skin_name` 的按 garden 读取，测试 `save_without_skin_name_loads` 相应更新、新增
+  `skinned_defaults_to_garden`）；`CHANGELOG.md` 0.2.0；`docs/game-v1-report.md` 第 8 节“美术阶段”；workspace 版本
+  0.2.0（Release 作业核对 tag 与版本）。测试 99 个通过（另 2 个 `#[ignore]` 工具），golden 未变。
+- **第 8 项 停下**（2026-10-19）：A3 全部完成，等负责人实机审看后打 `v0.2.0`。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 
