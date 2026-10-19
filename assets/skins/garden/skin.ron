@@ -46,6 +46,7 @@ Skin(
                 "armor_break_plank_play",
                 "armor_break_pot_play",
                 "armor_break_twig_play",
+                "burp_bubble_play",
                 "crumble_play",
                 "dew_idle",
                 "dew_pop_play",
@@ -159,6 +160,14 @@ Skin(
                 "scene_gate_post",
                 "scene_props_left",
                 "scene_props_right",
+            ],
+        ),
+        (
+            atlas: "skins/garden/garden_story.atlas.ron",
+            clips: [
+                "story_title_bg",
+                "story_ending_back",
+                "story_ending_front",
             ],
         ),
         (

@@ -161,6 +161,17 @@
   允许的数据改动，模拟不读取，golden 不变）；10 关按 LORE §4 填写；皮肤模式在 `Layer::OVERLAY` 下一层画整屏叠层（清晨
   `#9DB9FF` 12%、正午 `#FFF2C2` 10%、傍晚 `#FF9A5C` 18%）。实机截图 `docs/screenshots/a3-time-of-day.png`（1-1 / 1-5 /
   1-8 / 1-10）。测试 `time_of_day_tint`。
+- [x] 第 5 项 叙事（ART-SPEC 8.4）：十关园丁独白 `level.<id>.intro`（中文取 LORE §4 原句，英文为对应翻译）在 Intro 横幅显示、替换
+  “准备”，不改 Intro 时长；横幅木牌加长到 900 px，独白用 22 px 字。结局：1-10（最后一关）胜利后结算画面为结局静帧——温室地面
+  的裂缝、日灯笼的光束、从缝里探出卷了一下的根须、门外枯田边探出头的小芽怪（日灯笼与小芽怪用角色精灵，画在背层与前层之间）
+  ——与 `ending.line`；占位模式把这一句写在提示行。标题画面背景为根母远景的重绘（`art/story/title_bg.svg`，构图自定，只取参考板
+  调子），标题写在吊挂木牌上。CJK 子集字体按新文本重新生成（`scripts/subset_font.py`），新增测试 `cjk_font_covers_text_tables`
+  （解析字体 cmap，新文本漏跑子集脚本时失败——本项第一次实机截图里独白显示成方框，即因为此）。实机截图
+  `docs/screenshots/a3-story.png`（标题 / 中英独白 / 结局）。测试 `title_background_and_ending_still`、`i18n_tables_complete`
+  （每关独白与结局一句）、`chinese_hud_when_lang_zh`（Intro 为 1-1 独白）。
+- [x] 第 6 项 咬夹草 `burp` 与门板碎片单测（裁决八 2.4）：`chew` 末帧事件 `burp`，只在最后一个循环生成 `burp_bubble`（16 tick，
+  上升胀大后破掉）；测试 `snapmaw_burps_once_per_chew`（1-4，每次咀嚼恰好一个气泡）、`shield_break_spawns_plank_fx`（直接发
+  `EnemyArmorBroken { kind: Shield }`，不依赖脚本解）。A3 的呈现决策见 ADR-017。
 
 ### A1 全员静态（裁决六放行，2026-10-16）
 

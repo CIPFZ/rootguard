@@ -1,0 +1,10 @@
+// 特效 burp_bubble（ART-SPEC v1.3 4.10）：咬夹草咀嚼结束时打嗝冒出的一个小气泡，上升、胀大后破掉
+Rig(
+    kind: Fx(32, 32),
+    rest: "play",
+    flash: false,
+    parts: [
+        (name: "bubble", pivot: (16, 16), z: 0),
+        (name: "pop", pivot: (16, 16), z: 1, hidden: true),
+    ],
+)

@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+  <!-- ART-SPEC 8.4 标题背景：沉睡的根母（树冠半绿半枯、闭眼）、左侧温室、右侧枯玉米地与栅栏、地下根系。
+       标题与副标题写在上方吊挂的木牌上（游戏绘制文字），菜单按钮在中央偏左，根母在右侧不被遮挡 -->
+  <rect x="0" y="0" width="1280" height="720" fill="@sky_bottom"/>
+  <path d="M0 0 L1280 0 L1280 250 C1000 270 700 230 400 262 C240 278 100 258 0 266 Z" fill="@sky_top"/>
+  <path d="M90.0 120 C90.0 100.0 130.0 94.0 150 104.0 C162.0 80.0 206.0 86.0 206.0 108.0 C230.0 106.0 236.0 120 220.0 120 Z" fill="@dew_glow" opacity="0.9"/>
+  <path d="M472.0 200 C472.0 184.0 504.0 179.2 520 187.2 C529.6 168.0 564.8 172.8 564.8 190.4 C584.0 188.8 588.8 200 576.0 200 Z" fill="@dew_glow" opacity="0.9"/>
+  <path d="M1054.0 140 C1054.0 118.0 1098.0 111.4 1120 122.4 C1133.2 96.0 1181.6 102.6 1181.6 126.8 C1208.0 124.6 1214.6 140 1197.0 140 Z" fill="@dew_glow" opacity="0.9"/>
+  <path d="M0 470 C80 430 200 440 300 452 L300 520 L0 520 Z" fill="@leaf_dark"/>
+  <g opacity="0.7"><path fill="none" d="M1090 470 L1087.9 420.28501705500514 M1090 455.1 q-6 -4 -14 4 M1090 444.1 q-6 -4 -14 4 M1090 433.2 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1104 470 L1101.3 419.0293324926224 M1104 454.7 q-6 -4 -14 4 M1104 443.5 q-6 -4 -14 4 M1104 432.3 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1118 470 L1115.4 416.9906294901284 M1118 454.1 q-6 -4 -14 4 M1118 442.4 q6 -4 14 4 M1118 430.8 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1132 470 L1129.7 405.1944362598389 M1132 450.6 q-6 -4 -14 4 M1132 436.3 q-6 -4 -14 4 M1132 422.0 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1146 470 L1144.3 428.51232059830687 M1146 457.6 q-6 -4 -14 4 M1146 448.4 q6 -4 14 4 M1146 439.3 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1160 470 L1157.7 425.6723474992769 M1160 456.7 q6 -4 14 4 M1160 446.9 q-6 -4 -14 4 M1160 437.2 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1174 470 L1174.8 412.551995090126 M1174 452.8 q6 -4 14 4 M1174 440.1 q-6 -4 -14 4 M1174 427.5 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1188 470 L1188.7 413.0689512059984 M1188 452.9 q6 -4 14 4 M1188 440.4 q6 -4 14 4 M1188 427.9 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1202 470 L1204.5 416.0319440248098 M1202 453.8 q6 -4 14 4 M1202 441.9 q6 -4 14 4 M1202 430.1 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1216 470 L1217.2 406.16861555432524 M1216 450.9 q-6 -4 -14 4 M1216 436.8 q-6 -4 -14 4 M1216 422.8 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1230 470 L1232.3 414.24410488565644 M1230 453.3 q6 -4 14 4 M1230 441.0 q6 -4 14 4 M1230 428.7 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1244 470 L1243.5 426.4580266523511 M1244 456.9 q6 -4 14 4 M1244 447.4 q-6 -4 -14 4 M1244 437.8 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1258 470 L1260.8 417.3490493656977 M1258 454.2 q-6 -4 -14 4 M1258 442.6 q6 -4 14 4 M1258 431.0 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1272 470 L1272.6 409.14113901179024 M1272 451.7 q6 -4 14 4 M1272 438.4 q-6 -4 -14 4 M1272 425.0 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/></g>
+  <rect x="0" y="470" width="1280" height="250" fill="@grass_dry"/>
+  <path d="M0 470 L560 470 C620 520 600 600 640 720 L0 720 Z" fill="@leaf"/>
+  <path d="M560 470 L820 470 C860 540 840 620 880 720 L640 720 C600 600 620 520 560 470 Z" fill="@leaf_light"/>
+  <path fill="none" d="M0 540 C300 534 700 546 1280 536" stroke="@leaf_dark" stroke-width="3" opacity="0.6"/>
+  <path fill="none" d="M0 600 C300 594 700 606 1280 596" stroke="@leaf_dark" stroke-width="3" opacity="0.6"/>
+  <path fill="none" d="M0 660 C300 654 700 666 1280 656" stroke="@leaf_dark" stroke-width="3" opacity="0.6"/>
+  <path d="M0 676 C300 668 900 684 1280 672 L1280 720 L0 720 Z" fill="@bark_dark"/>
+  <path fill="none" d="M40 676 C70 694 110 690 150 712" stroke="@bark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M190 676 C220 694 260 690 300 712" stroke="@bark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M340 676 C370 694 410 690 450 712" stroke="@bark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M490 676 C520 694 560 690 600 712" stroke="@bark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M640 676 C670 694 710 690 750 712" stroke="@bark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M790 676 C820 694 860 690 900 712" stroke="@bark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M940 676 C970 694 1010 690 1050 712" stroke="@bark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M1090 676 C1120 694 1160 690 1200 712" stroke="@bark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M1240 676 C1270 694 1310 690 1350 712" stroke="@bark" stroke-width="4" stroke-linecap="round"/>
+  <path d="M1150 600 L1150 488 L1160 478 L1170 488 L1170 600 Z" fill="@bark" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M1180 600 L1180 488 L1190 478 L1200 488 L1200 600 Z" fill="@bark" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M1210 600 L1210 488 L1220 478 L1230 488 L1230 600 Z" fill="@bark" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M1240 600 L1240 488 L1250 478 L1260 488 L1260 600 Z" fill="@bark" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M1270 600 L1270 488 L1280 478 L1290 488 L1290 600 Z" fill="@bark" stroke="@outline" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M1140 512 L1280 506 M1140 572 L1280 566" stroke="@bark_dark" stroke-width="6" fill="none"/>
+  <path d="M930 480 C845.0 500 760 530 760 560" fill="none" stroke="@outline" stroke-width="24" stroke-linecap="round"/>
+  <path d="M930 480 C875.0 540 820 570 820 600" fill="none" stroke="@outline" stroke-width="24" stroke-linecap="round"/>
+  <path d="M930 480 C995.0 540 1060 570 1060 600" fill="none" stroke="@outline" stroke-width="24" stroke-linecap="round"/>
+  <path d="M930 480 C1030.0 506 1130 536 1130 566" fill="none" stroke="@outline" stroke-width="24" stroke-linecap="round"/>
+  <path d="M930 480 C935.0 560 940 590 940 620" fill="none" stroke="@outline" stroke-width="24" stroke-linecap="round"/>
+  <path d="M930 480 C845.0 500 760 530 760 560" fill="none" stroke="@bark" stroke-width="15" stroke-linecap="round"/>
+  <path d="M930 480 C875.0 540 820 570 820 600" fill="none" stroke="@bark" stroke-width="15" stroke-linecap="round"/>
+  <path d="M930 480 C995.0 540 1060 570 1060 600" fill="none" stroke="@bark" stroke-width="15" stroke-linecap="round"/>
+  <path d="M930 480 C1030.0 506 1130 536 1130 566" fill="none" stroke="@bark" stroke-width="15" stroke-linecap="round"/>
+  <path d="M930 480 C935.0 560 940 590 940 620" fill="none" stroke="@bark" stroke-width="15" stroke-linecap="round"/>
+  <path fill="none" d="M900 260 C850 220 790 200 740 190" stroke="@outline" stroke-width="30" stroke-linecap="round"/>
+  <path fill="none" d="M900 260 C850 220 790 200 740 190" stroke="@bark" stroke-width="21" stroke-linecap="round"/>
+  <path fill="none" d="M960 260 C1010 210 1070 190 1130 200" stroke="@outline" stroke-width="30" stroke-linecap="round"/>
+  <path fill="none" d="M960 260 C1010 210 1070 190 1130 200" stroke="@bark" stroke-width="21" stroke-linecap="round"/>
+  <path fill="none" d="M930 250 C924 200 934 160 940 120" stroke="@outline" stroke-width="30" stroke-linecap="round"/>
+  <path fill="none" d="M930 250 C924 200 934 160 940 120" stroke="@bark" stroke-width="21" stroke-linecap="round"/>
+  <circle cx="700" cy="236" r="69" fill="@outline"/>
+  <circle cx="760" cy="168" r="85" fill="@outline"/>
+  <circle cx="840" cy="116" r="95" fill="@outline"/>
+  <circle cx="950" cy="96" r="97" fill="@outline"/>
+  <circle cx="1060" cy="124" r="91" fill="@outline"/>
+  <circle cx="1145" cy="186" r="79" fill="@outline"/>
+  <circle cx="1178" cy="256" r="59" fill="@outline"/>
+  <circle cx="668" cy="290" r="53" fill="@outline"/>
+  <circle cx="780" cy="226" r="67" fill="@outline"/>
+  <circle cx="890" cy="190" r="75" fill="@outline"/>
+  <circle cx="1010" cy="196" r="75" fill="@outline"/>
+  <circle cx="1120" cy="240" r="61" fill="@outline"/>
+  <circle cx="730" cy="300" r="45" fill="@outline"/>
+  <circle cx="700" cy="236" r="64" fill="@leaf"/>
+  <circle cx="760" cy="168" r="80" fill="@leaf"/>
+  <circle cx="840" cy="116" r="90" fill="@leaf"/>
+  <circle cx="950" cy="96" r="92" fill="@straw"/>
+  <circle cx="1060" cy="124" r="86" fill="@straw"/>
+  <circle cx="1145" cy="186" r="74" fill="@straw"/>
+  <circle cx="1178" cy="256" r="54" fill="@straw"/>
+  <circle cx="668" cy="290" r="48" fill="@leaf"/>
+  <circle cx="780" cy="226" r="62" fill="@leaf"/>
+  <circle cx="890" cy="190" r="70" fill="@leaf"/>
+  <circle cx="1010" cy="196" r="70" fill="@straw"/>
+  <circle cx="1120" cy="240" r="56" fill="@straw"/>
+  <circle cx="730" cy="300" r="40" fill="@leaf"/>
+  <path fill="none" d="M664.8 261.6 C687.2 275.7 719.2 275.7 737.1 259.0" stroke="@leaf_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M716.0 200.0 C744.0 217.6 784.0 217.6 806.4 196.8" stroke="@leaf_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M790.5 152.0 C822.0 171.8 867.0 171.8 892.2 148.4" stroke="@leaf_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M899.4 132.8 C931.6 153.0 977.6 153.0 1003.4 129.1" stroke="@straw_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M1012.7 158.4 C1042.8 177.3 1085.8 177.3 1109.9 155.0" stroke="@straw_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M1104.3 215.6 C1130.2 231.9 1167.2 231.9 1187.9 212.6" stroke="@straw_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M1148.3 277.6 C1167.2 289.5 1194.2 289.5 1209.3 275.4" stroke="@straw_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M641.6 309.2 C658.4 319.8 682.4 319.8 695.8 307.3" stroke="@leaf_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M745.9 250.8 C767.6 264.4 798.6 264.4 816.0 248.3" stroke="@leaf_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M851.5 218.0 C876.0 233.4 911.0 233.4 930.6 215.2" stroke="@leaf_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M971.5 224.0 C996.0 239.4 1031.0 239.4 1050.6 221.2" stroke="@straw_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M1089.2 262.4 C1108.8 274.7 1136.8 274.7 1152.5 260.2" stroke="@straw_dark" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M708.0 316.0 C722.0 324.8 742.0 324.8 753.2 314.4" stroke="@leaf_dark" stroke-width="5" stroke-linecap="round"/>
+  <path d="M800 130 c8 -4 16 0 16 8 c-8 4 -16 0 -16 -8 Z" fill="@leaf_light" stroke="@outline" stroke-width="2"/>
+  <path d="M720 210 c8 -4 16 0 16 8 c-8 4 -16 0 -16 -8 Z" fill="@leaf_light" stroke="@outline" stroke-width="2"/>
+  <path d="M870 160 c8 -4 16 0 16 8 c-8 4 -16 0 -16 -8 Z" fill="@leaf_light" stroke="@outline" stroke-width="2"/>
+  <path d="M780 530 C834 500 850 430 856 330 C858 290 864 262 874 240 L986 240 C996 262 1002 290 1004 330 C1010 430 1026 500 1080 530 Z" fill="@bark" stroke="@outline" stroke-width="5" stroke-linejoin="round"/>
+  <path fill="none" d="M888 262 C870 340 886 420 857 512" stroke="@bark_dark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M916 262 C904 340 920 420 905 512" stroke="@bark_dark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M951 262 C948 340 964 420 966 512" stroke="@bark_dark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M976 262 C980 340 996 420 1011 512" stroke="@bark_dark" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="980" cy="462" r="16" fill="@bark.shade" stroke="@outline" stroke-width="3"/><circle cx="980" cy="462" r="8" fill="none" stroke="@bark_dark" stroke-width="2"/>
+  <circle cx="866" cy="300" r="16" fill="@leaf_light" stroke="@outline" stroke-width="2.5"/>
+  <circle cx="840" cy="452" r="14" fill="@leaf_light" stroke="@outline" stroke-width="2.5"/>
+  <circle cx="996" cy="336" r="11" fill="@leaf_light" stroke="@outline" stroke-width="2.5"/>
+  <path fill="none" d="M884 360 C894 372 908 372 918 360 M942 360 C952 372 966 372 976 360" stroke="@outline" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M882 340 C894 332 908 334 916 340 M944 340 C952 334 966 332 978 340" stroke="@bark_dark" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M910 414 C922 424 938 424 950 414" stroke="@outline" stroke-width="4" stroke-linecap="round"/>
+  <path fill="none" d="M930 372 C924 386 926 396 934 398" stroke="@bark_dark" stroke-width="4" stroke-linecap="round"/>
+  <path d="M1120 330 c6 6 4 14 -2 18 c-6 -6 -4 -14 2 -18 Z" fill="@straw_dark" stroke="@husk_outline" stroke-width="2"/>
+  <path d="M1162 318 c6 6 4 14 -2 18 c-6 -6 -4 -14 2 -18 Z" fill="@straw_dark" stroke="@husk_outline" stroke-width="2"/>
+  <path d="M1090 352 c6 6 4 14 -2 18 c-6 -6 -4 -14 2 -18 Z" fill="@straw_dark" stroke="@husk_outline" stroke-width="2"/>
+  <path d="M40 340 L200 250 L360 340 L360 600 L40 600 Z" fill="@leaf_dark"/>
+  <path d="M60 590 C36 550 50 473.31913429352375 66 463.31913429352375 C78 473.31913429352375 88 550 60 590 Z" fill="@leaf" stroke="@outline" stroke-width="2.5"/>
+  <path d="M108 590 C84 550 98 501.5540997548213 114 491.5540997548213 C126 501.5540997548213 136 550 108 590 Z" fill="@leaf" stroke="@outline" stroke-width="2.5"/>
+  <path d="M156 590 C132 550 146 490.15086767151956 162 480.15086767151956 C174 490.15086767151956 184 550 156 590 Z" fill="@leaf" stroke="@outline" stroke-width="2.5"/>
+  <path d="M204 590 C180 550 194 526.3598343441668 210 516.3598343441668 C222 526.3598343441668 232 550 204 590 Z" fill="@leaf" stroke="@outline" stroke-width="2.5"/>
+  <path d="M252 590 C228 550 242 487.91047872173453 258 477.91047872173453 C270 487.91047872173453 280 550 252 590 Z" fill="@leaf" stroke="@outline" stroke-width="2.5"/>
+  <path d="M300 590 C276 550 290 491.1722687283399 306 481.1722687283399 C318 491.1722687283399 328 550 300 590 Z" fill="@leaf" stroke="@outline" stroke-width="2.5"/>
+  <path d="M40 340 L200 250 L360 340 L360 600 L40 600 Z" fill="@frost" opacity="0.38"/>
+  <path fill="none" d="M40 340 L200 250 L360 340 L360 600 L40 600 Z M200 250 L200 600 M40 450 L360 450 M120 295 L120 600 M280 295 L280 600" stroke="@outline" stroke-width="12" stroke-linejoin="round"/>
+  <path fill="none" d="M40 340 L200 250 L360 340 L360 600 L40 600 Z M200 250 L200 600 M40 450 L360 450 M120 295 L120 600 M280 295 L280 600" stroke="@bark" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M100 374 C104 380 104 384 100 385 C96 384 96 380 100 374 Z" fill="@dew_glow" stroke="@outline" stroke-width="1.5"/>
+  <path d="M170 494 C174 500 174 504 170 505 C166 504 166 500 170 494 Z" fill="@dew_glow" stroke="@outline" stroke-width="1.5"/>
+  <path d="M240 394 C244 400 244 404 240 405 C236 404 236 400 240 394 Z" fill="@dew_glow" stroke="@outline" stroke-width="1.5"/>
+  <path d="M320 504 C324 510 324 514 320 515 C316 514 316 510 320 504 Z" fill="@dew_glow" stroke="@outline" stroke-width="1.5"/>
+  <path d="M150 334 C154 340 154 344 150 345 C146 344 146 340 150 334 Z" fill="@dew_glow" stroke="@outline" stroke-width="1.5"/>
+  <path d="M310 374 C314 380 314 384 310 385 C306 384 306 380 310 374 Z" fill="@dew_glow" stroke="@outline" stroke-width="1.5"/>
+  <path fill="none" d="M360 580 C420 580 420 630 500 650" stroke="@outline" stroke-width="14" stroke-linecap="round"/>
+  <path fill="none" d="M360 580 C420 580 420 630 500 650" stroke="@brass" stroke-width="8" stroke-linecap="round"/>
+  <path fill="none" d="M410 0 L420 44 M870 0 L860 44" stroke="@straw_dark" stroke-width="5" stroke-linecap="round"/>
+  <rect x="340" y="40" width="600" height="150" rx="8" fill="@bark" stroke="@outline" stroke-width="4"/>
+  <path fill="none" d="M354 92.5 C520.0 85.0 700.0 103.0 926 89.5 M354 148.0 C550.0 157.0 760.0 139.0 926 151.0" stroke="@bark.shade" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="354" cy="54" r="4" fill="@frost.shade" stroke="@outline" stroke-width="2"/>
+  <circle cx="926" cy="54" r="4" fill="@frost.shade" stroke="@outline" stroke-width="2"/>
+  <circle cx="354" cy="176" r="4" fill="@frost.shade" stroke="@outline" stroke-width="2"/>
+  <circle cx="926" cy="176" r="4" fill="@frost.shade" stroke="@outline" stroke-width="2"/>
+</svg>

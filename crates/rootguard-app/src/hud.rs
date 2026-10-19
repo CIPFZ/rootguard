@@ -65,6 +65,16 @@ const PORTRAIT_IN_CARD: Rect = Rect {
     max: Vec2::new(55.5, 47.0),
 };
 
+/// 横幅字号：大波提示 30；园丁独白较长，22（ART-SPEC 8.4）。
+const BANNER_SIZE: f32 = 30.0;
+const INTRO_SIZE: f32 = 22.0;
+
+/// 关卡独白的文本 key（ART-SPEC 8.4）。
+#[must_use]
+pub fn intro_key(level: &str) -> String {
+    format!("level.{level}.intro")
+}
+
 /// 皮肤是否提供 HUD 精灵（铲子与暂停按钮据此改为无边框，`BattleScene::ui`）。
 #[must_use]
 pub fn skinned_hud(painter: Option<&crate::skin::Painter<'_>>) -> bool {
@@ -85,13 +95,19 @@ pub fn card_at(world: &World, pos: Vec2) -> Option<usize> {
     (0..n).find(|&i| card_rect(i).contains(pos))
 }
 
-/// 横幅文字（SPEC 11.2："准备"、"大波来袭"、"最后一波"）。
+/// 横幅文字（SPEC 11.2："大波来袭"、"最后一波"）。Intro 阶段为该关的园丁独白 `level.<id>.intro`
+/// （ART-SPEC 8.4，替换"准备"；文本表没有时回退"准备"）。
 #[must_use]
 pub fn banner(world: &World) -> Option<String> {
     let state = world.resources.get::<BattleState>()?;
     let waves = world.resources.get::<WaveState>()?;
     if state.phase == Phase::Intro {
-        return Some(t(world, "banner.ready"));
+        let key = intro_key(state.level.as_str());
+        let has = world
+            .resources
+            .get::<crate::i18n::I18n>()
+            .is_some_and(|i| i.has(&key));
+        return Some(t(world, if has { &key } else { "banner.ready" }));
     }
     if state.phase != Phase::Playing || waves.banner.is_none() {
         return None;
@@ -301,8 +317,13 @@ pub fn draw(world: &World, list: &mut DrawList, painter: Option<&crate::skin::Pa
                     )
                 })
             });
+        let size = if state.phase == Phase::Intro {
+            INTRO_SIZE
+        } else {
+            BANNER_SIZE
+        };
         let pos = if board {
-            center + Vec2::new(0.0, BANNER_TEXT_DY)
+            center + Vec2::new(0.0, BANNER_TEXT_DY * size / BANNER_SIZE)
         } else {
             center
         };
@@ -310,7 +331,7 @@ pub fn draw(world: &World, list: &mut DrawList, painter: Option<&crate::skin::Pa
             hud,
             pos,
             text,
-            30.0,
+            size,
             Color::from_hex(0xFF_F59D).with_alpha(progress),
             TextAlign::Center,
         );

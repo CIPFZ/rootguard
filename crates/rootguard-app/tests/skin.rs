@@ -1406,3 +1406,184 @@ fn time_of_day_tint() {
         }
     }
 }
+
+/// 某片段第 0 帧在绘制列表中是否出现（任意尺寸）。
+fn drew(runner: &HeadlessRunner, clip: &str) -> bool {
+    drawn_rects_opt(runner, clip).is_some()
+}
+
+/// ART-SPEC 8.4：花园皮肤的标题画面画根母远景背景；1-10（最后一关）胜利的结算画面画结局静帧（日灯笼与小芽怪
+/// 用角色精灵）与 `ending.line`；其他关胜利不画。占位模式的结局一句写在提示行。
+#[test]
+fn title_background_and_ending_still() {
+    use rootguard_app::scenes::{ENDING_BACK, OutcomeScene, TITLE_BG};
+    let texts = |runner: &HeadlessRunner| -> Vec<String> {
+        runner
+            .last_draw_list()
+            .iter()
+            .filter_map(|c| match &c.kind {
+                DrawKind::Text { text, .. } => Some(text.clone()),
+                _ => None,
+            })
+            .collect()
+    };
+    let skinned = |runner: &mut HeadlessRunner| {
+        send(runner, UiAction::SetSkin(SkinMode::Skinned));
+        send(runner, UiAction::SetSkinName(SkinName::Garden));
+        runner.frames(2);
+    };
+    let mut title = runner_with(rootguard_app::TitleScene, &format!("title-{}", next_id()));
+    title.frames(2);
+    assert!(!drew(&title, TITLE_BG), "占位模式不画标题背景");
+    skinned(&mut title);
+    assert!(drew(&title, TITLE_BG));
+
+    let line = {
+        let world = title.app().world();
+        rootguard_app::i18n::t(world, "ending.line")
+    };
+    let mut end = runner_with(
+        OutcomeScene::new(true, vec![], false).with_ending(true),
+        &format!("ending-{}", next_id()),
+    );
+    end.frames(2);
+    assert!(!drew(&end, ENDING_BACK));
+    assert!(
+        texts(&end).iter().any(|t| t.contains(&line)),
+        "占位模式提示行应有结局一句"
+    );
+    skinned(&mut end);
+    assert!(drew(&end, ENDING_BACK));
+    assert!(drew(&end, "sunlantern_idle") && drew(&end, "sproutling_walk"));
+    assert!(texts(&end).contains(&line));
+
+    let mut mid = runner_with(
+        OutcomeScene::new(true, vec![], true).with_ending(false),
+        &format!("outcome-{}", next_id()),
+    );
+    skinned(&mut mid);
+    assert!(!drew(&mid, ENDING_BACK), "不是最后一关不画结局");
+}
+
+/// ART-SPEC v1.3 4.10：咬夹草每次咀嚼结束打一个嗝——`chew` 片段末帧事件 `burp`，只在最后一个循环（咀嚼计时器
+/// 剩余 ≤ 60）生成一个 `burp_bubble` 特效。1-4 没有吞不下的鼓腹枯壳；测试给足 Dew 与冷却只为放置。
+#[test]
+fn snapmaw_burps_once_per_chew() {
+    use rootguard_core::components::{ChompState, Chomper};
+    use rootguard_core::resources::{BattleState, CardTray};
+    let mut runner = common::battle_runner("1-4", &["snapmaw", "barkwall"]);
+    while state(&runner).is_some_and(|s| s.phase != Phase::Playing) {
+        runner.frame();
+    }
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    {
+        let world = runner.app_mut().world_mut();
+        world.resources.expect_mut::<BattleState>().dew = 9990;
+        for c in &mut world.resources.expect_mut::<CardTray>().cards {
+            c.cooldown.remaining = 0;
+        }
+    }
+    // 咬夹草在第 6 列、身前第 7 列一堵树皮墙（咀嚼时不被吃掉）；卡牌可用状态按上一 tick 的 Dew 计算，放到成功为止
+    for (slot, col) in [(0usize, 6u8), (1, 7)] {
+        for _ in 0..10 {
+            let placed = runner
+                .app()
+                .world()
+                .query::<&rootguard_core::components::Cell>()
+                .iter()
+                .any(|c| c.row == 2 && c.col == col);
+            if placed {
+                break;
+            }
+            {
+                let world = runner.app_mut().world_mut();
+                world.resources.expect_mut::<BattleState>().dew = 9990;
+                for c in &mut world.resources.expect_mut::<CardTray>().cards {
+                    c.cooldown.remaining = 0;
+                }
+            }
+            send(&mut runner, UiAction::SelectCard(slot));
+            send(&mut runner, UiAction::PlaceAt { row: 2, col });
+            runner.frame();
+        }
+    }
+    let mut bubbles: Vec<(u64, u32)> = Vec::new();
+    let mut seen = std::collections::BTreeSet::new();
+    let mut chews_done = 0;
+    let mut was_chewing = false;
+    for _ in 0..12_000 {
+        runner.frame();
+        let world = runner.app().world();
+        let chomper = world.query::<&Chomper>().iter().next().copied();
+        let Some(c) = chomper else { break };
+        let rs = world
+            .resources
+            .expect::<rootguard_app::render::RenderState>();
+        for f in rs.effects() {
+            if f.clip == "burp_bubble_play" && seen.insert(f.start) {
+                bubbles.push((f.start, c.chew.remaining));
+                assert!(
+                    c.state == ChompState::Chewing && c.chew.remaining <= 60,
+                    "气泡只在最后一个循环"
+                );
+            }
+        }
+        let chewing = c.state == ChompState::Chewing;
+        if was_chewing && !chewing {
+            chews_done += 1;
+            assert_eq!(
+                bubbles.len(),
+                chews_done,
+                "每次咀嚼恰好一个气泡（{bubbles:?}）"
+            );
+            if chews_done >= 2 {
+                break;
+            }
+        }
+        was_chewing = chewing;
+    }
+    assert!(chews_done >= 1, "应至少完成一次咀嚼");
+}
+
+/// 裁决八 2.4：门板破碎特效不依赖脚本解——直接对一只门板枯壳发 `EnemyArmorBroken { kind: Shield }`，
+/// 下一帧应生成 `armor_break_plank`（位置在它胸前），且只生成一次。
+#[test]
+fn shield_break_spawns_plank_fx() {
+    use rootguard_core::components::EnemyRef;
+    use rootguard_core::data::ArmorKind;
+    use rootguard_core::events::EnemyArmorBroken;
+    let mut runner = common::battle_runner("1-7", &[]);
+    send(&mut runner, UiAction::SetSkin(SkinMode::Skinned));
+    send(&mut runner, UiAction::SetSkinName(SkinName::Garden));
+    let shield = (0..20_000).find_map(|_| {
+        runner.frame();
+        runner
+            .app()
+            .world()
+            .query::<(Entity, &EnemyRef)>()
+            .iter()
+            .find(|(_, r)| r.id.as_str() == "shield_husk")
+            .map(|(e, _)| e)
+    });
+    let entity = shield.expect("1-7 应生成门板枯壳");
+    runner.app_mut().world_mut().events.send(EnemyArmorBroken {
+        entity,
+        kind: ArmorKind::Shield,
+    });
+    let count = |runner: &HeadlessRunner| {
+        runner
+            .app()
+            .world()
+            .resources
+            .expect::<rootguard_app::render::RenderState>()
+            .effects()
+            .iter()
+            .filter(|f| f.clip == "armor_break_plank_play")
+            .count()
+    };
+    runner.frame();
+    assert_eq!(count(&runner), 1);
+    runner.frame();
+    assert_eq!(count(&runner), 1, "双缓冲事件不应生成第二份");
+}

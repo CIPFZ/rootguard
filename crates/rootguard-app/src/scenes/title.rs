@@ -11,6 +11,9 @@ use crate::scenes::{SettingsScene, button_at, draw_menu, menu_slot, send};
 use crate::sfx::{self, Track};
 use crate::{LOGICAL_SIZE, TITLE};
 
+/// 标题背景片段（`art/story/title_bg.svg`）。
+pub const TITLE_BG: &str = "story_title_bg";
+
 /// 标题场景。
 pub struct TitleScene;
 
@@ -34,6 +37,22 @@ impl Scene for TitleScene {
     fn draw(&mut self, world: &mut World) {
         let sub = t(world, "title.subtitle");
         draw_menu(world, TITLE, Some(&sub));
+        // ART-SPEC 8.4：花园皮肤的标题背景（沉睡的根母远景；标题写在上方的吊挂木牌上）
+        let Some(mut list) = world.resources.remove::<DrawList>() else {
+            return;
+        };
+        if let Some(sk) = crate::skin::Painter::active(world) {
+            let full = Rect::from_min_size(Vec2::ZERO, LOGICAL_SIZE);
+            sk.draw_in(
+                &mut list,
+                Layer::BACKGROUND,
+                TITLE_BG,
+                full,
+                1.0,
+                Color::WHITE,
+            );
+        }
+        world.resources.insert(list);
     }
 
     fn ui(&mut self, world: &mut World, ctx: &egui::Context) {

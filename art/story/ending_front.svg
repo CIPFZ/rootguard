@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 70">
+  <!-- ART-SPEC 8.4 结局静帧（前层）：门口的枯土埂，小芽怪躲在后面只探出头 -->
+  <path d="M4 66 C10 30 40 14 80 18 C120 6 170 10 200 20 C230 18 252 36 256 66 Z" fill="@straw_dark" stroke="@husk_outline" stroke-width="4" stroke-linejoin="round"/>
+  <path fill="none" d="M40 40 L58 34 M120 30 L132 40 M184 36 L200 30" stroke="@husk_crack" stroke-width="3" stroke-linecap="round"/>
+  <path fill="none" d="M30 30 l-4 -16 M36 28 l4 -14" stroke="@straw" stroke-width="3" stroke-linecap="round"/>
+  <path fill="none" d="M90 30 l-4 -16 M96 28 l4 -14" stroke="@straw" stroke-width="3" stroke-linecap="round"/>
+  <path fill="none" d="M160 30 l-4 -16 M166 28 l4 -14" stroke="@straw" stroke-width="3" stroke-linecap="round"/>
+  <path fill="none" d="M220 30 l-4 -16 M226 28 l4 -14" stroke="@straw" stroke-width="3" stroke-linecap="round"/>
+</svg>

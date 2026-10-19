@@ -32,6 +32,9 @@ Clips([
         looping: true,
         duration: Ticks(60),
         frames: Every(10),
+        // 末帧打嗝（ART-SPEC v1.3 4.10）：相位由咀嚼计时器决定，最后一个循环的末帧 = 咀嚼结束前 10 tick，
+        // 呈现层只在最后一个循环消费，冒一个小气泡
+        events: [(50, "burp")],
         keys: {
             "jaw_upper": [(t: 0, rot: 2), (t: 15, rot: 0), (t: 30, rot: 2), (t: 45, rot: 0), (t: 60, rot: 2)],
             "jaw_lower": [(t: 0, rot: -1, sy: 1.0), (t: 15, rot: 1, sy: 1.08), (t: 30, rot: -1), (t: 45, rot: 1, sy: 1.08), (t: 60, rot: -1)],

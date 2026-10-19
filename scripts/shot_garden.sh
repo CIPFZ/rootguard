@@ -3,6 +3,7 @@
 #
 #   ./scripts/shot_garden.sh <脚本> <输出前缀> <秒>...
 #   ./scripts/shot_garden.sh tests/scripts/1-9.ron /tmp/shots/n19 90 200 300
+#   ./scripts/shot_garden.sh - /tmp/shots/title 3        # 脚本写 - 时普通启动（标题画面）
 #
 # 依赖同 scripts/screenshot.sh（Xvfb、ImageMagick import、Mesa）。存档目录隔离（ROOTGUARD_SAVE_DIR）。
 # 环境变量 SHOT_LANG（Zh / En，默认 Zh）。截图时刻按真实时间，画面不逐帧固定。
@@ -24,7 +25,9 @@ sleep 1
 cat > "$work/progress.ron" <<RON
 (version: 1, cleared: [], unlocked: [], settings: (sfx: 0.0, music: 0.0, lang: $lang, skin: Skinned, skin_name: Garden))
 RON
-DISPLAY="$display" ROOTGUARD_SAVE_DIR="$work" target/release/rootguard --autoplay "$script" >"$work/log" 2>&1 &
+args=()
+if [ "$script" != "-" ]; then args=(--autoplay "$script"); fi
+DISPLAY="$display" ROOTGUARD_SAVE_DIR="$work" target/release/rootguard "${args[@]}" >"$work/log" 2>&1 &
 game=$!
 start=$(date +%s.%N)
 for t in "$@"; do

@@ -1,0 +1,7 @@
+// 叙事画面（ART-SPEC 8.4）：标题背景与结局静帧。文件名 = 精灵名，`viewBox` = 尺寸。
+// artgen 打进 garden_story 图集，片段名 `story_<名>`；游戏在标题与 1-10 胜利后的结算画面绘制。
+[
+    (name: "title_bg", anchor: (0.0, 0.0)),
+    (name: "ending_back", anchor: (0.0, 0.0)),
+    (name: "ending_front", anchor: (0.0, 0.0)),
+]

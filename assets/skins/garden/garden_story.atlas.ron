@@ -1,0 +1,9 @@
+// 由 tools/artgen 生成，勿手改（ART-SPEC 9）
+Atlas(
+    image: "skins/garden/garden_story.png",
+    frames: [
+        (name: "story_title_bg_0", x: 0, y: 722, w: 1280, h: 720, anchor: (0.0, 0.0)),
+        (name: "story_ending_back_0", x: 0, y: 0, w: 1280, h: 720, anchor: (0.0, 0.0)),
+        (name: "story_ending_front_0", x: 1282, y: 722, w: 260, h: 70, anchor: (0.0, 0.0)),
+    ],
+)

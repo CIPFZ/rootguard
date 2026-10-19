@@ -15,7 +15,22 @@ pub struct OutcomeScene {
     won: bool,
     unlocked: Vec<DefenderId>,
     has_next: bool,
+    ending: bool,
 }
+
+/// 结局静帧（ART-SPEC 8.4 / LORE 结局）：背层、前层与两只角色的位置。
+pub const ENDING_BACK: &str = "story_ending_back";
+const ENDING_FRONT: &str = "story_ending_front";
+/// 前层（门口的枯土埂）左上角。
+const ENDING_FRONT_POS: Vec2 = Vec2::new(950.0, 400.0);
+/// 日灯笼：脚底位置与放大倍数（光束从它的灯笼照向裂缝）。
+const ENDING_LANTERN: (Vec2, f32) = (Vec2::new(330.0, 640.0), 1.6);
+/// 小芽怪：躲在土埂后只探出头。
+const ENDING_SPROUT: (Vec2, f32) = (Vec2::new(1080.0, 432.0), 1.6);
+/// 日灯笼的灯笼叠层：最亮的一帧（第 4 次产出的金色，ART-SPEC 4.12），身体为 idle（两层绘制，ADR-016 第 2 节）。
+const ENDING_LANTERN_LIGHT: (&str, u64) = ("sunlantern_produce_gold", 1400);
+/// 结局一句的位置（底部木牌）。
+const ENDING_LINE_POS: Vec2 = Vec2::new(640.0, 676.0);
 
 impl OutcomeScene {
     /// 创建；`unlocked` 为本次新解锁的卡牌。
@@ -25,7 +40,98 @@ impl OutcomeScene {
             won,
             unlocked,
             has_next,
+            ending: false,
         }
+    }
+
+    /// 最后一关胜利：显示结局静帧与 `ending.line`（ART-SPEC 8.4）。
+    #[must_use]
+    pub fn with_ending(mut self, ending: bool) -> Self {
+        self.ending = ending && self.won;
+        self
+    }
+
+    /// 结局静帧（皮肤模式且皮肤有结局画面时）；返回是否画了。
+    fn draw_ending(world: &mut World, line: &str) -> bool {
+        let Some(mut list) = world.resources.remove::<DrawList>() else {
+            return false;
+        };
+        let drew = crate::skin::Painter::active(world).is_some_and(|sk| {
+            let full = Rect::from_min_size(Vec2::ZERO, LOGICAL_SIZE);
+            if !sk.draw_in(
+                &mut list,
+                Layer::OVERLAY,
+                ENDING_BACK,
+                full,
+                1.0,
+                Color::WHITE,
+            ) {
+                return false;
+            }
+            let still = |clip| crate::skin::Pose {
+                clip,
+                elapsed: 0,
+                flash: false,
+                tint: Color::WHITE,
+            };
+            let (at, k) = ENDING_LANTERN;
+            sk.draw_scaled(
+                &mut list,
+                Layer::OVERLAY,
+                at,
+                0.0,
+                still("sunlantern_idle"),
+                k,
+            );
+            let (light, elapsed) = ENDING_LANTERN_LIGHT;
+            let lit = crate::skin::Pose {
+                elapsed,
+                ..still(light)
+            };
+            sk.draw_scaled(&mut list, Layer::OVERLAY, at, 0.0, lit, k);
+            let (at, k) = ENDING_SPROUT;
+            sk.draw_scaled(
+                &mut list,
+                Layer::OVERLAY,
+                at,
+                0.0,
+                still("sproutling_walk"),
+                k,
+            );
+            if let Some(size) = sk.frame_size(ENDING_FRONT) {
+                let front = Rect::from_min_size(ENDING_FRONT_POS, size);
+                sk.draw_in(
+                    &mut list,
+                    Layer::OVERLAY,
+                    ENDING_FRONT,
+                    front,
+                    1.0,
+                    Color::WHITE,
+                );
+            }
+            if let Some(size) = sk.frame_size(crate::hud::UI_BANNER) {
+                let board = Rect::from_center_size(ENDING_LINE_POS, size);
+                sk.draw_in(
+                    &mut list,
+                    Layer::OVERLAY,
+                    crate::hud::UI_BANNER,
+                    board,
+                    1.0,
+                    Color::WHITE,
+                );
+            }
+            list.text_aligned(
+                Layer::OVERLAY,
+                ENDING_LINE_POS - Vec2::new(0.0, 10.0),
+                line,
+                20.0,
+                Color::from_hex(0xFF_F59D),
+                TextAlign::Center,
+            );
+            true
+        });
+        world.resources.insert(list);
+        drew
     }
 
     fn primary(&self) -> UiAction {
@@ -77,11 +183,27 @@ impl Scene for OutcomeScene {
                 .collect();
             format!("{} {}", t(world, "outcome.unlocked"), names.join(", "))
         };
+        if self.ending {
+            let line = t(world, "ending.line");
+            if Self::draw_ending(world, &line) {
+                return;
+            }
+            // 占位模式：结局一句写在提示行
+            let hint = if hint.is_empty() {
+                line
+            } else {
+                format!("{line}  {hint}")
+            };
+            render::overlay(world.resources.expect_mut::<DrawList>(), &title, &hint);
+            return;
+        }
         render::overlay(world.resources.expect_mut::<DrawList>(), &title, &hint);
     }
 
     fn ui(&mut self, world: &mut World, ctx: &egui::Context) {
-        let slot = |i| menu_slot(LOGICAL_SIZE.x / 2.0, 440.0, 66.0, i);
+        // 结局静帧：按钮放在玻璃墙的空处，不挡住光束、根须与小芽怪
+        let top = if self.ending { 250.0 } else { 440.0 };
+        let slot = |i| menu_slot(LOGICAL_SIZE.x / 2.0, top, 66.0, i);
         let mut i = 0;
         if self.won && self.has_next {
             if button_at(

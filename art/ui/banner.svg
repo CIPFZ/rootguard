@@ -1,12 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 64">
-  <!-- 8.3 横幅：吊挂的木牌（两根绳） -->
-  <path fill="none" d="M60 0 L80 14 M500 0 L480 14" stroke="@straw_dark" stroke-width="4" stroke-linecap="round"/>
-  <g transform="translate(20 10)">
-    <rect x="2" y="2" width="516" height="48" rx="5" fill="@bark" stroke="@outline" stroke-width="3"/>
-    <path fill="none" d="M8 18.72 C156.0 16.64 312.0 20.8 512 18.2 M8 36.4 C182.0 38.48 364.0 34.32 512 37.44" stroke="@bark.shade" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="8" cy="8" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
-    <circle cx="512" cy="8" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
-    <circle cx="8" cy="44" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
-    <circle cx="512" cy="44" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 64">
+  <!-- 8.3 / 8.4 横幅：吊挂的长木牌（园丁独白一句也放得下） -->
+  <path fill="none" d="M80 0 L104 14 M820 0 L796 14" stroke="@straw_dark" stroke-width="4" stroke-linecap="round"/>
+  <g transform="translate(10 10)">
+    <rect x="2" y="2" width="876" height="48" rx="6" fill="@bark" stroke="@outline" stroke-width="3"/>
+    <path fill="none" d="M10 18 C260 14 560 22 870 16 M10 38 C300 42 600 34 870 40" stroke="@bark.shade" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="10" cy="10" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
+    <circle cx="870" cy="10" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
+    <circle cx="10" cy="42" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
+    <circle cx="870" cy="42" r="2.6" fill="@frost.shade" stroke="@outline" stroke-width="1.4"/>
   </g>
 </svg>

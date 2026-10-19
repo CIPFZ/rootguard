@@ -133,6 +133,8 @@ pub fn render_scene(root: &Path, palette: &Palette) -> Result<Vec<SceneSprite>> 
 
 /// HUD 皮肤精灵目录（ART-SPEC 8.3）。
 pub const UI_DIR: &str = "art/ui";
+/// 叙事画面目录（ART-SPEC 8.4：标题背景、结局静帧）。
+pub const STORY_DIR: &str = "art/story";
 
 /// 渲染 `<rel>/sprites.ron` 列出的单帧精灵（战场 L4 ～ L6 与 HUD 共用）。没有该目录时返回空表。
 ///

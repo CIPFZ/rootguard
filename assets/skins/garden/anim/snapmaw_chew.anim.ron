@@ -8,6 +8,6 @@ AnimationClip(
         (frame: "snapmaw_chew_2", ticks: 10),
         (frame: "snapmaw_chew_3", ticks: 10),
         (frame: "snapmaw_chew_4", ticks: 10),
-        (frame: "snapmaw_chew_5", ticks: 10),
+        (frame: "snapmaw_chew_5", ticks: 10, event: "burp"),
     ],
 )

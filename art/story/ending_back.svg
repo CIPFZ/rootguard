@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+  <!-- ART-SPEC 8.4 结局静帧（背层）：傍晚，温室内景；地面裂缝、光束、根须；右侧门外是枯田边缘 -->
+  <rect x="0" y="0" width="1280" height="720" fill="@bark_dark"/>
+  <rect x="0" y="0" width="1280" height="420" fill="@ember" opacity="0.55"/>
+  <rect x="0" y="0" width="1280" height="200" fill="@dew" opacity="0.35"/>
+  <rect x="0" y="0" width="1280" height="420" fill="@frost" opacity="0.25"/>
+  <rect x="-7" y="0" width="14" height="430" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <rect x="153" y="0" width="14" height="430" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <rect x="313" y="0" width="14" height="430" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <rect x="473" y="0" width="14" height="430" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <rect x="633" y="0" width="14" height="430" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <rect x="793" y="0" width="14" height="430" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <rect x="953" y="0" width="14" height="430" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <rect x="1113" y="0" width="14" height="430" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <rect x="1273" y="0" width="14" height="430" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <rect x="-4" y="200" width="1288" height="12" fill="@bark" stroke="@outline" stroke-width="3"/>
+  <rect x="960" y="150" width="240" height="290" fill="@grass_dry" stroke="@outline" stroke-width="5"/>
+  <rect x="960" y="150" width="240" height="140" fill="@ember" opacity="0.5"/>
+  <g opacity="0.85"><path fill="none" d="M980 330 L981.9 240.27616242133462 M980 303.1 q6 -4 14 4 M980 283.3 q6 -4 14 4 M980 263.6 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M998 330 L997.8 279.09748287777643 M998 314.7 q-6 -4 -14 4 M998 303.5 q-6 -4 -14 4 M998 292.3 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1016 330 L1017.6 277.6418232267476 M1016 314.3 q-6 -4 -14 4 M1016 302.8 q-6 -4 -14 4 M1016 291.3 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1034 330 L1036.2 264.3620118746709 M1034 310.3 q-6 -4 -14 4 M1034 295.9 q-6 -4 -14 4 M1034 281.4 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1052 330 L1050.7 263.9342297466278 M1052 310.2 q-6 -4 -14 4 M1052 295.6 q6 -4 14 4 M1052 281.1 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1070 330 L1072.9 251.7441316201399 M1070 306.5 q6 -4 14 4 M1070 289.3 q-6 -4 -14 4 M1070 272.1 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1088 330 L1085.9 276.68061221354674 M1088 314.0 q-6 -4 -14 4 M1088 302.3 q-6 -4 -14 4 M1088 290.5 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1106 330 L1104.1 246.75625753726854 M1106 305.0 q6 -4 14 4 M1106 286.7 q-6 -4 -14 4 M1106 268.4 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1124 330 L1123.2 263.2421399549869 M1124 310.0 q6 -4 14 4 M1124 295.3 q-6 -4 -14 4 M1124 280.6 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1142 330 L1144.2 261.734251111885 M1142 309.5 q6 -4 14 4 M1142 294.5 q6 -4 14 4 M1142 279.5 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1160 330 L1159.9 264.23519936098546 M1160 310.3 q6 -4 14 4 M1160 295.8 q-6 -4 -14 4 M1160 281.3 q-6 -4 -14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1178 330 L1176.3 277.306095366279 M1178 314.2 q-6 -4 -14 4 M1178 302.6 q-6 -4 -14 4 M1178 291.0 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/><path fill="none" d="M1196 330 L1193.6 255.97090957982076 M1196 307.8 q-6 -4 -14 4 M1196 291.5 q-6 -4 -14 4 M1196 275.2 q6 -4 14 4" stroke="@straw_dark" stroke-width="3" stroke-linecap="round"/></g>
+  <path d="M960 380 C1020 360 1120 372 1200 360 L1200 440 L960 440 Z" fill="@straw_dark"/>
+  <rect x="944" y="140" width="272" height="16" fill="@bark" stroke="@outline" stroke-width="4"/>
+  <rect x="944" y="140" width="16" height="310" fill="@bark" stroke="@outline" stroke-width="4"/>
+  <rect x="1200" y="140" width="16" height="310" fill="@bark" stroke="@outline" stroke-width="4"/>
+  <path d="M0 420 L1280 420 L1280 720 L0 720 Z" fill="@husk_crack"/>
+  <path fill="none" d="M0 470 C300 462 900 478 1280 466" stroke="@bark_dark" stroke-width="3" opacity="0.6"/>
+  <path fill="none" d="M0 540 C300 532 900 548 1280 536" stroke="@bark_dark" stroke-width="3" opacity="0.6"/>
+  <path fill="none" d="M0 620 C300 612 900 628 1280 616" stroke="@bark_dark" stroke-width="3" opacity="0.6"/>
+  <rect x="40" y="360" width="200" height="70" rx="6" fill="@bark" stroke="@outline" stroke-width="4"/>
+  <path d="M70 362 C60 340 66 326 70 318 C74 326 80 340 70 362 Z" fill="@leaf" stroke="@outline" stroke-width="2.5"/>
+  <path d="M110 362 C100 340 106 326 110 318 C114 326 120 340 110 362 Z" fill="@leaf" stroke="@outline" stroke-width="2.5"/>
+  <path d="M150 362 C140 340 146 326 150 318 C154 326 160 340 150 362 Z" fill="@leaf" stroke="@outline" stroke-width="2.5"/>
+  <path d="M190 362 C180 340 186 326 190 318 C194 326 200 340 190 362 Z" fill="@leaf" stroke="@outline" stroke-width="2.5"/>
+  <path d="M220 362 C210 340 216 326 220 318 C224 326 230 340 220 362 Z" fill="@leaf" stroke="@outline" stroke-width="2.5"/>
+  <path d="M392 548 L772 546 L712 646 Z" fill="@dew_glow" opacity="0.55"/>
+  <path d="M392 556 L750 566 L718 628 Z" fill="@dew_glow" opacity="0.6"/>
+  <path fill="none" d="M520 640 L585 600 L630 616 L680 584 L720 596 L770 560 L820 572 L880 536" stroke="@outline" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
+  <path fill="none" d="M600 604 L612 640 M700 590 L690 628 M790 566 L812 600" stroke="@outline" stroke-width="5" stroke-linecap="round"/>
+  <path fill="none" d="M520 640 L585 600 L630 616 L680 584 L720 596 L770 560 L820 572 L880 536" stroke="@dew" stroke-width="4" stroke-linejoin="round" opacity="0.8"/>
+  <path fill="none" d="M705 590 C700 540 730 500 770 498 C800 497 812 520 796 536 C786 546 770 540 772 528" stroke="@outline" stroke-width="16" stroke-linecap="round"/>
+  <path fill="none" d="M705 590 C700 540 730 500 770 498 C800 497 812 520 796 536 C786 546 770 540 772 528" stroke="@bark" stroke-width="10" stroke-linecap="round"/>
+  <path d="M772 528 C778 516 792 512 798 518 C792 528 782 532 772 528 Z" fill="@leaf_light" stroke="@outline" stroke-width="2.5"/>
+  <path fill="none" d="M820 494 C832 500 836 512 832 524" stroke="@dew_glow" stroke-width="3" stroke-linecap="round"/>
+  <path fill="none" d="M836 484 C852 494 856 512 850 530" stroke="@dew_glow" stroke-width="3" stroke-linecap="round"/>
+  <path fill="none" d="M676 520 C664 530 662 544 668 556" stroke="@dew_glow" stroke-width="3" stroke-linecap="round"/>
+</svg>

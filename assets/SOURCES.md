@@ -41,12 +41,13 @@
 | `assets/audio/bgm_title.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 标题 / 菜单 BGM（循环） |
 | `assets/audio/bgm_battle.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 对局 BGM（循环） |
 | `assets/audio/bgm_outcome.ogg` | 音频 | 程序化合成：`scripts/gen_audio.py`（标准库波形合成 + oggenc 编码，旋律由固定种子在五声音阶上生成） | Rootguard 项目 | 项目自有 | 结算 BGM（循环） |
-| `assets/fonts/RootguardCJK-Regular.otf` | 字体 | Noto Sans CJK SC Regular 子集，`scripts/subset_font.py` 生成（字符取自 `assets/data/i18n/*.ron`），已更名为 “Rootguard CJK Subset” | Adobe / Google（Noto CJK） | SIL OFL 1.1，全文见 `assets/fonts/LICENSE-OFL.txt` | 中文显示（E-1） |
+| `assets/fonts/RootguardCJK-Regular.otf` | 字体 | Noto Sans CJK SC Regular 子集，`scripts/subset_font.py` 生成（字符取自 `assets/data/i18n/*.ron`），已更名为 “Rootguard CJK Subset” | Adobe / Google（Noto CJK） | SIL OFL 1.1，全文见 `assets/fonts/LICENSE-OFL.txt` | 中文显示（E-1）；2026-10-16 按 A3 关卡独白与结局文本重新生成（459 字符） |
 | `assets/skins/default/skin.png` | 图像 | 程序化生成：`scripts/gen_skins.py`（Pillow 绘制基本几何形状，4 倍超采样；造型原创，见 ADR-007） | Rootguard 项目 | 项目自有 | 皮肤图集：12 防御者、9 敌人（含受伤闪白帧）、2 弹丸、Dew |
 | `assets/skins/default/skin.atlas.ron` | 数据 | 程序化生成：`scripts/gen_skins.py` | Rootguard 项目 | 项目自有 | 引擎图集 RON |
 | `assets/skins/garden/*.png` | 图像 | 程序化生成：`tools/artgen` 以 resvg 渲染 `art/characters/*/parts/*.svg`（手写 SVG 部件，颜色只取 `art/palette.ron`；造型依据 `LORE.md` 与 `ART-SPEC.md` 设计卡，见 ADR-013） | Rootguard 项目 | 项目自有 | garden 皮肤图集（美术阶段，逐角色增加） |
 | `assets/skins/garden/*.atlas.ron`、`anim/*.anim.ron`、`skin.ron` | 数据 | 程序化生成：`tools/artgen` | Rootguard 项目 | 项目自有 | 引擎图集 / 动画片段 RON 与皮肤清单 |
 | `assets/skins/garden/bg_base.png` | 图像 | 程序化生成：`tools/artgen` 的 `bg.rs`（L0 天空渐变与 L2 草地格按 ART-SPEC 8.1 公式由调色板计算；L1 远景渲染 `art/bg/far.svg`，手写 SVG） | Rootguard 项目 | 项目自有 | 战场静态底图（ART-SPEC 8.1 L0 ～ L2，ADR-015） |
+| `assets/skins/garden/garden_scene.png`、`garden_ui.png`、`garden_story.png` | 图像 | 程序化生成：`tools/artgen` 渲染 `art/bg/scene/*.svg`、`art/ui/*.svg`、`art/story/*.svg`（手写 SVG，颜色只取调色板） | Rootguard 项目 | 项目自有 | 战场 L4 ～ L6、HUD 与卡牌头像、标题背景与结局静帧（ART-SPEC 8.1 / 8.3 / 8.4） |
 | `art/**/*.svg`、`art/**/*.ron` | 源文件 | 实现者手写（不描摹、不位图化概念图，ART-SPEC 9.3） | Rootguard 项目 | 项目自有 | garden 皮肤的唯一来源 |
 | `assets/skins/default/skin.ron` | 数据 | 程序化生成：`scripts/gen_skins.py` | Rootguard 项目 | 项目自有 | 皮肤清单（图集路径与片段名） |
 | `assets/skins/default/anim/*.anim.ron`（46 个） | 数据 | 程序化生成：`scripts/gen_skins.py` | Rootguard 项目 | 项目自有 | 引擎动画片段 RON（idle / attack / armed / walk / eat，eat 第 2 帧 `eat_hit` 事件） |

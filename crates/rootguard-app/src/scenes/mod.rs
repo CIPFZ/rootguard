@@ -12,11 +12,11 @@ mod title;
 
 pub use battle::BattleScene;
 pub use level_select::LevelSelectScene;
-pub use outcome::OutcomeScene;
+pub use outcome::{ENDING_BACK, OutcomeScene};
 pub use pause::PauseScene;
 pub use seed_select::SeedSelectScene;
 pub use settings::SettingsScene;
-pub use title::TitleScene;
+pub use title::{TITLE_BG, TitleScene};
 
 use rootguard_core::events::UiAction;
 use trellia::egui;

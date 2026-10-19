@@ -350,6 +350,12 @@ fn i18n_tables_complete() {
             );
         }
     }
+    // ART-SPEC 8.4：每关一句园丁独白与结局一句（中英 key 一致已在上面检查）
+    for level in world.resources.expect::<LevelRegistry>().iter() {
+        let key = rootguard_app::hud::intro_key(level.id.as_str());
+        assert!(i18n.has(&key), "缺少 {key}");
+    }
+    assert!(i18n.has("ending.line"), "缺少 ending.line");
 }
 
 /// SPEC 11.6 / E-1：默认中文时对局 HUD 直接显示中文（不再回退英文），且 CJK 字体可解析。
@@ -373,7 +379,13 @@ fn chinese_hud_when_lang_zh() {
         texts.iter().any(|t| t.starts_with("关卡 1-1")),
         "HUD 应显示中文关卡名：{texts:?}"
     );
-    assert!(texts.iter().any(|t| t == "准备……"), "Intro 横幅应为中文");
+    // ART-SPEC 8.4：Intro 横幅是该关的园丁独白（LORE §4），替换“准备”
+    assert!(
+        texts
+            .iter()
+            .any(|t| t == "泉水停了。菜地那边有东西在动，我先把石籽荚请出来。"),
+        "Intro 横幅应为 1-1 的中文独白：{texts:?}"
+    );
     let font = rootguard_app::cjk_font_path().expect("CJK 字体应随资产提供");
     assert!(font.is_file());
 }
@@ -539,5 +551,79 @@ fn constructed_sfx_mapped() {
     assert_eq!(
         counts["sfx.snap"], counts["sfx.gulp"],
         "每次吞食一声 snap、一声 gulp"
+    );
+}
+
+/// 读取 OpenType `cmap`（格式 4 / 12）中的全部码位（只为测试字体覆盖，不是游戏代码）。
+fn font_codepoints(bytes: &[u8]) -> std::collections::BTreeSet<u32> {
+    let u16_at = |o: usize| u32::from(u16::from_be_bytes([bytes[o], bytes[o + 1]]));
+    let u32_at =
+        |o: usize| u32::from_be_bytes([bytes[o], bytes[o + 1], bytes[o + 2], bytes[o + 3]]);
+    let tables = u16_at(4) as usize;
+    let cmap = (0..tables)
+        .map(|i| 12 + 16 * i)
+        .find(|&r| &bytes[r..r + 4] == b"cmap")
+        .map(|r| u32_at(r + 8) as usize)
+        .expect("cmap 表");
+    let mut out = std::collections::BTreeSet::new();
+    for i in 0..u16_at(cmap + 2) as usize {
+        let sub = cmap + u32_at(cmap + 4 + 8 * i + 4) as usize;
+        match u16_at(sub) {
+            4 => {
+                let segs = u16_at(sub + 6) as usize / 2;
+                let ends = sub + 14;
+                let starts = ends + 2 * segs + 2;
+                let deltas = starts + 2 * segs;
+                let ranges = deltas + 2 * segs;
+                for s in 0..segs {
+                    let (start, end) = (u16_at(starts + 2 * s), u16_at(ends + 2 * s));
+                    let range = u16_at(ranges + 2 * s);
+                    for c in start..=end.min(0xFFFE) {
+                        let glyph = if range == 0 {
+                            (c + u16_at(deltas + 2 * s)) & 0xFFFF
+                        } else {
+                            let at = ranges + 2 * s + range as usize + 2 * (c - start) as usize;
+                            u16_at(at)
+                        };
+                        if glyph != 0 {
+                            out.insert(c);
+                        }
+                    }
+                }
+            }
+            12 => {
+                for g in 0..u32_at(sub + 12) as usize {
+                    let rec = sub + 16 + 12 * g;
+                    out.extend(u32_at(rec)..=u32_at(rec + 4));
+                }
+            }
+            _ => {}
+        }
+    }
+    out
+}
+
+/// SPEC 11.6 / E-1：随资产提供的 CJK 子集字体覆盖文本表中出现的每个字符（新增文本后忘了重跑
+/// `scripts/subset_font.py` 会显示成方框）。
+#[test]
+fn cjk_font_covers_text_tables() {
+    let font = std::fs::read(rootguard_app::cjk_font_path().expect("CJK 字体")).expect("读取字体");
+    let have = font_codepoints(&font);
+    let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../assets/data/i18n");
+    let mut missing = std::collections::BTreeSet::new();
+    for entry in std::fs::read_dir(dir).expect("i18n 目录") {
+        let text = std::fs::read_to_string(entry.expect("文件").path()).expect("读取");
+        for c in text
+            .chars()
+            .filter(|c| !c.is_control() && !c.is_whitespace())
+        {
+            if !have.contains(&u32::from(c)) {
+                missing.insert(c);
+            }
+        }
+    }
+    assert!(
+        missing.is_empty(),
+        "字体缺少 {missing:?}：请运行 scripts/subset_font.py 并更新 assets/SOURCES.md"
     );
 }

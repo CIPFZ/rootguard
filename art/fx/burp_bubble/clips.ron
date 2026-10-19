@@ -1,0 +1,14 @@
+// burp_bubble：16 tick——上升 8 px 并胀大，第 12 tick 破掉
+Clips([
+    (
+        name: "play",
+        looping: false,
+        duration: Ticks(16),
+        frames: Every(2),
+        keys: {
+            "bubble": [(t: 0, sx: 0.5, sy: 0.5, ease: Linear), (t: 10, dy: -8, sx: 1.2, sy: 1.2, ease: Step), (t: 12, dy: -8, op: 0.0)],
+            "pop": [(t: 0, dy: -8)],
+        },
+        swaps: { "pop": [(12, "base"), (16, "hidden")] },
+    ),
+])

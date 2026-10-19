@@ -9,7 +9,7 @@ use std::collections::BTreeSet;
 use std::collections::BTreeMap;
 
 use rootguard_core::Grid;
-use rootguard_core::components::{Cell, EnemyRef, Lane, ProjectileBody};
+use rootguard_core::components::{Cell, ChompState, Chomper, EnemyRef, Lane, ProjectileBody};
 use rootguard_core::data::ArmorKind;
 use rootguard_core::events::{
     DamageSource, DefenderPlaced, DefenderRemoved, DewSource, DewSpawned, EnemyArmorBroken,
@@ -36,6 +36,12 @@ const PLANT_DUST_Y: f32 = -10.0;
 const EMBER_WAVE_SIZE: Vec2 = Vec2::new(300.0, 345.0);
 /// 荆棘垫扎到时敌人脚下小尘的尺寸（复用 `plant_dust`，ART-SPEC 4.6）。
 const PRICK_DUST_SIZE: Vec2 = Vec2::new(56.0, 56.0);
+/// 咬夹草打嗝气泡相对格子脚底的位置（嘴的右上方，ART-SPEC 4.10）。
+const BURP_OFFSET: Vec2 = Vec2::new(30.0, -78.0);
+/// `chew` 片段一个循环的长度：只有咀嚼计时器剩余不超过它时（最后一个循环）才冒泡。
+const CHEW_CYCLE_TICKS: u32 = 60;
+/// 片段事件帧：咬夹草 `chew` 末帧的打嗝（ART-SPEC v1.3 4.10）。
+pub const BURP_EVENT: &str = "burp";
 /// 铲除：向上弹起并淡出（ART-SPEC 4.13）的时长与上升速度。
 pub const SHOVEL_TICKS: u64 = 12;
 const SHOVEL_RISE_PX_PER_TICK: f32 = 2.5;
@@ -258,6 +264,22 @@ pub fn capture(world: &mut World) {
             push(
                 format!("dew:{}", d.entity.to_bits().get()),
                 Fx::at("dew_pop", t.pos, tick),
+            );
+        }
+    }
+    // 咬夹草咀嚼结束打嗝：chew 片段末帧事件，只在最后一个循环冒一个气泡（ART-SPEC v1.3 4.10）
+    for a in world.events.get::<AnimationEvent>().iter() {
+        if a.event != BURP_EVENT {
+            continue;
+        }
+        let mut q = world.entities.query_one::<(&Chomper, &Cell)>(a.entity);
+        if let Ok((c, cell)) = q.get()
+            && c.state == ChompState::Chewing
+            && c.chew.remaining <= CHEW_CYCLE_TICKS
+        {
+            push(
+                format!("burp:{}", a.entity.to_bits().get()),
+                Fx::at("burp_bubble", cell_foot(*cell) + BURP_OFFSET, tick),
             );
         }
     }

@@ -39,6 +39,10 @@ pub const BG_IMAGE: &str = "bg_base.png";
 const BG_ATLAS: &str = "garden_bg";
 /// 战场独立精灵图集（ART-SPEC 8.1 L4 ～ L6）。
 const SCENE_ATLAS: &str = "garden_scene";
+/// 叙事画面图集（ART-SPEC 8.4：标题背景、结局静帧）。
+const STORY_ATLAS: &str = "garden_story";
+/// 叙事画面片段名前缀：`story_<精灵名>`。
+pub const STORY_PREFIX: &str = "story_";
 /// HUD 精灵片段名前缀：`ui_<精灵名>`。
 pub const UI_PREFIX: &str = "ui_";
 /// 战场精灵片段名前缀：`scene_<精灵名>`。
@@ -285,6 +289,60 @@ pub fn render_rest(ch: &Character, palette: &Palette) -> Result<Image> {
     ch.parts.render(&pose, palette)
 }
 
+/// 图集 RON 路径与其中的片段名（`skin.ron` 清单的一项）。
+type ManifestEntry = (String, Vec<String>);
+
+/// 把 `<dir>/sprites.ron` 的单帧精灵打成一张图集，每个精灵一个片段 `<prefix><名>`（战场 L4 ～ L6、叙事画面）。
+fn sprite_atlas(
+    root: &Path,
+    palette: &Palette,
+    (dir, atlas_name, prefix): (&str, &str, &str),
+    files: &mut BTreeMap<String, Vec<u8>>,
+    manifest: &mut Vec<ManifestEntry>,
+    summary: &mut Summary,
+) -> Result<()> {
+    let sprites = bg::render_sprites(root, dir, palette)?;
+    if sprites.is_empty() {
+        return Ok(());
+    }
+    let frames: Vec<FrameIn> = sprites
+        .iter()
+        .map(|(name, image, anchor)| FrameIn {
+            name: format!("{prefix}{name}_0"),
+            image: image.clone(),
+            anchor: *anchor,
+        })
+        .collect();
+    let packed = atlas::pack(atlas_name, &frames)?;
+    files.insert(
+        format!("{OUT_DIR}/{atlas_name}.png"),
+        packed.image.encode_png()?,
+    );
+    files.insert(
+        format!("{OUT_DIR}/{atlas_name}.atlas.ron"),
+        atlas::atlas_ron(&format!("{ASSET_PREFIX}/{atlas_name}.png"), &packed).into_bytes(),
+    );
+    let mut names = Vec::new();
+    for (name, _, _) in &sprites {
+        let clip = ClipOut {
+            name: format!("{prefix}{name}"),
+            looping: false,
+            frames: vec![(format!("{prefix}{name}_0"), 60, None)],
+        };
+        files.insert(
+            format!("{OUT_DIR}/anim/{}.anim.ron", clip.name),
+            atlas::clip_ron(&clip).into_bytes(),
+        );
+        names.push(clip.name);
+    }
+    summary.clips += names.len();
+    summary
+        .atlases
+        .push((atlas_name.to_owned(), packed.image.w, packed.image.h));
+    manifest.push((format!("{ASSET_PREFIX}/{atlas_name}.atlas.ron"), names));
+    Ok(())
+}
+
 /// 卡牌头像（ART-SPEC 4.13）：默认位姿的胸像，以及去饱和的“不可用”版。取景窗口取 rig 的 `portrait`，
 /// 缺省时以默认位姿可见范围为准：宽 = 可见宽 + 8，顶部留 4 px，水平居中。
 ///
@@ -493,44 +551,20 @@ pub fn build(root: &Path) -> Result<Built> {
             clips.into_iter().map(|c| c.name).collect(),
         ));
     }
-    // ART-SPEC 8.1 L4 ～ L6：战场独立精灵，单独一张图集，每个精灵一个单帧片段 `scene_<名>`
-    let scene = bg::render_scene(root, &palette)?;
-    if !scene.is_empty() {
-        let frames: Vec<FrameIn> = scene
-            .iter()
-            .map(|(name, image, anchor)| FrameIn {
-                name: format!("{SCENE_PREFIX}{name}_0"),
-                image: image.clone(),
-                anchor: *anchor,
-            })
-            .collect();
-        let packed = atlas::pack(SCENE_ATLAS, &frames)?;
-        files.insert(
-            format!("{OUT_DIR}/{SCENE_ATLAS}.png"),
-            packed.image.encode_png()?,
-        );
-        files.insert(
-            format!("{OUT_DIR}/{SCENE_ATLAS}.atlas.ron"),
-            atlas::atlas_ron(&format!("{ASSET_PREFIX}/{SCENE_ATLAS}.png"), &packed).into_bytes(),
-        );
-        let mut names = Vec::new();
-        for (name, _, _) in &scene {
-            let clip = ClipOut {
-                name: format!("{SCENE_PREFIX}{name}"),
-                looping: false,
-                frames: vec![(format!("{SCENE_PREFIX}{name}_0"), 60, None)],
-            };
-            files.insert(
-                format!("{OUT_DIR}/anim/{}.anim.ron", clip.name),
-                atlas::clip_ron(&clip).into_bytes(),
-            );
-            names.push(clip.name);
-        }
-        summary.clips += names.len();
-        summary
-            .atlases
-            .push((SCENE_ATLAS.to_owned(), packed.image.w, packed.image.h));
-        manifest.push((format!("{ASSET_PREFIX}/{SCENE_ATLAS}.atlas.ron"), names));
+    // ART-SPEC 8.1 L4 ～ L6：战场独立精灵，单独一张图集，每个精灵一个单帧片段 `scene_<名>`；
+    // 8.4 叙事画面同样处理（图集 garden_story，片段 `story_<名>`）
+    for (dir, atlas_name, prefix) in [
+        (bg::SCENE_DIR, SCENE_ATLAS, SCENE_PREFIX),
+        (bg::STORY_DIR, STORY_ATLAS, STORY_PREFIX),
+    ] {
+        sprite_atlas(
+            root,
+            &palette,
+            (dir, atlas_name, prefix),
+            &mut files,
+            &mut manifest,
+            &mut summary,
+        )?;
     }
     if let Some(image) = bg::render(root, &palette)? {
         files.insert(format!("{OUT_DIR}/{BG_IMAGE}"), image.encode_png()?);

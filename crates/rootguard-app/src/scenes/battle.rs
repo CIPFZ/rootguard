@@ -128,7 +128,7 @@ impl BattleScene {
         world
             .resources
             .expect_mut::<SceneCommands>()
-            .push(OutcomeScene::new(won, unlocks, has_next));
+            .push(OutcomeScene::new(won, unlocks, has_next).with_ending(!has_next));
     }
 }
 
